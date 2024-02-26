@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "concurrently -k \"tsc -w\" \"nodemon --env-file=.env ./dist/index.js\""
+    "dev": "concurrently -k \"tsc -w\" \"nodemon --env-file=.env.local ./dist/index.js\""
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fastify": "^4.26.1"
+    "fastify": "^4.26.1",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.20",
