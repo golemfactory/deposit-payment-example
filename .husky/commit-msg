@@ -1,0 +1,28 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+print_error() {
+  echo -e "\033[0;31m$1\033[0m" # \033[0;31m sets text color to red, \033[0m resets color
+}
+
+commit_msg_file=".git/COMMIT_EDITMSG"
+
+# Check if the commit message file exists
+if [ -e "$commit_msg_file" ]; then
+  commit_message=$(cat "$commit_msg_file")
+
+  # Use $commit_message as needed
+  echo "Commit message: $commit_message"
+
+  # Your logic here, for example, running check-for-issue-reference
+  node ./check-for-issue-reference "$commit_message" || {
+    echo "husky: commit-msg hook failed (add --no-verify to bypass)" && exit 1
+  }
+
+  npx commitlint --edit "$commit_msg_file"
+else
+  echo "Error: Commit message file not found: $commit_msg_file"
+  exit 1
+fi
+
+npx --no -- commitlint --edit "$1"
