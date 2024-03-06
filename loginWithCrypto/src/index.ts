@@ -1,0 +1,1 @@
+export { loginWithCrypto } from "./fastify";
