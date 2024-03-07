@@ -1,7 +1,9 @@
 import Fastify, { FastifyInstance } from "fastify";
 import fastifySensible from "@fastify/sensible";
-
+import cors from "@fastify/cors";
+//@ts-ignore
 import { loginWithCrypto } from "loginWithCrypto/fastify";
+import { container } from "./di.js";
 
 export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   const fastify = Fastify({
@@ -10,11 +12,16 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
 
   fastify.register(fastifySensible);
 
-  fastify.register(loginWithCrypto);
+  fastify.register(loginWithCrypto, {
+    userService: container.cradle.userService,
+  });
+
+  await fastify.register(cors, {
+    origin: "*",
+  });
 
   await fastify.listen({ port: Number(process.env.PORT) }, (err) => {
     if (err) {
-      console.log(err);
       fastify.log.error(err);
       throw err;
     }

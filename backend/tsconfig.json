@@ -1,16 +1,18 @@
 {
  "compilerOptions": {
-    "target": "es2020",
-    "module": "ES2022",
+    "target": "es6",
+    "module": "NodeNext",
     "outDir": "./dist",  // Specify the output directory for JavaScript files
     "rootDir": "./src",  // Specify the root directory of your TypeScript source files
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "Bundler",
+    "moduleResolution": "NodeNext",
         "paths": {
       "loginWithCrypto/*": ["node_modules/loginWithCrypto/*"]
     },
     "baseUrl": ".",
+    "declaration": false,
+
   },
   "include": [
     "**/*.ts",

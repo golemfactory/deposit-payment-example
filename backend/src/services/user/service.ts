@@ -1,30 +1,38 @@
-import mongoose from "mongoose";
-import { IUser, IUserService } from "./types";
+import { IUserService, IUser } from "./types.js";
+import { userModel } from "./model.js";
+import { v4 as uuidv4 } from "uuid";
 
 const randomNonce = () => {
   return Math.floor(Math.random() * 10000000);
 };
 
-export const UserService = (model: mongoose.Model<IUser>): IUserService => {
-  return {
-    ...model,
-    registerUser: async (walletAddress: string) => {
-      const user = model.findOne({ walletAddress });
-      if (user !== null) {
-        throw new Error("User already exists");
+export const userService: IUserService = {
+  registerUser: async (walletAddress: string) => {
+    const user = await userModel.findOne({ walletAddress });
+    if (user !== null) {
+      return user;
+    }
+    return new userModel(
+      {
+        walletAddress,
+        nonce: randomNonce(),
+        id: uuidv4(),
+      },
+      {
+        _id: true,
       }
-      return model.create({ walletAddress, nonce: randomNonce() });
-    },
-    regenerateNonce: async (userId: string) => {
-      const nonce = randomNonce();
-      await model.findOneAndUpdate({ id: userId }, { nonce });
-      return nonce;
-    },
-    findByWalletAddress: async (walletAddress: string) => {
-      return model.findOne({ walletAddress });
-    },
-    deleteUser: async (userId: string) => {
-      return model.deleteOne({ id: userId });
-    },
-  };
+    ).save();
+  },
+  regenerateNonce: async (userId: string) => {
+    const nonce = randomNonce();
+    await userModel.findOneAndUpdate({ id: userId }, { nonce });
+    return nonce;
+  },
+  findByWalletAddress: async (walletAddress: string) => {
+    return userModel.findOne({ walletAddress });
+  },
+  deleteUser: async (userId: string) => {
+    return userModel.deleteOne({ id: userId });
+  },
+  ...userModel,
 };

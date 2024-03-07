@@ -9,26 +9,25 @@
     "build": "pnpm run build:cjs && pnpm run build:esm && pnpm run build:types",
     "build:watch": "pnpm run build:cjs:watch & pnpm run build:esm:watch & pnpm run build:types:watch",
     "build:cjs": "tsc --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false --skipLibCheck && printf '{\"type\":\"commonjs\"}' > ./dist/_cjs/package.json",
-      "build:cjs:watch": "tsc --watch --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false --skipLibCheck && printf '{\"type\":\"commonjs\"}' > ./dist/_cjs/package.json",
-
+    "build:cjs:watch": "tsc --watch --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false --skipLibCheck && printf '{\"type\":\"commonjs\"}' > ./dist/_cjs/package.json",
     "build:esm": "tsc --module es2015 --outDir ./dist/_esm --skipLibCheck && printf '{\"type\": \"module\",\"sideEffects\":false}' > ./dist/_esm/package.json",
-      "build:esm:watch": "tsc --watch --module es2015 --outDir ./dist/_esm --skipLibCheck && printf '{\"type\": \"module\",\"sideEffects\":false}' > ./dist/_esm/package.json",
+    "build:esm:watch": "tsc --watch --module es2015 --outDir ./dist/_esm --skipLibCheck && printf '{\"type\": \"module\",\"sideEffects\":false}' > ./dist/_esm/package.json",
     "build:types": "tsc --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck ",
-      "build:types:watch": "tsc --watch --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck "
+    "build:types:watch": "tsc --watch --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck "
   },
   "exports": {
     ".": {
-      "types" : "./dist/_types/index.d.ts",
+      "types": "./dist/_types/index.d.ts",
       "import": "./dist/_esm/index.js",
       "default": "./dist/_cjs/index.js"
     },
     "./react": {
-      "types" : "./dist/_types/react/index.d.ts",
+      "types": "./dist/_types/react/index.d.ts",
       "import": "./dist/_esm/react/index.js",
       "default": "./dist/_cjs/react/index.js"
     },
     "./fastify": {
-      "types" : "./dist/_types/fastify/index.d.ts",
+      "types": "./dist/_types/fastify/index.d.ts",
       "import": "./dist/_esm/fastify/index.js",
       "default": "./dist/_cjs/fastify/index.js"
     }
@@ -47,6 +46,7 @@
   },
   "dependencies": {
     "@fastify/jwt": "^8.0.0",
+    "@types/jsonwebtoken": "^9.0.6",
     "dayjs": "^1.11.10",
     "fastify-plugin": "^4.5.1",
     "jsonwebtoken": "^9.0.2",
