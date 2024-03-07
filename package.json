@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "prepare": "husky",
-    "dev": "zx startup.mjs"
+    "dev": "zx startup.mjs",
+    "loginWithCrypto": "pnpm --filter loginWithCrypto"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +19,9 @@
   },
   "dependencies": {
     "@types/jest": "^29.5.12"
-  }
+  },
+  "workspaces": [
+    "loginWithCrypto",
+    "backend"
+  ]
 }

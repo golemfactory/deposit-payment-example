@@ -7,9 +7,14 @@
   "scripts": {
     "test": "jest",
     "build": "pnpm run build:cjs && pnpm run build:esm && pnpm run build:types",
+    "build:watch": "pnpm run build:cjs:watch & pnpm run build:esm:watch & pnpm run build:types:watch",
     "build:cjs": "tsc --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false --skipLibCheck && printf '{\"type\":\"commonjs\"}' > ./dist/_cjs/package.json",
+      "build:cjs:watch": "tsc --watch --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false --skipLibCheck && printf '{\"type\":\"commonjs\"}' > ./dist/_cjs/package.json",
+
     "build:esm": "tsc --module es2015 --outDir ./dist/_esm --skipLibCheck && printf '{\"type\": \"module\",\"sideEffects\":false}' > ./dist/_esm/package.json",
-    "build:types": "tsc --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck "
+      "build:esm:watch": "tsc --watch --module es2015 --outDir ./dist/_esm --skipLibCheck && printf '{\"type\": \"module\",\"sideEffects\":false}' > ./dist/_esm/package.json",
+    "build:types": "tsc --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck ",
+      "build:types:watch": "tsc --watch --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck "
   },
   "exports": {
     ".": {

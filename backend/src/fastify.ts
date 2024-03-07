@@ -9,6 +9,7 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   });
 
   fastify.register(fastifySensible);
+
   fastify.register(loginWithCrypto);
 
   await fastify.listen({ port: Number(process.env.PORT) }, (err) => {
