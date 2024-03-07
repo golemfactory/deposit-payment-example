@@ -1,5 +1,4 @@
 import { RouteOptions } from "fastify";
-import { use } from "i18next";
 
 export const register: RouteOptions = {
   method: "POST",
