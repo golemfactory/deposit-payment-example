@@ -2,7 +2,7 @@ import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 
 import { WagmiProvider } from "wagmi";
-import { holesky } from "viem/chains";
+import { holesky, mainnet } from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 
@@ -17,7 +17,7 @@ const metadata = {
   icons: ["./logo.svg"],
 };
 
-const chains = [holesky] as const;
+const chains = [holesky, mainnet] as const;
 const config = defaultWagmiConfig({
   chains,
   projectId,

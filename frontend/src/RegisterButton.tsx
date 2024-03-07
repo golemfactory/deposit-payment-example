@@ -3,7 +3,6 @@ import { useSignNonce } from "hooks/useSignNonce";
 import { useLogin } from "hooks/useLogin";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
-import { t } from "i18next";
 
 export const RegisterButton = () => {
   const { register, signature, message } = useSignNonce();
