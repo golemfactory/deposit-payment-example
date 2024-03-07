@@ -3,6 +3,7 @@ import { useSignNonce } from "hooks/useSignNonce";
 import { useLogin } from "hooks/useLogin";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
+import { t } from "i18next";
 
 export const RegisterButton = () => {
   const { register, signature, message } = useSignNonce();
@@ -10,7 +11,7 @@ export const RegisterButton = () => {
   const { login, tokens } = useLogin();
 
   if (!walletAddress) {
-    throw new Error("Wallet address not found");
+    throw new Error(t("Wallet address not found"));
   }
 
   useEffect(() => {

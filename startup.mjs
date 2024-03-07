@@ -15,12 +15,12 @@ if (openFileLimit === "number") {
 
 // //kill previous and recreate session
 try {
-  await $`tmux kill-session -t "golem-portal"`;
+  await $`tmux kill-session -t "deposit-example"`;
 } catch (err) {
   console.log("dapp webapp in not running. Nothing to kill");
 }
 
-await $`tmux new-session -d -s "golem-portal"`;
+await $`tmux new-session -d -s "deposit-example"`;
 
 //create panes for services
 
