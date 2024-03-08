@@ -1,17 +1,18 @@
 {
  "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "NodeNext",
     "outDir": "./dist",  // Specify the output directory for JavaScript files
     "rootDir": "./src",  // Specify the root directory of your TypeScript source files
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
         "paths": {
       "loginWithCrypto/*": ["node_modules/loginWithCrypto/*"]
     },
     "baseUrl": ".",
     "declaration": false,
+        "skipLibCheck": true
 
   },
   "include": [

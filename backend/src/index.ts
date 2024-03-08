@@ -1,4 +1,4 @@
-import { startupFastifyServer } from "./fastify";
+import { startupFastifyServer } from "./fastify.js";
 import "./di.js";
 
 startupFastifyServer();

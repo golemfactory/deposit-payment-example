@@ -10,7 +10,7 @@ export const RegisterButton = () => {
   const { login, tokens } = useLogin();
 
   if (!walletAddress) {
-    throw new Error(t("Wallet address not found"));
+    throw new Error("Wallet address not found");
   }
 
   useEffect(() => {

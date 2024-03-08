@@ -29,17 +29,14 @@ export const login: RouteOptions = {
     const { walletAddress, messageSignature, message } = req.body;
     // @ts-ignore temporary
     const { userService } = req.routeOptions.config;
-    console.log("walletAddress", walletAddress, messageSignature);
     const isOk = await verifyMessage({
       address: walletAddress,
       signature: messageSignature,
       message: message,
     });
 
-    console.log("isOk", isOk);
     if (isOk) {
       const user = await userService.findByWalletAddress(walletAddress);
-      console.log("user", user, walletAddress);
       if (!user) {
         res.status(401).send({ message: "Invalid signature" });
         return;

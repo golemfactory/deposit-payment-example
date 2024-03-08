@@ -4,7 +4,7 @@ import { RegisterButton } from "./RegisterButton";
 import { BlockchainProvider } from "./blockchainProvider";
 import { SnackbarProvider } from "notistack";
 import { DepositForm } from "./DepositForm";
-
+import bd from "js-big-decimal";
 function BlockChainLogin() {
   const { address: walletAddress } = useAccount();
   const loginToken = localStorage.getItem("accessToken");
@@ -23,7 +23,7 @@ function Deposit() {
 function App() {
   return (
     <BlockchainProvider>
-      <SnackbarProvider autoHideDuration={2000}>
+      <SnackbarProvider autoHideDuration={5000}>
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12 grid grid-cols-2">
             <w3m-button />

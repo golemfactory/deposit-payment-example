@@ -6,6 +6,8 @@ const requiredEnv = [
   "JWT_SECRET",
   "JWT_TOKEN_EXPIRATION",
   "JWT_REFRESH_TOKEN_EXPIRATION",
+  "DEPOSIT_CONTRACT_ADDRESS",
+  "SERVICE_FEE",
 ];
 
 const ensureEnv = (env: string) => {
