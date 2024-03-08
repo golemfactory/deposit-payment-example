@@ -1,0 +1,60 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true,
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/no-empty-function": ["error", { "allow": ["constructors"] }],
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "react/react-in-jsx-scope": "off",
+    "no-undef": "error",
+    "no-case-declarations": "error",
+    "no-alert": "error",
+    "no-fallthrough": "error",
+    "no-cond-assign": "error",
+    "no-dupe-args": "error",
+    "no-dupe-keys": "error",
+    "semi": "off",
+    "eqeqeq": "error",
+    "no-tabs": "error",
+    "no-new-object": "error",
+    "no-array-constructor": "error",
+    "no-mixed-operators": "warn",
+    "no-plusplus": "warn",
+    "no-use-before-define": [
+      "error"
+    ],
+    "consistent-this": [
+      "warn",
+      "that"
+    ],
+    "object-curly-spacing": [
+      "warn",
+      "always"
+    ],
+    "brace-style": 0,
+    "no-catch-shadow": "warn",
+    "no-shadow": "warn",
+    "array-bracket-spacing": [
+      "error",
+      "never"
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ]
+  },
+  "globals": {
+    "__dirname": true
+  }
+}

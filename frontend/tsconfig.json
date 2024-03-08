@@ -1,28 +1,33 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "baseUrl": ".",
+    "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "useUnknownInCatchVariables": false,
     "module": "ESNext",
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
+  
     "paths": {
       "utils/*": [
         "src/utils/*"
+      ],
+      "state/*": [
+        "src/state/*",
       ],
       "app/*": [
         "src/app/*"
@@ -32,10 +37,25 @@
       ],
       "hooks/*": [
         "src/hooks/*"
+      ],
+      "ethereum/*": [
+        "src/ethereum/*"
+      ],
+      "types/*": [
+        "src/types/*"
+      ],
+      "assets/*": [
+        "src/assets/*"
+      ],
+      "settings": [
+        "src/settings.ts"
+      ],
+      "themes" : [
+        "src/themes/*"
       ]
-      
     }
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "./src"
+  ]
 }
