@@ -17,7 +17,7 @@ if (openFileLimit === "number") {
 try {
   await $`tmux kill-session -t "deposit-example"`;
 } catch (err) {
-  console.log("dapp webapp in not running. Nothing to kill");
+  console.log("Nothing to kill");
 }
 
 await $`tmux new-session -d -s "deposit-example"`;
@@ -26,13 +26,17 @@ await $`tmux new-session -d -s "deposit-example"`;
 
 //backend
 await $`tmux new-window -n "backend"`;
-await $`tmux send-keys -t backend "cd backend && npm run dev" C-m`;
+await $`tmux send-keys -t backend "cd backend && pnpm run dev" C-m`;
 
 //frontend
 
-//new react
 await $`tmux new-window -n "frontend"`;
-await $`tmux send-keys -t frontend "cd frontend && npm run dev" C-m`;
+await $`tmux send-keys -t frontend "cd frontend && pnpm run dev" C-m`;
+
+//sdk in dev mode
+
+await $`tmux new-window -n "sdk"`;
+await $`tmux send-keys -t sdk "cd golem-js && pnpm run dev" C-m`;
 
 //separated instance of yagna if ine is running it is always better to run
 //separated instance just for the dapp purpose

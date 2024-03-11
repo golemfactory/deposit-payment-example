@@ -1,0 +1,3 @@
+[submodule "golem-js"]
+	path = golem-js
+	url = git@github.com:golemfactory/golem-js.git

@@ -1,11 +1,10 @@
 import Fastify, { FastifyInstance } from "fastify";
 import fastifySensible from "@fastify/sensible";
 import cors from "@fastify/cors";
-//@ts-ignore
 import { loginWithCrypto } from "loginWithCrypto/fastify";
 import { container } from "./di.js";
 import { paymentService } from "./services/payment/routes.js";
-
+import { fileService } from "./services/file/routes.js";
 export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   const fastify = Fastify({
     logger: true,
@@ -18,6 +17,8 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   });
 
   fastify.register(paymentService);
+  console.log("fileService", fileService);
+  fastify.register(fileService);
 
   await fastify.register(cors, {
     origin: "*",
