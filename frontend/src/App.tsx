@@ -5,6 +5,7 @@ import { BlockchainProvider } from "./blockchainProvider";
 import { SnackbarProvider } from "notistack";
 import { DepositForm } from "./DepositForm";
 import bd from "js-big-decimal";
+import { FileUploader } from "./Uploader";
 function BlockChainLogin() {
   const { address: walletAddress } = useAccount();
   const loginToken = localStorage.getItem("accessToken");
@@ -33,6 +34,9 @@ function App() {
 
           <div className="col-span-4 col-start-5">
             <Deposit />
+          </div>
+          <div className="col-span-4 col-start-5">
+            <FileUploader />
           </div>
         </div>
       </SnackbarProvider>

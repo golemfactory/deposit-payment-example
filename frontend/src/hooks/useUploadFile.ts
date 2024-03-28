@@ -36,11 +36,6 @@ export function useProcessFile(): {
   >({
     mutationFn: processFile,
     onSuccess: (data) => {
-      // const message = `Kto pracuje w golemie ten się w cyrku nie śmieje nonce: ${data.nonce}`;
-      // setMessage(message);
-      // signMessage({
-      //   message,
-      // });
       enqueueSnackbar("Uploaded successfully", { variant: "success" });
     },
     onError: (error) => {

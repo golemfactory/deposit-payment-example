@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useSignMessage } from "wagmi";
 
-async function register({
+async function signNonce({
   walletAddress,
 }: {
   walletAddress: `0x${string}`;
@@ -37,13 +37,13 @@ export function useSignNonce(): {
     }
   }, [signError]);
 
-  const { mutate: registerMutation } = useMutation<
+  const { mutate: signNonceMutation } = useMutation<
     { nonce: number },
     unknown,
     { walletAddress: `0x${string}` },
     unknown
   >({
-    mutationFn: register,
+    mutationFn: signNonce,
     onSuccess: (data) => {
       const message = `Kto pracuje w golemie ten się w cyrku nie śmieje nonce: ${data.nonce}`;
       setMessage(message);
@@ -58,7 +58,7 @@ export function useSignNonce(): {
   });
 
   return {
-    register: registerMutation,
+    register: signNonceMutation,
     signature: data,
     message: message,
   };

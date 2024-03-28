@@ -20,6 +20,8 @@ export const paymentService = fastifyPlugin(
       },
       handler: async (request, reply) => {
         const paymentService = container.cradle.paymentService;
+        // @ts-ignore
+        // TODO: make sure request.body is the right type
         const res = await paymentService.saveDeposit(request.body);
         return res;
       },

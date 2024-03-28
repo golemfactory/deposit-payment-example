@@ -5,19 +5,22 @@ import { loginWithCrypto } from "loginWithCrypto/fastify";
 import { container } from "./di.js";
 import { paymentService } from "./services/payment/routes.js";
 import { fileService } from "./services/file/routes.js";
+
+import fastifyMultipart from "@fastify/multipart";
+
 export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   const fastify = Fastify({
     logger: true,
   });
 
   fastify.register(fastifySensible);
+  fastify.register(fastifyMultipart);
 
   fastify.register(loginWithCrypto, {
     userService: container.cradle.userService,
   });
 
   fastify.register(paymentService);
-  console.log("fileService", fileService);
   fastify.register(fileService);
 
   await fastify.register(cors, {

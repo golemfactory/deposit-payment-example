@@ -8,7 +8,6 @@ const requiredEnv = [
 ];
 
 const ensureEnv = (env: string): string => {
-  console.log("config", config);
   if (config[env] === undefined) {
     throw new Error(`Environment variable ${env} is missing`);
   } else {
