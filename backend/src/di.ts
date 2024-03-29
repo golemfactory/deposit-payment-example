@@ -14,6 +14,7 @@ export const container = awilix.createContainer<{
   connectionString: string;
   contractAddress: string;
   serviceFee: string;
+  mode: "mock" | "real";
 }>({
   injectionMode: InjectionMode.CLASSIC,
   strict: true,
@@ -36,6 +37,10 @@ container.register({
 });
 
 container.register({
+  mode: awilix.asValue("mock"),
+});
+
+container.register({
   db: awilix
     .asFunction((connectionString) => {
       console.log("connection string", connectionString);
@@ -53,7 +58,7 @@ container.register({
 });
 
 container.register({
-  fileService: awilix.asFunction(fileService),
+  fileService: awilix.asFunction(fileService).singleton(),
 });
 
 container.cradle.db.then(() => {

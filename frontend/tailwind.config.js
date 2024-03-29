@@ -21,10 +21,14 @@ module.exports = {
       "darkblue-600": "#0E137C",
       "darkblue-700": "#0C0E55",
       "dangerred-200": "#A71919",
+      "dangerred-100": "#F66A6A",
       //TODO add whole color palette with names
       "success-50": "#E8F6E8",
       "success-100": "#5BC281",
       "success-200": "#367946",
+
+      "notistack-red": "#d32f2f",
+      "notistack-green": "#43a047",
       // golemblue: '#0c14d4',
       // primary: '#181ea9',
       // secondary: '#f6f8fc',

@@ -6,6 +6,7 @@ import { SnackbarProvider } from "notistack";
 import { DepositForm } from "./DepositForm";
 import bd from "js-big-decimal";
 import { FileUploader } from "./Uploader";
+import { ScanResults } from "./ScanResults";
 function BlockChainLogin() {
   const { address: walletAddress } = useAccount();
   const loginToken = localStorage.getItem("accessToken");
@@ -16,6 +17,24 @@ function BlockChainLogin() {
   );
 }
 
+import { SWRConfig } from "swr";
+
+function localStorageProvider() {
+  // When initializing, we restore the data from `localStorage` into a map.
+  const map = new Map<string, unknown>(
+    JSON.parse(localStorage.getItem("app-cache") || "[]")
+  );
+
+  // Before unloading the app, we write back all the data into `localStorage`.
+  window.addEventListener("beforeunload", () => {
+    const appCache = JSON.stringify(Array.from(map.entries()));
+    localStorage.setItem("app-cache", appCache);
+  });
+
+  // We still use the map for write & read for performance.
+  return map;
+}
+
 function Deposit() {
   const { address: walletAddress } = useAccount();
   return <div>{walletAddress ? <DepositForm /> : ""}</div>;
@@ -23,24 +42,28 @@ function Deposit() {
 
 function App() {
   return (
-    <BlockchainProvider>
-      <SnackbarProvider autoHideDuration={5000}>
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-12 grid grid-cols-2">
-            <w3m-button />
+    //@ts-ignore
+    <SWRConfig>
+      <BlockchainProvider>
+        <SnackbarProvider autoHideDuration={50000}>
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-12 grid grid-cols-2">
+              <w3m-button />
 
-            <BlockChainLogin />
-          </div>
+              <BlockChainLogin />
+            </div>
 
-          <div className="col-span-4 col-start-5">
-            <Deposit />
+            <div className="col-span-4 col-start-5">
+              <Deposit />
+            </div>
+            <div className="col-span-4 col-start-5">
+              <FileUploader />
+              <ScanResults />
+            </div>
           </div>
-          <div className="col-span-4 col-start-5">
-            <FileUploader />
-          </div>
-        </div>
-      </SnackbarProvider>
-    </BlockchainProvider>
+        </SnackbarProvider>
+      </BlockchainProvider>
+    </SWRConfig>
   );
 }
 

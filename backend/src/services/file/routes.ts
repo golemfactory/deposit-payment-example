@@ -5,6 +5,7 @@ import util from "node:util";
 import { pipeline } from "node:stream";
 import fs from "node:fs";
 import { fileURLToPath } from "url";
+import { v4 as uuidv4 } from "uuid";
 
 const DIR_NAME = fileURLToPath(new URL("../../../../temp/", import.meta.url));
 export const fileService = fastifyPlugin(
@@ -31,6 +32,13 @@ export const fileService = fastifyPlugin(
 
         console.log("Processing file...");
         container.cradle.fileService.processFile(data?.filename, "");
+      },
+    });
+    fastify.get("/scan-result", {
+      handler: (request, reply) => {
+        container.cradle.fileService.resultStream.subscribe((result) => {
+          reply.sse({ data: JSON.stringify(result), id: uuidv4() });
+        });
       },
     });
     done();
