@@ -3,36 +3,64 @@ import { useProcessFile } from "hooks/useUploadFile";
 import { Button } from "react-daisyui";
 import { RegisterButton } from "./RegisterButton";
 export const FileUploader = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<FileList | null>(null);
   const { upload } = useProcessFile();
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      setFiles(e.target.files);
     }
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (file) {
-      upload({ file });
+    if (files) {
+      [...files].forEach(upload);
     }
-  }, [file]);
+  }, [files]);
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    const files = event.dataTransfer.files;
+    // Handle the dropped files
+    console.log(files);
+    setFiles(files);
+  };
 
   return (
     <div>
       <input
         type="file"
         onChange={handleFileChange}
+        multiple
         hidden
         ref={fileInputRef}
       />
-      <Button
-        onClick={() => {
-          fileInputRef.current?.click();
-        }}
+      <div
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        className="p-4 border-dashed border-2 border-gray-300 rounded-lg"
+        // style={{
+        //   border: "2px dashed #aaa",
+        //   padding: "20px",
+        //   marginBottom: "20px",
+        //   borderRadius: "5px",
+
+        // }}
       >
-        Upload
-      </Button>
+        Drop files here or{" "}
+        <Button
+          onClick={() => {
+            fileInputRef.current?.click();
+          }}
+          color="primary"
+        >
+          Click to Upload
+        </Button>
+      </div>
     </div>
   );
 };

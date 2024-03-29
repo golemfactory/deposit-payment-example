@@ -23,15 +23,13 @@ export const fileService = fastifyPlugin(
           reply.code(400).send({ message: "No file uploaded" });
           return;
         }
-
         //accoumulate the file in memory
         await util.promisify(pipeline)(
           data.file,
           fs.createWriteStream(`${DIR_NAME}/${data.filename}`)
         );
-
-        console.log("Processing file...");
         container.cradle.fileService.processFile(data?.filename, "");
+        reply.send({ message: "File uploaded" });
       },
     });
     fastify.get("/scan-result", {

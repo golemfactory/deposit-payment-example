@@ -4,7 +4,6 @@ import { RegisterButton } from "./RegisterButton";
 import { BlockchainProvider } from "./blockchainProvider";
 import { SnackbarProvider } from "notistack";
 import { DepositForm } from "./DepositForm";
-import bd from "js-big-decimal";
 import { FileUploader } from "./Uploader";
 import { ScanResults } from "./ScanResults";
 function BlockChainLogin() {

@@ -3,11 +3,7 @@ import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useSignMessage } from "wagmi";
 
-async function processFile({
-  file,
-}: {
-  file: File;
-}): Promise<{ result: boolean }> {
+async function processFile(file: File): Promise<{ result: boolean }> {
   const formData = new FormData();
   formData.append("file", file);
   const response = await fetch(
@@ -17,6 +13,7 @@ async function processFile({
       body: formData,
     }
   );
+  console.log(response);
   if (!response.ok)
     throw new Error(`Error uploading file user: ${response.statusText}`);
 
@@ -24,14 +21,14 @@ async function processFile({
 }
 
 export function useProcessFile(): {
-  upload: ({ file }: { file: File }) => void;
+  upload: (file: File) => void;
 } {
   const { enqueueSnackbar } = useSnackbar();
 
   const { mutate: uploadFileMutation } = useMutation<
     { result: boolean },
     unknown,
-    { file: File },
+    File,
     unknown
   >({
     mutationFn: processFile,
@@ -39,6 +36,7 @@ export function useProcessFile(): {
       enqueueSnackbar("Uploaded successfully", { variant: "success" });
     },
     onError: (error) => {
+      console.error(error);
       enqueueSnackbar(`Error registering: ${error}`, { variant: "error" });
     },
   });
