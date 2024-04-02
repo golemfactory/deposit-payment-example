@@ -17,6 +17,7 @@
     "@fastify/multipart": "^8.1.0",
     "@fastify/sensible": "^5.5.0",
     "@golem-sdk/golem-js": "workspace:*",
+    "@golem-sdk/task-executor": "workspace:*",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/uuid": "^9.0.8",
     "awilix": "^10.0.1",

@@ -1,4 +1,4 @@
-import * as sdk from "@golem-sdk/golem-js";
+import * as sdk from "@golem-sdk/task-executor";
 import { Observable, ReplaySubject, Subject } from "rxjs";
 import { BehaviorSubject } from "rxjs";
 
@@ -70,7 +70,8 @@ class Worker {
 }
 
 export const fileService = (
-  GolemSDK: typeof sdk
+  GolemSDK: any,
+  contractAddress: any
 ): {
   workers: Record<string, Worker>;
   getUserWorker: (userId: string) => Promise<Worker>;
@@ -79,7 +80,7 @@ export const fileService = (
   processFile: (fileName: string, userId: string) => void;
   init: () => void;
 } => {
-  console.log("creating file service");
+  console.log("creating file service", contractAddress);
 
   return {
     resultStream: new Subject<IScanResult>(),
@@ -120,14 +121,22 @@ export const fileService = (
             yagnaOptions: {
               apiKey: "81d0ead5501e4395ade8b9c11361dee3",
             },
+            allocation: {
+              deposit: {
+                contract: contractAddress,
+                id: "0x1",
+              },
+            },
           });
+          console.log("Executor created ");
           executor
-            .run(async (ctx) => {
+            .run(async (ctx: any) => {
+              console.log("Connected to Golem");
               this.workers[userId].context = ctx;
               this.workers[userId].setState("free");
               resolve(this.workers[userId]);
             })
-            .catch((e) => {
+            .catch((e: any) => {
               console.log("Error", e);
             });
         }
@@ -147,6 +156,7 @@ export const fileService = (
         }
       }
 
+      console.log("Scanning file on Golem", fileName);
       const results = await worker.context
         .beginBatch()
         .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
@@ -154,7 +164,7 @@ export const fileService = (
         .run("ls /golem/output/")
         .run(`cat /golem/output/temp/metadata.json`)
         .end();
-
+      console.log("results", results);
       return JSON.parse((results[3].stdout || "null") as string);
     },
     async processFile(fileName: string, userId: string) {

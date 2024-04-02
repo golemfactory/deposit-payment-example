@@ -3,7 +3,7 @@ import { userService } from "./services/user/index.js";
 import mongoose from "mongoose";
 import { paymentService } from "./services/payment/index.js";
 import { fileService } from "./services/file/service.js";
-import * as GolemSDK from "@golem-sdk/golem-js";
+import * as GolemSDK from "@golem-sdk/task-executor";
 
 export const container = awilix.createContainer<{
   db: Promise<typeof mongoose>;
@@ -11,6 +11,7 @@ export const container = awilix.createContainer<{
   paymentService: ReturnType<typeof paymentService>;
   fileService: ReturnType<typeof fileService>;
   GolemSDK: typeof GolemSDK;
+
   connectionString: string;
   contractAddress: string;
   serviceFee: string;
@@ -37,13 +38,12 @@ container.register({
 });
 
 container.register({
-  mode: awilix.asValue("mock"),
+  mode: awilix.asValue("real"),
 });
 
 container.register({
   db: awilix
     .asFunction((connectionString) => {
-      console.log("connection string", connectionString);
       return mongoose.connect(connectionString);
     })
     .singleton(),
@@ -64,3 +64,5 @@ container.register({
 container.cradle.db.then(() => {
   console.log("Connected to database");
 });
+
+container.cradle.fileService.init();

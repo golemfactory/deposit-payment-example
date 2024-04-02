@@ -1,3 +1,9 @@
 [submodule "golem-js"]
 	path = golem-js
 	url = git@github.com:golemfactory/golem-js.git
+[submodule "ya-ts-client"]
+	path = ya-ts-client
+	url = git@github.com:golemfactory/ya-ts-client.git
+[submodule "golem-sdk-task-executor"]
+	path = golem-sdk-task-executor
+	url = git@github.com:golemfactory/golem-sdk-task-executor.git
