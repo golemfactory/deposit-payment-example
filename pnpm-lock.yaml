@@ -588,6 +588,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
+      typescript:
+        specifier: ^5.2.2
+        version: 5.4.3
 
   ya-ts-client:
     devDependencies:
@@ -6237,9 +6240,6 @@ packages:
 
   /@web3modal/scaffold@4.0.13(@types/react@18.2.74)(react@18.2.0)(valtio@1.13.2):
     resolution: {integrity: sha512-ur543j3KunFUIoSAT4GGwAX0GxVPHNkuCEUGJL52KSfXG6rqHlPoVMeGyZKN4Mo2FyQCh76vFgm9Vv2GribuDQ==}
-    peerDependenciesMeta:
-      '@web3modal/siwe':
-        optional: true
     dependencies:
       '@web3modal/common': 4.0.13
       '@web3modal/core': 4.0.13(@types/react@18.2.74)(react@18.2.0)
@@ -6300,15 +6300,6 @@ packages:
       '@wagmi/connectors': '>=4.0.0'
       '@wagmi/core': '>=2.0.0'
       viem: '>=2.0.0'
-    peerDependenciesMeta:
-      '@web3modal/siwe':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-      vue:
-        optional: true
     dependencies:
       '@wagmi/connectors': 4.1.24(@types/react@18.2.74)(@wagmi/core@2.6.15)(react-dom@18.2.0)(react-native@0.73.6)(react@18.2.0)(typescript@5.4.3)(viem@2.7.22)
       '@wagmi/core': 2.6.15(@types/react@18.2.74)(react@18.2.0)(typescript@5.4.3)(viem@2.7.22)
