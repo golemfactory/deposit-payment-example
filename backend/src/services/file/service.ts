@@ -1,17 +1,18 @@
 import * as sdk from "@golem-sdk/task-executor";
 import { Observable, ReplaySubject, Subject } from "rxjs";
 import { BehaviorSubject } from "rxjs";
-
+import { Allocation, WorkContext } from "@golem-sdk/golem-js";
 import { fileURLToPath } from "url";
 import { IScanResult, fileStatus } from "./types.js";
 import { container } from "../../di.js";
 import { successScanResult, virusScanResult } from "./mock.js";
+import { W } from "mongodb";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const DIR_NAME = fileURLToPath(new URL("../../../../temp/", import.meta.url));
 
 type WorkerType = {
-  context: sdk.WorkContext;
+  context: WorkContext;
   setState: (newState: "busy" | "free" | "connecting") => void;
   getState: () => string;
   isFree: (fileId: string) => Promise<void>;
@@ -21,7 +22,7 @@ type WorkerType = {
 };
 
 class Worker {
-  constructor(public context: sdk.WorkContext) {}
+  constructor(public context: WorkContext & { allocation: Allocation }) {}
   private stateSubject: BehaviorSubject<string> = new BehaviorSubject(
     "connecting"
   );
@@ -70,7 +71,7 @@ class Worker {
 }
 
 export const fileService = (
-  GolemSDK: any,
+  GolemSDK: typeof sdk,
   contractAddress: any
 ): {
   workers: Record<string, Worker>;
@@ -129,11 +130,23 @@ export const fileService = (
             },
           });
           console.log("Executor created ");
+          executor.events.on("end", (event: any) => {
+            console.log("Event", event);
+          });
           executor
-            .run(async (ctx: any) => {
+            .run(async (ctx: WorkContext) => {
               console.log("Connected to Golem");
-              this.workers[userId].context = ctx;
+
+              const workerContext = ctx;
+              //@ts-ignore
+              workerContext.allocation =
+                ctx.activity.agreement.proposal.demand.allocation;
+
+              //@ts-ignore
+              this.workers[userId].context = workerContext;
+
               this.workers[userId].setState("free");
+
               resolve(this.workers[userId]);
             })
             .catch((e: any) => {
@@ -157,6 +170,10 @@ export const fileService = (
       }
 
       console.log("Scanning file on Golem", fileName);
+
+      //TODO handle errors and timeouts
+      //but it seems that there was no try to find another one
+      //this is task executor abstraction so it should handle it for me
       const results = await worker.context
         .beginBatch()
         .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
@@ -164,7 +181,7 @@ export const fileService = (
         .run("ls /golem/output/")
         .run(`cat /golem/output/temp/metadata.json`)
         .end();
-      console.log("results", results);
+
       return JSON.parse((results[3].stdout || "null") as string);
     },
     async processFile(fileName: string, userId: string) {

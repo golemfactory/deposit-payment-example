@@ -54,6 +54,9 @@ importers:
       awilix:
         specifier: ^10.0.1
         version: 10.0.1
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
       fastify:
         specifier: ^4.26.1
         version: 4.26.2
@@ -87,6 +90,9 @@ importers:
       viem:
         specifier: ^2.7.22
         version: 2.7.22(typescript@5.4.3)
+      ya-ts-client:
+        specifier: workspace:*
+        version: link:../ya-ts-client
     devDependencies:
       '@types/node':
         specifier: ^20.11.20
@@ -209,6 +215,9 @@ importers:
       bottleneck:
         specifier: ^2.19.5
         version: 2.19.5
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
       debug:
         specifier: ^4.3.4
         version: 4.3.4(supports-color@8.1.1)
@@ -7306,7 +7315,6 @@ packages:
   /chalk@5.3.0:
     resolution: {integrity: sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
-    dev: true
 
   /char-regex@1.0.2:
     resolution: {integrity: sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==}
