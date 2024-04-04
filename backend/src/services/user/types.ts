@@ -9,6 +9,11 @@ export interface IUser {
   id: UserIdType;
   nonce: NonceType;
   walletAddress: EthereumAddressType;
+  deposits: Array<{
+    isCurrent: boolean;
+    id: string;
+    isValid: boolean;
+  }>;
 }
 
 export interface IUserService {
@@ -19,4 +24,13 @@ export interface IUserService {
   ): Promise<IUser | null>;
   findById(userId: UserIdType): Promise<IUser | null>;
   deleteUser(userId: UserIdType): Promise<DeleteResult>;
+  addDeposit({
+    userId,
+    isValid,
+    id,
+  }: {
+    userId: UserIdType;
+    isValid: boolean;
+    id: string;
+  }): Promise<void>;
 }

@@ -8,9 +8,18 @@ export const publicClient = createPublicClient({
   transport: http(),
 });
 
-export const paymentService = (contractAddress: `0x${string}`, serviceFee: string) => {
+export const paymentService = (
+  contractAddress: `0x${string}`,
+  serviceFee: string
+) => {
   return {
-    saveDeposit: async ({ nonce, funder }: { nonce: number; funder: `0x${string}` }) => {
+    saveDeposit: async ({
+      nonce,
+      funder,
+    }: {
+      nonce: number;
+      funder: `0x${string}`;
+    }) => {
       const data = await publicClient.readContract({
         address: contractAddress,
         abi: abi,
@@ -18,10 +27,11 @@ export const paymentService = (contractAddress: `0x${string}`, serviceFee: strin
         args: [BigInt(nonce), funder],
       });
 
-      const { amount, feeAmount } = data;
+      const { amount, feeAmount, id } = data;
 
       const feeRation = Number(BigDecimal.default.divide(feeAmount, amount));
 
+      //TODO : save to db
       if (feeRation < Number(serviceFee)) {
         return {
           result: false,

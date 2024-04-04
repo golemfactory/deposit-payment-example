@@ -1,6 +1,5 @@
 import { RouteOptions } from "fastify";
 import { verifyMessage } from "../../utils/verifyMessage.js";
-import jwt from "jsonwebtoken";
 import config from "../../utils/ensureEnv.js";
 
 export const login: RouteOptions = {
@@ -42,14 +41,31 @@ export const login: RouteOptions = {
         return;
       }
       userService.regenerateNonce(user.id);
+
+      console.log("user", user);
+
+      console.log(
+        "config",
+        config.JWT_SECRET,
+        config.JWT_TOKEN_EXPIRATION,
+        config.JWT_REFRESH_TOKEN_EXPIRATION
+      );
+
       const tokens = {
-        accessToken: jwt.sign({ id: user.id }, config.JWT_SECRET, {
-          expiresIn: config.JWT_TOKEN_EXPIRATION,
-        }),
-        refreshToken: jwt.sign({ id: user.id }, config.JWT_SECRET, {
-          expiresIn: config.JWT_REFRESH_TOKEN_EXPIRATION,
-        }),
+        accessToken: await res.jwtSign(
+          { _id: user._id },
+          {
+            expiresIn: config.JWT_TOKEN_EXPIRATION,
+          }
+        ),
+        refreshToken: await res.jwtSign(
+          { _id: user._id },
+          {
+            expiresIn: config.JWT_REFRESH_TOKEN_EXPIRATION,
+          }
+        ),
       };
+      console.log("tokens", tokens);
 
       res.send(tokens);
     } else {

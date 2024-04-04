@@ -34,5 +34,36 @@ export const userService: IUserService = {
   deleteUser: async (userId: string) => {
     return userModel.deleteOne({ id: userId });
   },
+
+  addDeposit: async ({
+    userId,
+    isValid,
+    id,
+  }: {
+    userId: string;
+    isValid: boolean;
+    id: string;
+  }) => {
+    userModel.updateOne(
+      { id: userId },
+      {
+        $set: {
+          "deposits.$[].isCurrent": false,
+        },
+      }
+    );
+    userModel.updateOne(
+      { id: userId },
+      {
+        $push: {
+          deposits: {
+            isCurrent: true,
+            id,
+            isValid,
+          },
+        },
+      }
+    );
+  },
   ...userModel,
 };
