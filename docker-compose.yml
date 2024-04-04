@@ -6,6 +6,19 @@ services:
       context: .
       dockerfile: Dockerfile
     command: tail -F anything
+    environment:
+      - YAGNA_APPKEY_=66667777888
+      - YAGNA_APPKEY=66667777888
+      - YAGNA_API_KEY=66667777888
+      - YAGNA_API_URL=http://yagna:7465
+      - JWT_SECRET=dup]a
+      - JWT_TOKEN_EXPIRATION=1d
+      - JWT_REFRESH_TOKEN_EXPIRATION=7d
+      - JWT_ISSUER=golem.network
+      - MONGO_URI=mongodb://root:example@mongo:27017/
+      - PORT=5174
+      - DB_NAME="depositDB"
+
   yagna:
     build:
       context: ./yagna
@@ -16,6 +29,9 @@ services:
     environment:
       - YAGNA_AUTOCONF_APPKEY=66667777888
       - YAGNA_AUTOCONF_ID_SECRET=0000000000000000000000000000000000000000000000000000000222222222
+      - YAGNA_API_URL=http://0.0.0.0:7465
+      - SUBNET=change_me
+      - YA_NET_BIND_URL=udp://0.0.0.0:0
   mongo:
     image: mongo
     restart: always
