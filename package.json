@@ -7,7 +7,13 @@
     "test": "jest",
     "prepare": "husky",
     "dev": "zx startup.mjs",
-    "loginWithCrypto": "pnpm --filter loginWithCrypto"
+    "loginWithCrypto": "pnpm --filter loginWithCrypto", 
+    "build:golem-js": "pnpm --filter golem-js build",
+    "build:task-executor": "pnpm --filter @golem-sdk/task-executor build",
+    "build:ya-ts-client": "pnpm --filter ya-ts-client build",
+    "build:loginWithCrypto": "pnpm --filter loginWithCrypto build",
+    "build:backend": "pnpm --filter backend build",
+    "build:all": "pnpm build:loginWithCrypto && pnpm build:ya-ts-client && pnpm build:golem-js && pnpm build:task-executor && pnpm build:backend"
   },
   "keywords": [],
   "author": "",
