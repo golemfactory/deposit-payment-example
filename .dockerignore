@@ -9,4 +9,5 @@
 **/.git
 **/.gitmodules
 **/.github
-
+**/Dockerfile
+**/docker-compose.yml
