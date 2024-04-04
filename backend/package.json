@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "concurrently -k \"tsc -w\" \"nodemon --env-file=.env.local ./dist/index.js\""
+    "dev": "concurrently -k \"tsc -w\" \"nodemon --env-file=.env.local ./dist/index.js\"",
+    "build": "tsc"
   },
   "type": "module",
   "keywords": [],
