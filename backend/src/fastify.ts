@@ -29,12 +29,15 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   fastify.register(paymentService);
   fastify.register(fileService);
 
-  fastify.listen({ port: Number(process.env.PORT) }, (err) => {
-    if (err) {
-      fastify.log.error(err);
-      throw err;
+  fastify.listen(
+    { port: Number(process.env.PORT), host: process.env.HOST },
+    (err) => {
+      if (err) {
+        fastify.log.error(err);
+        throw err;
+      }
     }
-  });
+  );
 
   return fastify;
 };
