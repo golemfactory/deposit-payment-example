@@ -1,6 +1,5 @@
-
-
 services:
+  # application service
   app:
     build:
       context: .
@@ -18,7 +17,10 @@ services:
       - MONGO_URI=mongodb://root:example@mongo:27017/
       - PORT=5174
       - DB_NAME="depositDB"
-
+    ports:
+      - "7000:7000"
+      - "5174:5174"
+  # yagna service
   yagna:
     build:
       context: ./yagna
@@ -32,18 +34,26 @@ services:
       - YAGNA_API_URL=http://0.0.0.0:7465
       - SUBNET=change_me
       - YA_NET_BIND_URL=udp://0.0.0.0:0
+  # mongo service
   mongo:
     image: mongo
-    restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=project
+  # mongo express service
   mongo-express:
     image: mongo-express
-    restart: always
-    ports:
-      - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=${MONGO_ROOT_USER}
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD}
+    depends_on:
+      - mongo
+    ports:
+      - "8888:8081"
