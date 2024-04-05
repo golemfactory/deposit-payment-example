@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - BACKEND_URL=${BACKEND_URL:-http://127.0.0.1:5174}
     command: tail -F anything
     environment:
       - YAGNA_APPKEY=66667777888
