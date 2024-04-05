@@ -6,7 +6,6 @@ import { fileURLToPath } from "url";
 import { IScanResult, fileStatus } from "./types.js";
 import { container } from "../../di.js";
 import { successScanResult, virusScanResult } from "./mock.js";
-import { W } from "mongodb";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const DIR_NAME = fileURLToPath(new URL("../../../../temp/", import.meta.url));
