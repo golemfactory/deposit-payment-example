@@ -23,7 +23,7 @@ jobs:
             --label "org.opencontainers.image.description=Deposit payment example dockerized app" \
             --label "org.opencontainers.image.licenses=MIT" \
             -t ghcr.io/golemfactory/deposit_example:latest \
-            build/docker
+            .
           
           # tag image with the same tag as the release 
           docker tag \
