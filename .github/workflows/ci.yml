@@ -3,7 +3,12 @@ name: Build docker files
 on:
   push:
 
+permissions:
+  packages: write
+  contents: write
+
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
@@ -23,12 +28,8 @@ jobs:
             --label "org.opencontainers.image.description=Deposit payment example dockerized app" \
             --label "org.opencontainers.image.licenses=MIT" \
             -t ghcr.io/golemfactory/deposit_example:latest \
+            --build-arg BACKEND_URL=http://deposit.dev.golem.network:5174 \
             .
-          
-          # tag image with the same tag as the release 
-          docker tag \
-            ghcr.io/golemfactory/deposit_example:latest \
-            ghcr.io/golemfactory/deposit_example:${{ steps.version.outputs.version }}
 
           # push one image with two tags into repository
           docker push --all-tags ghcr.io/golemfactory/deposit_example

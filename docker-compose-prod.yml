@@ -1,8 +1,9 @@
 services:
   # application service
   backend:
-    image: scx1332/deposit-payment-example
-    command: cd /app/backend && pnpm run run
+    image: ghcr.io/golemfactory/deposit_example
+    command: pnpm run run
+    working_dir: /app/backend
     environment:
       - YAGNA_APPKEY=66667777888
       - YAGNA_API_URL=http://yagna:7465
@@ -18,8 +19,9 @@ services:
     ports:
       - "5174:5174"
   frontend:
-    image: scx1332/deposit-payment-example
-    command: cd /app/frontend && pnpm run run
+    image: ghcr.io/golemfactory/deposit_example
+    command: pnpm run run
+    working_dir: /app/frontend
     environment:
       - YAGNA_APPKEY=66667777888
       - YAGNA_API_URL=http://yagna:7465
