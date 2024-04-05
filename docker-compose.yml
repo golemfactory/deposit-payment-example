@@ -15,8 +15,10 @@ services:
       - JWT_REFRESH_TOKEN_EXPIRATION=7d
       - JWT_ISSUER=golem.network
       - MONGO_URI=mongodb://root:example@mongo:27017/
+      - HOST=0.0.0.0
       - PORT=5174
-      - DB_NAME="depositDB"
+      - DB_NAME=depositDB
+      - VITE_BACKEND_URL=http://127.0.0.1:5174
     ports:
       - "3000:3000"
       - "5174:5174"
