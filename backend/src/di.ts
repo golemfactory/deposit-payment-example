@@ -25,8 +25,6 @@ export const container = awilix.createContainer<{
   strict: true,
 });
 
-console.log("pro", process.env);
-
 container.register({
   GolemSDK: awilix.asValue(GolemSDK),
 });
@@ -45,7 +43,7 @@ container.register({
 
 container.register({
   YagnaConfig: awilix.asValue({
-    appKey: process.env.YAGNA_APPKEY_ || "",
+    appKey: process.env.YAGNA_APPKEY || "",
     apiUrl: process.env.YAGNA_API_URL || "",
   }),
 });

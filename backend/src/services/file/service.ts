@@ -119,7 +119,7 @@ export const fileService = (
             package: "pociejewski/clamav:latest",
             //here I would like to be able to pass SUBNET but i have to do that usiong env
             yagnaOptions: {
-              apiKey: "81d0ead5501e4395ade8b9c11361dee3",
+              apiKey: container.cradle.YagnaConfig.appKey,
             },
             allocation: {
               deposit: {
