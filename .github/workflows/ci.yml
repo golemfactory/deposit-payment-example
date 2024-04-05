@@ -12,6 +12,23 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Build
+      - name: Create and push docker image
         run: |
-          docker-compose build
+          # login to ghcr.io
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          
+          # build with full metadata
+          docker build \
+            --label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
+            --label "org.opencontainers.image.description=Deposit payment example dockerized app" \
+            --label "org.opencontainers.image.licenses=MIT" \
+            -t ghcr.io/golemfactory/deposit_example:latest \
+            build/docker
+          
+          # tag image with the same tag as the release 
+          docker tag \
+            ghcr.io/golemfactory/deposit_example:latest \
+            ghcr.io/golemfactory/deposit_example:${{ steps.version.outputs.version }}
+
+          # push one image with two tags into repository
+          docker push --all-tags ghcr.io/golemfactory/deposit_example
