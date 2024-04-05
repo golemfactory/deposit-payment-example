@@ -1,8 +1,25 @@
 services:
   # application service
-  app:
+  backend:
     image: scx1332/deposit-payment-example
-    command: tail -F anything
+    command: cd /app/backend && pnpm run run
+    environment:
+      - YAGNA_APPKEY=66667777888
+      - YAGNA_API_URL=http://yagna:7465
+      - JWT_SECRET=dup]a
+      - JWT_TOKEN_EXPIRATION=1d
+      - JWT_REFRESH_TOKEN_EXPIRATION=7d
+      - JWT_ISSUER=golem.network
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/
+      - HOST=0.0.0.0
+      - PORT=5174
+      - DB_NAME=depositDB
+      - DEPOSIT_CONTRACT_ADDRESS=0xb9919c8D8D384d93C195503064A3b303Ea8Fdbaa
+    ports:
+      - "5174:5174"
+  frontend:
+    image: scx1332/deposit-payment-example
+    command: cd /app/frontend && pnpm run run
     environment:
       - YAGNA_APPKEY=66667777888
       - YAGNA_API_URL=http://yagna:7465
@@ -17,7 +34,6 @@ services:
       - DEPOSIT_CONTRACT_ADDRESS=0xb9919c8D8D384d93C195503064A3b303Ea8Fdbaa
     ports:
       - "3000:3000"
-      - "5174:5174"
   # yagna service
   yagna:
     build:
