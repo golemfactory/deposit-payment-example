@@ -2,8 +2,7 @@ FROM node:20-bullseye
 
 RUN apt-get update && apt-get install -y vim
 
-# Set the working directory
-RUN npm install -g pnpm
+RUN npm install -g pnpm serve
 
 # Set the working directory
 WORKDIR /app
