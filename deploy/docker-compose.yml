@@ -18,6 +18,10 @@ services:
       - DEPOSIT_CONTRACT_ADDRESS=0xb9919c8D8D384d93C195503064A3b303Ea8Fdbaa
     ports:
       - "5174:5174"
+    depends_on:
+      - yagna
+      - mongo
+
   frontend:
     image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
     command: pnpm run run
@@ -36,6 +40,8 @@ services:
       - DEPOSIT_CONTRACT_ADDRESS=0xb9919c8D8D384d93C195503064A3b303Ea8Fdbaa
     ports:
       - "3000:3000"
+    depends_on:
+      - backend
   # yagna service
   yagna:
     build:
