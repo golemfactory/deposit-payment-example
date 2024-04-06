@@ -13,7 +13,8 @@
     "build:ya-ts-client": "pnpm --filter ya-ts-client build",
     "build:loginWithCrypto": "pnpm --filter loginWithCrypto build",
     "build:backend": "pnpm --filter backend build",
-    "build:all": "pnpm build:loginWithCrypto && pnpm build:ya-ts-client && pnpm build:golem-js && pnpm build:task-executor && pnpm build:backend"
+    "build:frontend": "pnpm --filter deposit:frontend build",
+    "build:all": "pnpm build:loginWithCrypto && pnpm build:ya-ts-client && pnpm build:golem-js && pnpm build:task-executor && pnpm build:backend && pnpm build:frontend"
   },
   "keywords": [],
   "author": "",

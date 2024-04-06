@@ -1,0 +1,81 @@
+services:
+  # application service
+  backend:
+    image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
+    command: pnpm run run
+    working_dir: /app/backend
+    environment:
+      - YAGNA_APPKEY=66667777888
+      - YAGNA_API_URL=http://yagna:7465
+      - JWT_SECRET=dup]a
+      - JWT_TOKEN_EXPIRATION=1d
+      - JWT_REFRESH_TOKEN_EXPIRATION=7d
+      - JWT_ISSUER=golem.network
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/
+      - HOST=0.0.0.0
+      - PORT=5174
+      - DB_NAME=depositDB
+      - DEPOSIT_CONTRACT_ADDRESS=0xb9919c8D8D384d93C195503064A3b303Ea8Fdbaa
+    ports:
+      - "5174:5174"
+    depends_on:
+      - yagna
+      - mongo
+
+  frontend:
+    image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
+    command: pnpm run run
+    working_dir: /app/frontend
+    environment:
+      - YAGNA_APPKEY=66667777888
+      - YAGNA_API_URL=http://yagna:7465
+      - JWT_SECRET=dup]a
+      - JWT_TOKEN_EXPIRATION=1d
+      - JWT_REFRESH_TOKEN_EXPIRATION=7d
+      - JWT_ISSUER=golem.network
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/
+      - HOST=0.0.0.0
+      - PORT=5174
+      - DB_NAME=depositDB
+      - DEPOSIT_CONTRACT_ADDRESS=0xb9919c8D8D384d93C195503064A3b303Ea8Fdbaa
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+  # yagna service
+  yagna:
+    build:
+      context: ../yagna
+      dockerfile: Dockerfile
+      args:
+        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta1
+    command: yagna service run
+    environment:
+      - YAGNA_AUTOCONF_APPKEY=66667777888
+      - YAGNA_AUTOCONF_ID_SECRET=0000000000000000000000000000000000000000000000000000000222222222
+      - YAGNA_API_URL=http://0.0.0.0:7465
+      - SUBNET=change_me
+      - YA_NET_BIND_URL=udp://0.0.0.0:0
+  # mongo service
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=project
+  # mongo express service
+  mongo-express:
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=${MONGO_ROOT_USER}
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD}
+    depends_on:
+      - mongo
+    ports:
+      - "8888:8081"
