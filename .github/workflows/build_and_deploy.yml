@@ -46,7 +46,7 @@ jobs:
           # push one image with two tags into repository
           docker push --all-tags ghcr.io/golemfactory/deposit_example
 
-      - name: Notify Staging
+      - name: Notify Develop Branch
         continue-on-error: true
-        if: ${{ steps.get_image_tag.outputs.result == 'staging' }}
+        if: ${{ steps.get_image_tag.outputs.result == 'develop' }}
         run: curl http://deposit.dev.golem.network:5000/release/pull
