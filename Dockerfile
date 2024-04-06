@@ -16,4 +16,4 @@ RUN echo "The backend URL is $BACKEND_URL"
 RUN mkdir /app/temp
 
 RUN pnpm install
-RUN pnpm build:all
+RUN rm -rf /app
