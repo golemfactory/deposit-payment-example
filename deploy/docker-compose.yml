@@ -39,7 +39,7 @@ services:
   # yagna service
   yagna:
     build:
-      context: ./yagna
+      context: ../yagna
       dockerfile: Dockerfile
       args:
         - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta1
