@@ -1,7 +1,7 @@
 services:
   # application service
   backend:
-    image: ghcr.io/golemfactory/deposit_example
+    image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
     command: pnpm run run
     working_dir: /app/backend
     environment:
@@ -19,7 +19,7 @@ services:
     ports:
       - "5174:5174"
   frontend:
-    image: ghcr.io/golemfactory/deposit_example
+    image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
     command: pnpm run run
     working_dir: /app/frontend
     environment:
