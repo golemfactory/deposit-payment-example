@@ -1,6 +1,6 @@
 ARG BACKEND_URL=http://127.0.0.1:5174
 
-FROM node:20-bullseye
+FROM ghcr.io/golemfactory/deposit_example:base
 
 RUN apt-get update && apt-get install -y vim
 
