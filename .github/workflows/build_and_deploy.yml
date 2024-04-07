@@ -41,7 +41,7 @@ jobs:
             --label "org.opencontainers.image.description=Deposit payment example dockerized app" \
             --label "org.opencontainers.image.licenses=MIT" \
             -t ghcr.io/golemfactory/deposit_example:${{ steps.get_image_tag.outputs.result }} \
-            --build-arg BACKEND_URL=http://deposit.dev.golem.network:5174 \
+            --build-arg BACKEND_URL=http://deposit.dev.golem.network \
             .
 
           # push one image with two tags into repository
