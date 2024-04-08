@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
       args:
         - BACKEND_URL=${BACKEND_URL:-http://127.0.0.1:5174}
-    command: tail -F anything
+    command: pnpm run start:app
     environment:
       - YAGNA_APPKEY=66667777888
       - YAGNA_API_URL=http://yagna:7465

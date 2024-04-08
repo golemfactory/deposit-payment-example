@@ -4,12 +4,7 @@ name: Build and push containers to Github Container Registry and apply rolling u
 on:
   push:
     branches:
-      - staging
       - develop
-      - main
-      - base
-    tags:
-      - v*
 
 jobs:
   build:
@@ -20,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Getting image tag
         uses: actions/github-script@v6
@@ -34,7 +29,7 @@ jobs:
         run: |
           # login to ghcr.io
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
-          
+
           # build with full metadata
           docker build \
             --label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \

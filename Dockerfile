@@ -17,3 +17,4 @@ RUN mkdir /app/temp
 
 RUN pnpm install
 RUN pnpm build:all
+RUN npm install pm2 -g
