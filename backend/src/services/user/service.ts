@@ -17,6 +17,7 @@ export const userService: IUserService = {
         walletAddress,
         nonce: randomNonce(),
         id: uuidv4(),
+        deposits: [],
       },
       {
         _id: true,
