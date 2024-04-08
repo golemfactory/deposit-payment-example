@@ -12,8 +12,8 @@
     "build:cjs:watch": "tsc --watch --module commonjs --outDir ./dist/_cjs --removeComments --verbatimModuleSyntax false --skipLibCheck && node src/write_csj.js",
     "build:esm": "tsc --module es2015 --outDir ./dist/_esm --skipLibCheck && node src/write_esm.js",
     "build:esm:watch": "tsc --watch --module es2015 --outDir ./dist/_esm --skipLibCheck && node src/write_esm.js",
-    "build:types": "tsc --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck ",
-    "build:types:watch": "tsc --watch --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck "
+    "build:types": "tsc --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck",
+    "build:types:watch": "tsc --watch --declarationDir ./dist/_types --emitDeclarationOnly --declaration --declarationMap --skipLibCheck"
   },
   "exports": {
     ".": {

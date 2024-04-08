@@ -3,7 +3,6 @@ name: Build docker files
 on:
   push:
 jobs:
-
   build:
     runs-on: ubuntu-latest
     permissions:
