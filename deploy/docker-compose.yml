@@ -27,7 +27,7 @@ services:
     command: pnpm run start
     working_dir: /app/frontend
     environment:
-      - YAGNA_APPKEY=66667777888
+      - YAGNA_APPKEY=${YAGNA_APPKEY}
       - YAGNA_API_URL=http://yagna:7465
       - JWT_SECRET=dup]a
       - JWT_TOKEN_EXPIRATION=1d

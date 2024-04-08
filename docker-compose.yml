@@ -1,12 +1,11 @@
 services:
   # application service
-  app:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - BACKEND_URL=${BACKEND_URL:-http://127.0.0.1:5174}
-    command: pnpm run start:app
+    command: pnpm run start
+    working_dir: /app/backend
     environment:
       - YAGNA_APPKEY=66667777888
       - YAGNA_API_URL=http://yagna:7465
@@ -20,8 +19,33 @@ services:
       - DB_NAME=depositDB
       - DEPOSIT_CONTRACT_ADDRESS=0xb9919c8D8D384d93C195503064A3b303Ea8Fdbaa
     ports:
-      - "3000:3000"
       - "5174:5174"
+    depends_on:
+      - yagna
+      - mongo
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: pnpm run start
+    working_dir: /app/frontend
+    environment:
+      - YAGNA_APPKEY=${YAGNA_APPKEY}
+      - YAGNA_API_URL=http://yagna:7465
+      - JWT_SECRET=dup]a
+      - JWT_TOKEN_EXPIRATION=1d
+      - JWT_REFRESH_TOKEN_EXPIRATION=7d
+      - JWT_ISSUER=golem.network
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/
+      - HOST=0.0.0.0
+      - PORT=5174
+      - DB_NAME=depositDB
+      - DEPOSIT_CONTRACT_ADDRESS=0xb9919c8D8D384d93C195503064A3b303Ea8Fdbaa
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
   # yagna service
   yagna:
     build:
@@ -31,10 +55,10 @@ services:
         - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta1
     command: yagna service run
     environment:
-      - YAGNA_AUTOCONF_APPKEY=66667777888
-      - YAGNA_AUTOCONF_ID_SECRET=0000000000000000000000000000000000000000000000000000000222222222
+      - YAGNA_AUTOCONF_APPKEY=${YAGNA_APPKEY}
+      - YAGNA_AUTOCONF_ID_SECRET=${YAGNA_PRIVATE_KEY}
       - YAGNA_API_URL=http://0.0.0.0:7465
-      - SUBNET=change_me
+      - SUBNET=${SUBNET}
       - YA_NET_BIND_URL=udp://0.0.0.0:0
   # mongo service
   mongo:
@@ -45,6 +69,7 @@ services:
       - MONGO_INITDB_DATABASE=project
     ports:
       - "27017:27017"
+
   # mongo express service
   mongo-express:
     image: mongo-express
