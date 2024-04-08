@@ -22,7 +22,7 @@ jobs:
           script: |
             return context.payload.ref.replace(/.*\//, '');
 
-      - name: Create and push docker image
+      - name: Build docker image only
         run: |
           # login to ghcr.io
           docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
