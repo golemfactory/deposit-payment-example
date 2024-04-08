@@ -1,13 +1,13 @@
 [submodule "golem-js"]
 	path = golem-js
-	url = https://github.com/golemfactory/golem-js.git
+	url = git@github.com:golemfactory/golem-js.git
 	branch = pociej/deposit
 [submodule "ya-ts-client"]
 	path = ya-ts-client
-	url = https://github.com/golemfactory/ya-ts-client.git
+	url = git@github.com:golemfactory/ya-ts-client.git
   branch = pociej/deposit
 [submodule "golem-sdk-task-executor"]
 	path = golem-sdk-task-executor
-	url = https://github.com/golemfactory/golem-sdk-task-executor.git
+	url = git@github.com:golemfactory/golem-sdk-task-executor.git
 	branch = pociej/deposit
 
