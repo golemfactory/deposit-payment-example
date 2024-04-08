@@ -55,7 +55,9 @@ container.register({
 container.register({
   db: awilix
     .asFunction((connectionString) => {
-      return mongoose.connect(connectionString);
+      return mongoose.connect(connectionString, {
+        dbName: process.env.DB_NAME,
+      });
     })
     .singleton(),
 });

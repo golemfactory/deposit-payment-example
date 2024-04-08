@@ -1,11 +1,12 @@
 {
-  "name": "backend",
+  "name": "deposit:backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
   "scripts": {
     "dev": "concurrently -k \"tsc -w\" \"nodemon --env-file=.env.local ./dist/index.js\"",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "pm2 start ./dist/index.js"
   },
   "type": "module",
   "keywords": [],

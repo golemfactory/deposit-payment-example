@@ -1,0 +1,13 @@
+**/.husky
+**/.idea
+**/.vscode
+**/node_modules
+**/.env
+.dockerignore
+**/.gitignore
+**/*.env
+**/.git
+**/.gitmodules
+**/.github
+**/Dockerfile
+**/docker-compose.yml

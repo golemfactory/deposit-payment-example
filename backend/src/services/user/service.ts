@@ -1,6 +1,7 @@
 import { IUserService, IUser } from "./types.js";
 import { userModel } from "./model.js";
 import { v4 as uuidv4 } from "uuid";
+import mongoose from "mongoose";
 
 const randomNonce = () => {
   return Math.floor(Math.random() * 10000000);
@@ -9,6 +10,11 @@ const randomNonce = () => {
 export const userService: IUserService = {
   registerUser: async (walletAddress: string) => {
     const user = await userModel.findOne({ walletAddress });
+    console.log("#########################");
+    console.log("registering user");
+    console.log("model", mongoose.connection);
+    console.log("user", user);
+    console.log("#########################");
     if (user !== null) {
       return user;
     }
@@ -17,6 +23,7 @@ export const userService: IUserService = {
         walletAddress,
         nonce: randomNonce(),
         id: uuidv4(),
+        deposits: [],
       },
       {
         _id: true,

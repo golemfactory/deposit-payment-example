@@ -45,7 +45,7 @@ export function useSignNonce(): {
   >({
     mutationFn: signNonce,
     onSuccess: (data) => {
-      const message = `Kto pracuje w golemie ten się w cyrku nie śmieje nonce: ${data.nonce}`;
+      const message = `Login to service by signing nonce: ${data.nonce}`;
       setMessage(message);
       signMessage({
         message,

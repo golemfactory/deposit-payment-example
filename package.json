@@ -12,8 +12,12 @@
     "build:task-executor": "pnpm --filter @golem-sdk/task-executor build",
     "build:ya-ts-client": "pnpm --filter ya-ts-client build",
     "build:loginWithCrypto": "pnpm --filter loginWithCrypto build",
-    "build:backend": "pnpm --filter backend build",
-    "build:all": "pnpm build:loginWithCrypto && pnpm build:ya-ts-client && pnpm build:golem-js && pnpm build:task-executor && pnpm build:backend"
+    "build:backend": "pnpm --filter deposit:backend build",
+    "build:frontend": "pnpm --filter deposit:frontend build",
+    "build:all": "pnpm build:loginWithCrypto && pnpm build:ya-ts-client && pnpm build:golem-js && pnpm build:task-executor && pnpm build:backend && pnpm build:frontend",
+    "start:frontend": "pnpm --filter deposit:frontend start",
+    "start:backend": "pnpm --filter deposit:backend start",
+    "start:app": "pnpm start:frontend && pnpm start:backend"
   },
   "keywords": [],
   "author": "",

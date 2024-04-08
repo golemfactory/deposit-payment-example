@@ -51,7 +51,7 @@ export const FileUploader = () => {
 
         // }}
       >
-        Drop files here or{" "}
+        Drag & Drop files here or{" "}
         <Button
           onClick={() => {
             fileInputRef.current?.click();
