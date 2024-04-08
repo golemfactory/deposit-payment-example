@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently -k \"tsc -w\" \"nodemon --env-file=.env.local ./dist/index.js\"",
     "build": "tsc",
-    "start": "node ./dist/index.js"
+    "start": "pm2 start ./dist/index.js"
   },
   "type": "module",
   "keywords": [],
