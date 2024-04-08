@@ -2,7 +2,7 @@ services:
   # application service
   backend:
     image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
-    command: pnpm run run
+    command: pnpm run start
     working_dir: /app/backend
     environment:
       - YAGNA_APPKEY=66667777888
@@ -24,7 +24,7 @@ services:
 
   frontend:
     image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
-    command: pnpm run run
+    command: pnpm run start
     working_dir: /app/frontend
     environment:
       - YAGNA_APPKEY=66667777888
