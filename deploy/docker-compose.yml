@@ -51,10 +51,10 @@ services:
         - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta1
     command: yagna service run
     environment:
-      - YAGNA_AUTOCONF_APPKEY=66667777888
-      - YAGNA_AUTOCONF_ID_SECRET=0000000000000000000000000000000000000000000000000000000222222222
+      - YAGNA_AUTOCONF_APPKEY=${YAGNA_APPKEY}
+      - YAGNA_AUTOCONF_ID_SECRET=${YAGNA_PRIVATE_KEY}
       - YAGNA_API_URL=http://0.0.0.0:7465
-      - SUBNET=change_me
+      - SUBNET=${SUBNET}
       - YA_NET_BIND_URL=udp://0.0.0.0:0
   # mongo service
   mongo:
