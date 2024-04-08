@@ -4,8 +4,7 @@ FROM node:20-bullseye
 
 RUN apt-get update && apt-get install -y vim
 
-RUN npm install -g pnpm serve
-
+RUN npm install -g pnpm serve pm2
 # Set the working directory
 WORKDIR /app
 COPY . /app
@@ -17,4 +16,3 @@ RUN mkdir /app/temp
 
 RUN pnpm install
 RUN pnpm build:all
-RUN npm install pm2 -g
