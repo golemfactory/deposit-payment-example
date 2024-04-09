@@ -42,6 +42,6 @@ await $`tmux send-keys -t sdk "cd golem-js && pnpm run dev" C-m`;
 //separated instance just for the dapp purpose
 
 await $`tmux new-window -n yagna`;
-await $`tmux send-keys -t yagna "yagna service run" C-m`;
+await $`tmux send-keys -t yagna "cd yagna && cargo run -- service run" C-m`;
 
 await $`tmux attach-session -d`;

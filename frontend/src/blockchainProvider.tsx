@@ -27,6 +27,10 @@ const config = defaultWagmiConfig({
 createWeb3Modal({
   wagmiConfig: config,
   projectId,
+  themeVariables: {
+    "--w3m-accent": "#FFD700",
+    "--w3m-border-radius-master": "5",
+  },
 });
 
 export function BlockchainProvider({ children }: PropsWithChildren) {

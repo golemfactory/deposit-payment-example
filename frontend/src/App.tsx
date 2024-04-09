@@ -17,6 +17,8 @@ function BlockChainLogin() {
 }
 
 import { SWRConfig } from "swr";
+import { ConnectWallet } from "components/connectWallet";
+import { Home } from "components/home";
 
 function localStorageProvider() {
   // When initializing, we restore the data from `localStorage` into a map.
@@ -45,20 +47,14 @@ function App() {
     <SWRConfig>
       <BlockchainProvider>
         <SnackbarProvider autoHideDuration={50000}>
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-12 grid grid-cols-2">
-              <w3m-button />
-
-              <BlockChainLogin />
-            </div>
-
-            <div className="col-span-4 col-start-5">
-              <Deposit />
-            </div>
-            <div className="col-span-4 col-start-5">
-              <FileUploader />
-              <ScanResults />
-            </div>
+          <div
+            className="grid grid-cols-12 gap-4 h-screen overflow-hidden"
+            style={{
+              backgroundImage: "url('background.jpg')",
+              backgroundSize: "cover",
+            }}
+          >
+            <Home />
           </div>
         </SnackbarProvider>
       </BlockchainProvider>

@@ -11,9 +11,11 @@ export class Yagna {
   private YagnaConfig: { appKey: string; apiUrl: string };
   private lastDebitNoteEventTimestamp: string = new Date().toISOString();
   private lastInvoiceEventTimestamp: string = new Date().toISOString();
+
   constructor(YagnaConfig: { appKey: string; apiUrl: string }) {
     this.YagnaConfig = YagnaConfig;
     this.debitNoteEvents = new Subject();
+    console.log("Yagna config", YagnaConfig);
     const paymentClient = new YaTsClient.PaymentApi.Client({
       BASE: `${YagnaConfig.apiUrl}/payment-api/v1`,
       HEADERS: {
