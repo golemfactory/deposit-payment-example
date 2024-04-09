@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useProcessFile } from "hooks/useUploadFile";
 import { Button } from "react-daisyui";
-import { RegisterButton } from "./RegisterButton";
+import { RegisterButton } from "./components/RegisterButton";
 export const FileUploader = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const { upload } = useProcessFile();

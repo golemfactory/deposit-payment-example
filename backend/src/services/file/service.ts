@@ -173,6 +173,7 @@ export const fileService = (
       //TODO handle errors and timeouts
       //but it seems that there was no try to find another one
       //this is task executor abstraction so it should handle it for me
+
       const results = await worker.context
         .beginBatch()
         .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)

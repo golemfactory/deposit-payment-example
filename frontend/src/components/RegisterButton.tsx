@@ -3,6 +3,7 @@ import { useSignNonce } from "hooks/useSignNonce";
 import { useLogin } from "hooks/useLogin";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 export const RegisterButton = () => {
   const { register, signature, message } = useSignNonce();
@@ -29,13 +30,23 @@ export const RegisterButton = () => {
       localStorage.setItem("refreshToken", tokens.refreshToken);
     }
   }, [tokens]);
+
+  const MotionButton = motion(Button);
+
   return (
-    <Button
+    <MotionButton
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
       onClick={() => {
         register({ walletAddress });
       }}
+      className="bg-primary !text-white border-none text-lg font-light absolute"
+      style={{
+        top: "50vh",
+      }}
     >
-      Register
-    </Button>
+      Register in service
+    </MotionButton>
   );
 };

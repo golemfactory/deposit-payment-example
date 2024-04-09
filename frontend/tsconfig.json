@@ -53,10 +53,13 @@
       ],
       "themes" : [
         "src/themes/*"
+      ],
+      "config": [
+        "src/config.ts"
       ]
     }
   },
   "include": [
     "./src"
-  ]
+, "config.ts"  ]
 }
