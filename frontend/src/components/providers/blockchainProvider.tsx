@@ -25,10 +25,9 @@ createWeb3Modal({
   projectId: config.projectId,
   themeVariables: {
     "--w3m-font-family": "Kanit-Light",
-    "--w3m-accent": "#181EA9",
-    "--w3m-border-radius-master": "10px",
-    "--w3m-color-mix": "#181EA9",
-    "--w3m-font-size-master": "1rem",
+    "--w3m-accent": "#181ea9a6",
+    "--w3m-border-radius-master": "5px",
+    "--w3m-font-size-master": "0.9rem",
   },
 });
 

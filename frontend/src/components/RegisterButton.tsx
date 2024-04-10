@@ -11,9 +11,8 @@ export const RegisterButton = ({ isVisible }: { isVisible: boolean }) => {
   const { login, tokens, isWaiting } = useLogin();
 
   if (!walletAddress) {
-    return <></>;
+    throw new Error("Wallet address not found");
   }
-
   const debouncedPending = useDebounce(
     isPending,
     new Map([
