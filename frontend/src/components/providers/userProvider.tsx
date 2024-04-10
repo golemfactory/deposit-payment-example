@@ -13,21 +13,23 @@ import { ReducerArgs } from "types/reducerArgs";
 import { UserState, UserAction } from "types/user";
 import { useAccount } from "wagmi";
 
-export const UserContext = createContext({
+export const UserContext = createContext<{
+  user: User;
+}>({
   user: { state: UserState.DISCONNECTED },
 });
 
 type User = {
   state: UserState;
-  allowanceAmount?: BigInt;
+  allowanceAmount?: bigint;
 };
 
 type Payload = {
   [UserAction.CONNECT]: never;
   [UserAction.DISCONNECT]: never;
   [UserAction.REGISTER]: never;
-  [UserAction.ENOUGH_ALLOWANCE]: { allowanceAmount: BigInt };
-  [UserAction.NOT_ENOUGH_ALLOWANCE]: { allowanceAmount: BigInt };
+  [UserAction.ENOUGH_ALLOWANCE]: { allowanceAmount: bigint };
+  [UserAction.NOT_ENOUGH_ALLOWANCE]: { allowanceAmount: bigint };
   [UserAction.LOADING]: never;
   [UserAction.APPROVE]: string;
 };
@@ -87,7 +89,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
       if (isLoadingAllowance) {
         dispatch({ kind: UserAction.LOADING });
       }
-      if (isFetched && data) {
+      if (isFetched && data !== undefined) {
         if (data > config.minimalAllowance) {
           dispatch({
             kind: UserAction.ENOUGH_ALLOWANCE,

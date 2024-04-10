@@ -15,7 +15,7 @@ type Config<Chains extends Chain[]> = {
   requestorWalletAddress: {
     [Key in Chains[number]["id"]]: `0x${string}`;
   };
-  minimalAllowance: BigInt;
+  minimalAllowance: bigint;
 };
 
 export const config: Config<[typeof holesky]> = {

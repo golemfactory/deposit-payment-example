@@ -15,7 +15,7 @@ const metadata = {
 };
 
 const wagmiConfig = defaultWagmiConfig({
-  chains: config.supportedChains as const,
+  chains: config.supportedChains,
   projectId: config.projectId,
   metadata,
 });
@@ -27,6 +27,7 @@ createWeb3Modal({
     "--w3m-font-family": "Kanit-Light",
     "--w3m-accent": "#181EA9",
     "--w3m-border-radius-master": "1px",
+    "--w3m-color-mix": "#181EA9",
   },
 });
 

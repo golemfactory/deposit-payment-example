@@ -49,11 +49,8 @@ function App() {
           <SnackbarProvider autoHideDuration={50000}>
             <UserProvider>
               <div
+                id="app"
                 className="grid grid-cols-12 gap-4 h-screen overflow-hidden"
-                style={{
-                  backgroundImage: "url('background.jpg')",
-                  backgroundSize: "cover",
-                }}
               >
                 <Home />
               </div>

@@ -1,4 +1,7 @@
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { adjustShadowRootStyles, queryShadowRootDeep } from "utils/shadowRoot";
+import { flareTestnet } from "viem/chains";
 import { useAccount } from "wagmi";
 
 const variants = {
@@ -10,8 +13,22 @@ const variants = {
     top: "50vh",
   },
 };
+
+const pathToContent = [
+  { selector: "w3m-button", useShadowRoot: true },
+  { selector: "w3m-account-button", useShadowRoot: true },
+  { selector: "wui-account-button", useShadowRoot: true },
+  { selector: "button", useShadowRoot: false },
+];
+
 export const ConnectWallet = () => {
   const { isConnected } = useAccount();
+
+  useEffect(() => {
+    const button = queryShadowRootDeep(pathToContent) as HTMLElement;
+    button.style.borderRadius = "16px";
+    button.style.backgroundColor = "#0000005b";
+  }, []);
   return (
     <motion.div
       style={{
