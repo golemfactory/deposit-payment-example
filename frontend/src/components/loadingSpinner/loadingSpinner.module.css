@@ -1,0 +1,15 @@
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .2;
+    transform: scale(0.5);
+  }
+}
+
+.pulsar {
+  animation: pulse 1s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}

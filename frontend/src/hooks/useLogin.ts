@@ -1,5 +1,6 @@
 import { UseMutateFunction, useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
+import { is, set } from "ramda";
 import { useEffect, useState } from "react";
 async function login({
   messageSignature,
@@ -35,9 +36,13 @@ type IUseLogin = {
     unknown
   >;
   tokens: { accessToken: string; refreshToken: string } | undefined;
+  isWaiting: boolean;
+  isError: boolean;
 };
 
 export function useLogin(): IUseLogin {
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [isError, setIsError] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [tokens, setTokens] = useState<
     { accessToken: string; refreshToken: string } | undefined
@@ -54,13 +59,9 @@ export function useLogin(): IUseLogin {
     }
   }, [verificationError]);
 
-  useEffect(() => {
-    if (tokens) {
-      enqueueSnackbar(`Registered successfully`, {
-        variant: "success",
-      });
-    }
-  }, [tokens]);
+  // useEffect(() => {
+  //   setIsWaiting(!tokens);
+  // }, [tokens]);
   const { mutate: loginMutation } = useMutation<
     { accessToken: string; refreshToken: string },
     unknown,
@@ -72,16 +73,25 @@ export function useLogin(): IUseLogin {
     unknown
   >({
     mutationFn: login,
+    onSettled: () => {
+      console.log("settled");
+      setIsWaiting(true);
+    },
     onSuccess: (data) => {
       setTokens(data);
+      setIsWaiting(false);
     },
     onError: (error) => {
       setVerificationError(error);
+      setIsWaiting(false);
+      setIsError(true);
     },
   });
 
   return {
     login: loginMutation,
     tokens,
+    isWaiting,
+    isError,
   };
 }

@@ -1,11 +1,10 @@
 import { useAccount } from "wagmi";
 import "./App.css";
-import { RegisterButton } from "./RegisterButton";
-import { BlockchainProvider } from "./blockchainProvider";
+import { RegisterButton } from "./components/RegisterButton";
+import { BlockchainProvider } from "./components/providers/blockchainProvider";
 import { SnackbarProvider } from "notistack";
 import { DepositForm } from "./DepositForm";
-import { FileUploader } from "./Uploader";
-import { ScanResults } from "./ScanResults";
+
 function BlockChainLogin() {
   const { address: walletAddress } = useAccount();
   const loginToken = localStorage.getItem("accessToken");
@@ -17,6 +16,8 @@ function BlockChainLogin() {
 }
 
 import { SWRConfig } from "swr";
+import { Home } from "components/home";
+import { UserProvider } from "components/providers/userProvider";
 
 function localStorageProvider() {
   // When initializing, we restore the data from `localStorage` into a map.
@@ -42,27 +43,22 @@ function Deposit() {
 function App() {
   return (
     //@ts-ignore
-    <SWRConfig>
-      <BlockchainProvider>
-        <SnackbarProvider autoHideDuration={50000}>
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-12 grid grid-cols-2">
-              <w3m-button />
-
-              <BlockChainLogin />
-            </div>
-
-            <div className="col-span-4 col-start-5">
-              <Deposit />
-            </div>
-            <div className="col-span-4 col-start-5">
-              <FileUploader />
-              <ScanResults />
-            </div>
-          </div>
-        </SnackbarProvider>
-      </BlockchainProvider>
-    </SWRConfig>
+    <div data-theme="golem" className="font-kanit">
+      <SWRConfig>
+        <BlockchainProvider>
+          <SnackbarProvider autoHideDuration={50000}>
+            <UserProvider>
+              <div
+                id="app"
+                className="grid grid-cols-12 gap-4 h-screen overflow-hidden"
+              >
+                <Home />
+              </div>
+            </UserProvider>
+          </SnackbarProvider>
+        </BlockchainProvider>
+      </SWRConfig>
+    </div>
   );
 }
 

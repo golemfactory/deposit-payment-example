@@ -11,3 +11,7 @@
 	url = git@github.com:golemfactory/golem-sdk-task-executor.git
 	branch = pociej/deposit
 
+[submodule "yagna"]
+	path = yagna
+	url = git@github.com:golemfactory/yagna.git
+  branch = js-sdk-deposit-poc

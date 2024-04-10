@@ -151,6 +151,9 @@ importers:
       swr:
         specifier: ^2.2.5
         version: 2.2.5(react@18.2.0)
+      ts-pattern:
+        specifier: ^5.1.1
+        version: 5.1.1
       viem:
         specifier: ~2.7.19
         version: 2.7.22(typescript@5.4.3)
@@ -6240,6 +6243,9 @@ packages:
 
   /@web3modal/scaffold@4.0.13(@types/react@18.2.74)(react@18.2.0)(valtio@1.13.2):
     resolution: {integrity: sha512-ur543j3KunFUIoSAT4GGwAX0GxVPHNkuCEUGJL52KSfXG6rqHlPoVMeGyZKN4Mo2FyQCh76vFgm9Vv2GribuDQ==}
+    peerDependenciesMeta:
+      '@web3modal/siwe':
+        optional: true
     dependencies:
       '@web3modal/common': 4.0.13
       '@web3modal/core': 4.0.13(@types/react@18.2.74)(react@18.2.0)
@@ -6300,6 +6306,15 @@ packages:
       '@wagmi/connectors': '>=4.0.0'
       '@wagmi/core': '>=2.0.0'
       viem: '>=2.0.0'
+    peerDependenciesMeta:
+      '@web3modal/siwe':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      vue:
+        optional: true
     dependencies:
       '@wagmi/connectors': 4.1.24(@types/react@18.2.74)(@wagmi/core@2.6.15)(react-dom@18.2.0)(react-native@0.73.6)(react@18.2.0)(typescript@5.4.3)(viem@2.7.22)
       '@wagmi/core': 2.6.15(@types/react@18.2.74)(react@18.2.0)(typescript@5.4.3)(viem@2.7.22)
@@ -15202,6 +15217,10 @@ packages:
       typescript: 5.4.3
       webpack: 5.91.0
     dev: true
+
+  /ts-pattern@5.1.1:
+    resolution: {integrity: sha512-i+owkHr5RYdQxj8olUgRrqpiWH9x27PuWVfXwDmJ/n/CoF/SAa7WW1i2oUpPDMQpJ4U+bGRUcZkVq7i1m3zFCg==}
+    dev: false
 
   /ts-toolbelt@9.6.0:
     resolution: {integrity: sha512-nsZd8ZeNUzukXPlJmTBwUAuABDe/9qtVDelJeT/qW0ow3ZS3BsQJtNkan1802aM9Uf68/Y8ljw86Hu0h5IUW3w==}

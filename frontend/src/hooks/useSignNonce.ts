@@ -25,9 +25,10 @@ export function useSignNonce(): {
   register: ({ walletAddress }: { walletAddress: `0x${string}` }) => void;
   signature: `0x${string}` | undefined;
   message: string;
+  isPending: boolean;
 } {
   const { enqueueSnackbar } = useSnackbar();
-  const { data, error: signError, signMessage } = useSignMessage();
+  const { data, error: signError, signMessage, isPending } = useSignMessage();
   const [message, setMessage] = useState<string>("");
   useEffect(() => {
     if (signError) {
@@ -61,5 +62,6 @@ export function useSignNonce(): {
     register: signNonceMutation,
     signature: data,
     message: message,
+    isPending,
   };
 }
