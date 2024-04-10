@@ -15,7 +15,7 @@ export const RegisterSummary = ({ isVisible }: { isVisible: boolean }) => {
             borderRadius: "16px",
             padding: "1rem",
             fontSize: "1.3rem",
-            minWidth: "380px",
+            minWidth: "350px",
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

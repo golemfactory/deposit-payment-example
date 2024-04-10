@@ -10,15 +10,12 @@ const randomNonce = () => {
 export const userService: IUserService = {
   registerUser: async (walletAddress: string) => {
     const user = await userModel.findOne({ walletAddress });
-    console.log("#########################");
-    console.log("registering user");
-    console.log("model", mongoose.connection);
-    console.log("user", user);
-    console.log("#########################");
+
     if (user !== null) {
       return user;
     }
-    return new userModel(
+    console.log("no user");
+    const newu = await new userModel(
       {
         walletAddress,
         nonce: randomNonce(),
@@ -29,6 +26,8 @@ export const userService: IUserService = {
         _id: true,
       }
     ).save();
+    console.log("new user", newu);
+    return newu;
   },
   regenerateNonce: async (userId: string) => {
     const nonce = randomNonce();

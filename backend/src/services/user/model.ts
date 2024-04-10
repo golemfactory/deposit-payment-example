@@ -32,11 +32,6 @@ const schema = new mongoose.Schema<IUser>(
           type: Boolean,
           required: true,
         },
-        id: {
-          type: String,
-          required: true,
-          index: { unique: true },
-        },
       },
     ],
   },
