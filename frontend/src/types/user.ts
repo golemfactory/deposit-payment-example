@@ -12,6 +12,10 @@ export enum UserState {
   NOT_GRANTED = "NOT_GRANTED",
   // User is in the process of connecting
   LOADING = "LOADING",
+  // User has deposited GLM
+  HAS_DEPOSIT = "HAS_DEPOSIT",
+  // User has not deposited GLM
+  HAS_NO_DEPOSIT = "HAS_NO_DEPOSIT",
 }
 
 export enum UserAction {
@@ -22,4 +26,17 @@ export enum UserAction {
   LOADING = "LOADING",
   ENOUGH_ALLOWANCE = "ENOUGH_ALLOWANCE",
   NOT_ENOUGH_ALLOWANCE = "NOT_ENOUGH_ALLOWANCE",
+  HAS_DEPOSIT = "HAS_DEPOSIT",
+  HAS_NO_DEPOSIT = "HAS_NO_DEPOSIT",
 }
+
+export const UserStateOrderValue = {
+  [UserState.DISCONNECTED]: 0,
+  [UserState.CONNECTED]: 1,
+  [UserState.REGISTERED]: 2,
+  [UserState.GRANTED]: 4,
+  [UserState.NOT_GRANTED]: 4,
+  [UserState.LOADING]: 3,
+  [UserState.HAS_DEPOSIT]: 5,
+  [UserState.HAS_NO_DEPOSIT]: 5,
+};

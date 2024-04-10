@@ -1,12 +1,18 @@
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useBalance,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 
 import { abi } from "./abi";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { assertBigInt, assertOptionalBigInt } from "types/assertBigInt";
-import { parseEther } from "viem";
-import { useEffect } from "react";
-import { is } from "ramda";
+import { TransactionExecutionError, parseEther } from "viem";
+import { useEffect, useState } from "react";
+import { add, is } from "ramda";
 
 export function useAllowance(): {
   isFetched: boolean;
@@ -27,7 +33,7 @@ export function useAllowance(): {
     if (!isFetching) {
       setTimeout(() => {
         const result = refetch();
-      }, 2000);
+      }, 12000);
     }
   }, [isFetching]);
 
@@ -37,19 +43,51 @@ export function useAllowance(): {
 }
 
 export function useApprove() {
-  const { writeContractAsync } = useWriteContract();
+  const {
+    writeContractAsync,
+    //rep
+    isPending,
+    isError: isPrepError,
+    error: prepError,
+  } = useWriteContract();
   const chainId = useChainId();
+  const [txHash, setTxHash] = useState<`0x${string}`>();
   const { address } = useAccount();
+  const balance = useBalance({
+    address,
+    token: config.GLMContractAddress[chainId],
+  });
+  const {
+    error: txError,
+    isLoading,
+    isError: isTxError,
+    data: txData,
+  } = useWaitForTransactionReceipt({
+    hash: txHash,
+  });
 
   return {
     approve: async () => {
-      const result = await writeContractAsync({
-        address: config.GLMContractAddress[chainId],
-        abi: abi,
-        functionName: "approve",
-        args: [config.requestorWalletAddress[chainId], parseEther("100")],
-      });
-      return result;
+      try {
+        const hash = await writeContractAsync({
+          address: config.GLMContractAddress[chainId],
+          abi: abi,
+          functionName: "approve",
+          args: [config.requestorWalletAddress[chainId], balance.data?.value],
+        });
+        setTxHash(hash);
+      } catch (e) {
+        //There is no option in viewm/wagmi to detect if the error is due to user rejection
+        //https://github.com/wevm/viem/discussions/2113
+        console.error(e instanceof TransactionExecutionError);
+      }
     },
+    isError: isPrepError || isTxError,
+    error: {
+      prepError,
+      txError,
+    },
+    isProcessing: isPending || isLoading,
+    approveData: txData,
   };
 }

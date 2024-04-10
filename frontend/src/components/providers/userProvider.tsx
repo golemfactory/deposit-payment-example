@@ -10,19 +10,51 @@ import {
 import { match } from "ts-pattern";
 import { ReducerArgs } from "types/reducerArgs";
 
-import { UserState, UserAction } from "types/user";
+import { UserState, UserAction, UserStateOrderValue } from "types/user";
 import { useAccount } from "wagmi";
 
-export const UserContext = createContext<{
-  user: User;
-}>({
-  user: { state: UserState.DISCONNECTED },
-});
-
-type User = {
+type UserProps = {
   state: UserState;
   allowanceAmount?: bigint;
 };
+
+interface UserInterface {
+  isAtLeastAt(state: UserState): boolean;
+  isConnected(): boolean;
+  isRegistered(): boolean;
+  hasKnownAllowance(): boolean;
+  hasEnoughAllowance(): boolean;
+}
+
+const withUserInterface = function (user: UserProps) {
+  return {
+    ...user,
+    isAtLeastAt(state: UserState) {
+      return UserStateOrderValue[user.state] >= UserStateOrderValue[state];
+    },
+    isConnected() {
+      return this.isAtLeastAt(UserState.CONNECTED);
+    },
+    isRegistered() {
+      return this.isAtLeastAt(UserState.REGISTERED);
+    },
+    hasKnownAllowance() {
+      return this.isAtLeastAt(UserState.GRANTED);
+    },
+    hasEnoughAllowance() {
+      return (
+        user.allowanceAmount !== undefined &&
+        user.allowanceAmount > config.minimalAllowance
+      );
+    },
+  };
+};
+
+export const UserContext = createContext<{
+  user: UserProps & UserInterface;
+}>({
+  user: withUserInterface({ state: UserState.DISCONNECTED }),
+});
 
 type Payload = {
   [UserAction.CONNECT]: never;
@@ -34,7 +66,7 @@ type Payload = {
   [UserAction.APPROVE]: string;
 };
 
-const userActionReducer = (user: User, action: ReducerArgs<Payload>) => {
+const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
   const { kind, payload = {} } = action;
 
   const state = match(kind)
@@ -53,59 +85,49 @@ const userActionReducer = (user: User, action: ReducerArgs<Payload>) => {
   };
 };
 
-const getUserState = ({
-  isConnected,
-  isRegistered,
-}: {
-  isConnected: boolean;
-  isRegistered: boolean;
-}) => {
-  if (isRegistered) {
-    return UserState.REGISTERED;
-  } else if (isConnected) {
-    return UserState.CONNECTED;
-  } else if (hasWallet) {
-    return UserState.DISCONNECTED;
-  }
-};
-
 export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { isConnected } = useAccount();
   //TODO : check if user is registered
   const isRegistered = !!localStorage.getItem("accessToken");
   const { isFetched, isLoading: isLoadingAllowance, data } = useAllowance();
-
   const [user, dispatch] = useReducer(
     userActionReducer,
-    isRegistered
-      ? { state: UserState.REGISTERED }
-      : isConnected
-        ? { state: UserState.CONNECTED }
-        : { state: UserState.DISCONNECTED }
+    isConnected
+      ? isRegistered
+        ? { state: UserState.REGISTERED }
+        : { state: UserState.CONNECTED }
+      : { state: UserState.DISCONNECTED }
   );
 
   useEffect(() => {
     if (isConnected) {
-      if (isLoadingAllowance) {
-        dispatch({ kind: UserAction.LOADING });
-      }
-      if (isFetched && data !== undefined) {
-        if (data > config.minimalAllowance) {
-          dispatch({
-            kind: UserAction.ENOUGH_ALLOWANCE,
-            payload: { allowanceAmount: data },
-          });
-        } else {
-          dispatch({
-            kind: UserAction.NOT_ENOUGH_ALLOWANCE,
-            payload: { allowanceAmount: data },
-          });
+      dispatch({ kind: UserAction.CONNECT });
+      if (isRegistered) {
+        if (isLoadingAllowance) {
+          dispatch({ kind: UserAction.LOADING });
+        }
+        if (isFetched && data !== undefined) {
+          if (data > config.minimalAllowance) {
+            dispatch({
+              kind: UserAction.ENOUGH_ALLOWANCE,
+              payload: { allowanceAmount: data },
+            });
+          } else {
+            dispatch({
+              kind: UserAction.NOT_ENOUGH_ALLOWANCE,
+              payload: { allowanceAmount: data },
+            });
+          }
         }
       }
+    } else {
+      dispatch({ kind: UserAction.DISCONNECT });
     }
   }, [isLoadingAllowance, isFetched, data]);
 
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user: withUserInterface(user) }}>
+      {children}
+    </UserContext.Provider>
   );
 };
