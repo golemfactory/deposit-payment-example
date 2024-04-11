@@ -4,6 +4,7 @@ import { AllowanceSummary } from "./allowanceSummary";
 import { ApproveForm } from "./approveForm";
 import { RegisterSummary } from "./registerSummary";
 import { RegisterButton } from "./RegisterButton";
+import { useAccount } from "wagmi";
 
 const variants = {
   onTop: {
@@ -17,6 +18,8 @@ const variants = {
 
 export const Register = () => {
   const { user } = useUser();
+  const { address } = useAccount();
+  console.log("user", user.state);
   return (
     <motion.div
       style={{
@@ -26,8 +29,14 @@ export const Register = () => {
       variants={variants}
       transition={{ duration: 0.5 }}
     >
-      <RegisterButton isVisible={!user.isRegistered() && user.isConnected()} />
-      <RegisterSummary isVisible={user.isRegistered()} />
+      {user.isConnected() && address && (
+        <RegisterButton
+          isVisible={!user.isRegistered() && user.isConnected()}
+        />
+      )}
+      {user.isRegistered() && (
+        <RegisterSummary isVisible={user.isRegistered()} />
+      )}
     </motion.div>
   );
 };

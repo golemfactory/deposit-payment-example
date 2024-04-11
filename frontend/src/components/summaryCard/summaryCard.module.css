@@ -1,0 +1,7 @@
+.summaryCard {
+  background-color: #0000005b;
+  border-radius: 16px;
+  padding: 1rem;
+  font-size: 1.3rem;
+  min-width: 350px;
+}

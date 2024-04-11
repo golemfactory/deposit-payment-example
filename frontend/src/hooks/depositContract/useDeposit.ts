@@ -26,6 +26,7 @@ export function useCreateDeposit() {
           config.requestorWalletAddress[chainId],
           BigInt(amount * Math.pow(10, 18)),
           BigInt(fee * Math.pow(10, 18)),
+          BigInt(0),
           BigInt(validToTimestamp),
         ],
       });
@@ -57,7 +58,7 @@ export function useUserCurrentDeposit() {
   return useReadContract({
     address: config.depositContractAddress[useChainId()],
     abi: abi,
-    functionName: "getDeposit2",
+    functionName: "getDepositByNonce",
     args: [user.currentDeposit.nonce || BigInt(0), address],
   });
 }

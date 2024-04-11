@@ -3,18 +3,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useAllowance } from "hooks/GLM/useGLMApprove";
 import { formatEther } from "viem";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
+import { SummaryCard } from "./summaryCard/summaryCard";
 export const AllowanceSummary = ({ isVisible }: { isVisible: boolean }) => {
   const { data } = useAllowance();
   return (
-    <div
-      style={{
-        backgroundColor: "#0000005b",
-        borderRadius: "16px",
-        padding: "1rem",
-        fontSize: "1.3rem",
-        minWidth: "350px",
-      }}
-    >
+    <SummaryCard isVisible={isVisible}>
       <h3>
         <CheckCircleIcon
           className="h-8 inline"
@@ -29,6 +22,6 @@ export const AllowanceSummary = ({ isVisible }: { isVisible: boolean }) => {
         {formatEther(config.minimalAllowance)})
       </p>
       <p>Spent: x GLM </p>
-    </div>
+    </SummaryCard>
   );
 };

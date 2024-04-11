@@ -4,6 +4,7 @@ import { AllowanceSummary } from "./allowanceSummary";
 import { ApproveForm } from "./approveForm";
 import { CreateDepositForm } from "./createDepositForm";
 import { DepositSummary } from "./depositSummary";
+import { useAccount } from "wagmi";
 
 const variants = {
   onTop: {
@@ -18,6 +19,7 @@ const variants = {
 export const Deposit = () => {
   const { user } = useUser();
   console.log("Deposit rendered", user.hasDeposit());
+  const { address } = useAccount();
   return (
     <motion.div
       style={{
@@ -27,10 +29,13 @@ export const Deposit = () => {
       variants={variants}
       transition={{ duration: 0.5 }}
     >
-      <CreateDepositForm
-        isVisible={user.hasDepositDataLoaded() && !user.hasDeposit()}
-      />
-      <DepositSummary isVisible={user.hasDeposit()} />
+      {user.hasDepositDataLoaded() && address && (
+        <CreateDepositForm
+          isVisible={user.hasDepositDataLoaded() && !user.hasDeposit()}
+        />
+      )}
+
+      {user.hasDeposit() && <DepositSummary />}
     </motion.div>
   );
 };

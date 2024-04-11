@@ -7,6 +7,62 @@ export const abi = [
     type: "constructor",
   },
   {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: "uint256", name: "id", type: "uint256" },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+    ],
+    name: "DepositClosed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: "uint256", name: "id", type: "uint256" },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+    ],
+    name: "DepositCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: "uint256", name: "id", type: "uint256" },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+    ],
+    name: "DepositExtended",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: "uint256", name: "id", type: "uint256" },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+    ],
+    name: "DepositTerminated",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "GLM",
     outputs: [{ internalType: "contract IERC20", name: "", type: "address" }],
@@ -22,37 +78,36 @@ export const abi = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
+      { internalType: "uint64", name: "nonce", type: "uint64" },
+      { internalType: "address", name: "spender", type: "address" },
+      { internalType: "uint128", name: "amount", type: "uint128" },
+      { internalType: "uint128", name: "flatFeeAmount", type: "uint128" },
+      { internalType: "int64", name: "percentFee", type: "int64" },
+      { internalType: "uint64", name: "validToTimestamp", type: "uint64" },
     ],
-    name: "approve",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    name: "createDeposit",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "uint64", name: "nonce", type: "uint64" },
-      { internalType: "address", name: "spender", type: "address" },
+      { internalType: "uint256", name: "id", type: "uint256" },
+      { internalType: "address", name: "addr", type: "address" },
       { internalType: "uint128", name: "amount", type: "uint128" },
-      { internalType: "uint128", name: "feeAmount", type: "uint128" },
-      { internalType: "uint64", name: "validToTimestamp", type: "uint64" },
     ],
-    name: "createDeposit",
+    name: "depositSingleTransfer",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "id", type: "uint256" },
+      { internalType: "address", name: "addr", type: "address" },
+      { internalType: "uint128", name: "amount", type: "uint128" },
+    ],
+    name: "depositSingleTransferAndClose",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -92,8 +147,8 @@ export const abi = [
   {
     inputs: [
       { internalType: "uint64", name: "nonce", type: "uint64" },
-      { internalType: "uint128", name: "extraAmount", type: "uint128" },
-      { internalType: "uint128", name: "extraFee", type: "uint128" },
+      { internalType: "uint128", name: "additionalAmount", type: "uint128" },
+      { internalType: "uint128", name: "additionalFlatFee", type: "uint128" },
       { internalType: "uint64", name: "validToTimestamp", type: "uint64" },
     ],
     name: "extendDeposit",
@@ -142,7 +197,7 @@ export const abi = [
       { internalType: "uint64", name: "nonce", type: "uint64" },
       { internalType: "address", name: "funder", type: "address" },
     ],
-    name: "getDeposit2",
+    name: "getDepositByNonce",
     outputs: [
       {
         components: [
@@ -215,4 +270,4 @@ export const abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const;
+];

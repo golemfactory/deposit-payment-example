@@ -119,22 +119,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   //TODO : check if user is registered
   const [isRegistered, setIsRegistered] = useState(false);
 
-  useEffect(() => {
-    const currentDeposit = userData?.deposits.find(
-      (deposit) => deposit.isCurrent
-    );
-    if (!isUserLoading && userData?._id) {
-      setIsRegistered(true);
-    }
-    if (currentDeposit) {
-      console.log("currentDeposit", currentDeposit);
-      dispatch({ kind: UserAction.HAS_DEPOSIT, payload: { currentDeposit } });
-    } else {
-      dispatch({ kind: UserAction.HAS_NO_DEPOSIT });
-    }
-  }, [isUserLoading, userData]);
-
-  const { isFetched, isLoading: isLoadingAllowance, data } = useAllowance();
   const [user, dispatch] = useReducer(
     userActionReducer,
     isConnected
@@ -143,6 +127,27 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
         : { state: UserState.CONNECTED }
       : { state: UserState.DISCONNECTED }
   );
+
+  useEffect(() => {
+    const currentDeposit = (userData?.deposits || []).find(
+      (deposit) => deposit.isCurrent
+    );
+    if (!isUserLoading && userData?._id) {
+      console.log("userData", userData);
+      setIsRegistered(true);
+    }
+    if (currentDeposit) {
+      console.log("currentDeposit", currentDeposit);
+      dispatch({ kind: UserAction.HAS_DEPOSIT, payload: { currentDeposit } });
+    } else {
+      if (userData?.deposits) {
+        console.log("aaa");
+        dispatch({ kind: UserAction.HAS_NO_DEPOSIT });
+      }
+    }
+  }, [isUserLoading, userData]);
+
+  const { isFetched, isLoading: isLoadingAllowance, data } = useAllowance();
 
   useEffect(() => {
     if (isConnected) {
