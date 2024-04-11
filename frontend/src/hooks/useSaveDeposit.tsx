@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
+import { useState } from "react";
 
 async function saveDeposit({
   nonce,
@@ -34,8 +35,12 @@ export function useSaveDeposit(): {
     nonce: number;
   }) => void;
   result: boolean;
+  isSuccess: boolean;
+  isError: boolean;
 } {
   const { enqueueSnackbar } = useSnackbar();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const { mutate: saveDepositMutation } = useMutation<
     { result: boolean },
@@ -48,6 +53,7 @@ export function useSaveDeposit(): {
   >({
     mutationFn: saveDeposit,
     onSuccess: (data) => {
+      setIsSuccess(true);
       // setTokens(data);
       if (data.result) {
         enqueueSnackbar(<h2>Oh great! Deposit saved &#128525; &#128526;</h2>, {
@@ -66,6 +72,7 @@ export function useSaveDeposit(): {
       }
     },
     onError: (error) => {
+      setIsError(true);
       // setVerificationError(error);
     },
   });
@@ -73,5 +80,7 @@ export function useSaveDeposit(): {
   return {
     saveDeposit: saveDepositMutation,
     result: true,
+    isSuccess,
+    isError,
   };
 }

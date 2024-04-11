@@ -10,3 +10,9 @@ export const loginWithCrypto = fastifyPlugin<{
   fastify.register(connectRoutes, opts);
   done();
 });
+
+declare module "fastify" {
+  interface FastifyInstance {
+    authenticate: () => void;
+  }
+}

@@ -38,6 +38,7 @@ export const ConnectWallet = () => {
 
         button.style.borderRadius = "16px";
         button.style.backgroundColor = "#0000005b";
+        button.style.color = "#ffffffc1";
         button.style.padding = "0.5rem 1rem";
       } catch (e) {
         console.log("Button not found");

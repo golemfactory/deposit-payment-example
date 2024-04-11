@@ -5,8 +5,8 @@ import { loginWithCrypto } from "loginWithCrypto/fastify";
 import { container } from "./di.js";
 import { paymentService } from "./services/payment/routes.js";
 import { fileService } from "./services/file/routes.js";
+import { userService } from "./services/user/routes.js";
 import { FastifySSEPlugin } from "fastify-sse-v2";
-
 import fastifyMultipart from "@fastify/multipart";
 
 export const startupFastifyServer = async (): Promise<FastifyInstance> => {
@@ -28,6 +28,7 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
 
   fastify.register(paymentService);
   fastify.register(fileService);
+  fastify.register(userService);
 
   fastify.listen(
     { port: Number(process.env.PORT), host: process.env.HOST },
@@ -41,3 +42,14 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
 
   return fastify;
 };
+
+declare module "fastify" {
+  interface FastifyInstance {
+    authenticate: () => void;
+  }
+  interface FastifyRequest {
+    user: {
+      _id: string;
+    };
+  }
+}

@@ -1,11 +1,12 @@
 import { config } from "config";
 import { useAllowance } from "hooks/GLM/useGLMApprove";
+import { useUserData } from "hooks/userUserData";
 import {
   PropsWithChildren,
   createContext,
-  useContext,
   useEffect,
   useReducer,
+  useState,
 } from "react";
 import { match } from "ts-pattern";
 import { ReducerArgs } from "types/reducerArgs";
@@ -16,6 +17,11 @@ import { useAccount } from "wagmi";
 type UserProps = {
   state: UserState;
   allowanceAmount?: bigint;
+  currentDeposit?: {
+    isCurrent: boolean;
+    isValid: boolean;
+    nonce: bigint;
+  };
 };
 
 interface UserInterface {
@@ -24,6 +30,8 @@ interface UserInterface {
   isRegistered(): boolean;
   hasKnownAllowance(): boolean;
   hasEnoughAllowance(): boolean;
+  hasDepositDataLoaded(): boolean;
+  hasDeposit(): boolean;
 }
 
 const withUserInterface = function (user: UserProps) {
@@ -47,6 +55,12 @@ const withUserInterface = function (user: UserProps) {
         user.allowanceAmount > config.minimalAllowance
       );
     },
+    hasDepositDataLoaded() {
+      return this.isAtLeastAt(UserState.HAS_DEPOSIT);
+    },
+    hasDeposit() {
+      return !!user.currentDeposit;
+    },
   };
 };
 
@@ -64,11 +78,18 @@ type Payload = {
   [UserAction.NOT_ENOUGH_ALLOWANCE]: { allowanceAmount: bigint };
   [UserAction.LOADING]: never;
   [UserAction.APPROVE]: string;
+  [UserAction.HAS_DEPOSIT]: {
+    currentDeposit: {
+      isCurrent: boolean;
+      isValid: boolean;
+      nonce: number;
+    };
+  };
+  [UserAction.HAS_NO_DEPOSIT]: never;
 };
 
 const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
   const { kind, payload = {} } = action;
-
   const state = match(kind)
     .with(UserAction.CONNECT, () => UserState.CONNECTED)
     .with(UserAction.DISCONNECT, () => UserState.DISCONNECTED)
@@ -76,19 +97,43 @@ const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
     .with(UserAction.ENOUGH_ALLOWANCE, () => UserState.GRANTED)
     .with(UserAction.NOT_ENOUGH_ALLOWANCE, () => UserState.NOT_GRANTED)
     .with(UserAction.LOADING, () => UserState.LOADING)
+    .with(UserAction.HAS_DEPOSIT, () => UserState.HAS_DEPOSIT)
+    .with(UserAction.HAS_NO_DEPOSIT, () => UserState.HAS_NO_DEPOSIT)
     .otherwise(() => user.state);
 
-  return {
+  const newUser = {
     ...user,
     ...payload,
-    state,
+    state:
+      UserStateOrderValue[state] > UserStateOrderValue[user.state]
+        ? state
+        : user.state,
   };
+
+  return newUser;
 };
 
 export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { isConnected } = useAccount();
+  const { userData, isLoading: isUserLoading } = useUserData();
   //TODO : check if user is registered
-  const isRegistered = !!localStorage.getItem("accessToken");
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  useEffect(() => {
+    const currentDeposit = userData?.deposits.find(
+      (deposit) => deposit.isCurrent
+    );
+    if (!isUserLoading && userData?._id) {
+      setIsRegistered(true);
+    }
+    if (currentDeposit) {
+      console.log("currentDeposit", currentDeposit);
+      dispatch({ kind: UserAction.HAS_DEPOSIT, payload: { currentDeposit } });
+    } else {
+      dispatch({ kind: UserAction.HAS_NO_DEPOSIT });
+    }
+  }, [isUserLoading, userData]);
+
   const { isFetched, isLoading: isLoadingAllowance, data } = useAllowance();
   const [user, dispatch] = useReducer(
     userActionReducer,
@@ -103,9 +148,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     if (isConnected) {
       dispatch({ kind: UserAction.CONNECT });
       if (isRegistered) {
-        if (isLoadingAllowance) {
-          dispatch({ kind: UserAction.LOADING });
-        }
         if (isFetched && data !== undefined) {
           if (data > config.minimalAllowance) {
             dispatch({
@@ -123,7 +165,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     } else {
       dispatch({ kind: UserAction.DISCONNECT });
     }
-  }, [isLoadingAllowance, isFetched, data]);
+  }, [isFetched, data, isRegistered]);
 
   return (
     <UserContext.Provider value={{ user: withUserInterface(user) }}>

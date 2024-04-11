@@ -1,4 +1,4 @@
-import { IUserService, IUser } from "./types.js";
+import { IUserService, IUser, Deposit } from "./types.js";
 import { userModel } from "./model.js";
 import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
@@ -14,20 +14,21 @@ export const userService: IUserService = {
     if (user !== null) {
       return user;
     }
-    console.log("no user");
-    const newu = await new userModel(
+    return await new userModel(
       {
         walletAddress,
         nonce: randomNonce(),
-        id: uuidv4(),
         deposits: [],
       },
       {
         _id: true,
       }
     ).save();
-    console.log("new user", newu);
-    return newu;
+  },
+  //@ts-ignore
+  findById: async (userId: string) => {
+    console.log("find by id", userId);
+    return userModel.findOne({ _id: userId });
   },
   regenerateNonce: async (userId: string) => {
     const nonce = randomNonce();
@@ -41,32 +42,21 @@ export const userService: IUserService = {
     return userModel.deleteOne({ id: userId });
   },
 
-  addDeposit: async ({
-    userId,
-    isValid,
-    id,
-  }: {
-    userId: string;
-    isValid: boolean;
-    id: string;
-  }) => {
-    userModel.updateOne(
-      { id: userId },
+  addDeposit: async (userId: string, deposit: Deposit) => {
+    await userModel.updateOne(
+      { _id: userId },
       {
         $set: {
           "deposits.$[].isCurrent": false,
         },
       }
     );
-    userModel.updateOne(
-      { id: userId },
+    const user = await userModel.findOne({ _id: userId });
+    const up = await userModel.updateOne(
+      { _id: userId },
       {
         $push: {
-          deposits: {
-            isCurrent: true,
-            id,
-            isValid,
-          },
+          deposits: deposit,
         },
       }
     );

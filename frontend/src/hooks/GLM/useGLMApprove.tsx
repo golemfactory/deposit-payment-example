@@ -9,10 +9,9 @@ import {
 import { abi } from "./abi";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
-import { assertBigInt, assertOptionalBigInt } from "types/assertBigInt";
-import { TransactionExecutionError, parseEther } from "viem";
+import { assertOptionalBigInt } from "types/assertBigInt";
+import { TransactionExecutionError } from "viem";
 import { useEffect, useState } from "react";
-import { add, is } from "ramda";
 
 export function useAllowance(): {
   isFetched: boolean;
@@ -41,6 +40,7 @@ export function useAllowance(): {
 
   return { isFetched, data, isLoading: isFetching || isLoading };
 }
+4;
 
 export function useApprove() {
   const {

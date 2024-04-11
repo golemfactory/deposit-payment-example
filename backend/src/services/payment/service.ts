@@ -2,6 +2,8 @@ import { createPublicClient, http } from "viem";
 import { holesky } from "viem/chains";
 import { abi } from "./abi.js";
 import BigDecimal from "js-big-decimal";
+import { Deposit } from "../user/types.js";
+import { container } from "../../di.js";
 
 export const publicClient = createPublicClient({
   chain: holesky,
@@ -13,34 +15,40 @@ export const paymentService = (
   serviceFee: string
 ) => {
   return {
-    saveDeposit: async ({
-      nonce,
-      funder,
-    }: {
-      nonce: number;
-      funder: `0x${string}`;
-    }) => {
+    saveDeposit: async (userId: string, nonce: string) => {
+      const userService = container.cradle.userService;
+      const user = await userService.findById(userId);
+      if (!user) {
+        throw new Error(`User not found with id ${userId}`);
+      }
+
       const data = await publicClient.readContract({
         address: contractAddress,
         abi: abi,
         functionName: "getDeposit2",
-        args: [BigInt(nonce), funder],
+        args: [BigInt(nonce), user.walletAddress],
       });
 
-      const { amount, feeAmount, id } = data;
-
-      const feeRation = Number(BigDecimal.default.divide(feeAmount, amount));
-
-      //TODO : save to db
-      if (feeRation < Number(serviceFee)) {
-        return {
-          result: false,
-        };
-      } else {
-        return {
-          result: true,
-        };
+      if (!data) {
+        throw new Error(
+          `Deposit not found with nonce ${nonce} and funder ${user.walletAddress}`
+        );
       }
+
+      const { amount, feeAmount } = data;
+
+      const feeRatio = Number(BigDecimal.default.divide(feeAmount, amount));
+      const documentDeposit = {
+        nonce: BigInt(nonce),
+        isCurrent: true,
+        isValid: true,
+      };
+
+      if (feeRatio < Number(serviceFee)) {
+        documentDeposit.isValid = false;
+      }
+      console.log("going to add deposit");
+      userService.addDeposit(userId, documentDeposit);
     },
   };
 };

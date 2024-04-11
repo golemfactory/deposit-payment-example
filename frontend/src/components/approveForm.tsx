@@ -14,12 +14,7 @@ export const ApproveForm = ({ isVisible }: { isVisible: boolean }) => {
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 0.4 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Card
             style={{
               borderColor: "#ffffff14",

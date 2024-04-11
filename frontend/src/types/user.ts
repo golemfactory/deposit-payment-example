@@ -40,3 +40,20 @@ export const UserStateOrderValue = {
   [UserState.HAS_DEPOSIT]: 5,
   [UserState.HAS_NO_DEPOSIT]: 5,
 };
+
+export type Deposit = {
+  isCurrent: boolean;
+  id: string;
+  isValid: boolean;
+  nonce: number;
+};
+
+export type UserData = {
+  _id: string;
+  nonce: number;
+  deposits: {
+    isCurrent: boolean;
+    isValid: boolean;
+    nonce: number;
+  }[];
+};

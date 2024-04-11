@@ -7,6 +7,7 @@ import { Home } from "components/home";
 import { UserProvider } from "components/providers/userProvider";
 
 function App() {
+  console.log("APP rendering");
   return (
     //@ts-ignore
     <div data-theme="golem" className="font-kanit">

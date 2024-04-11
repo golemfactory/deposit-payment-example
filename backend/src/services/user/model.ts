@@ -4,11 +4,6 @@ import { IUser } from "./types.js";
 
 const schema = new mongoose.Schema<IUser>(
   {
-    id: {
-      type: String,
-      required: true,
-      index: { unique: true },
-    },
     nonce: {
       type: Number,
       required: true,
@@ -20,16 +15,36 @@ const schema = new mongoose.Schema<IUser>(
     },
     deposits: [
       {
+        id: {
+          type: BigInt,
+          required: true,
+        },
+        spender: {
+          type: String,
+          required: true,
+        },
         amount: {
-          type: Number,
+          type: BigInt,
           required: true,
         },
         feeAmount: {
-          type: Number,
+          type: BigInt,
           required: true,
         },
         isCurrent: {
           type: Boolean,
+          required: true,
+        },
+        nonce: {
+          type: BigInt,
+          required: true,
+        },
+        isValid: {
+          type: Boolean,
+          required: true,
+        },
+        validTo: {
+          type: BigInt,
           required: true,
         },
       },

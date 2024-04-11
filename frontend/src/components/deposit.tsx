@@ -2,36 +2,35 @@ import { motion } from "framer-motion";
 import { useUser } from "hooks/useUser";
 import { AllowanceSummary } from "./allowanceSummary";
 import { ApproveForm } from "./approveForm";
+import { CreateDepositForm } from "./createDepositForm";
+import { DepositSummary } from "./depositSummary";
 
 const variants = {
   onTop: {
-    top: "205px",
+    top: "355px",
     left: "30px",
-    minWidth: "350px",
   },
   onCenter: {
     top: "30vh",
   },
 };
 
-export const Allowance = () => {
+export const Deposit = () => {
   const { user } = useUser();
-
+  console.log("Deposit rendered", user.hasDeposit());
   return (
     <motion.div
       style={{
-        position: "fixed",
+        position: "absolute",
       }}
-      animate={user.hasEnoughAllowance() ? "onTop" : "onCenter"}
+      animate={user.hasDeposit() ? "onTop" : "onCenter"}
       variants={variants}
       transition={{ duration: 0.5 }}
     >
-      <ApproveForm
-        isVisible={user.hasKnownAllowance() && !user.hasEnoughAllowance()}
+      <CreateDepositForm
+        isVisible={user.hasDepositDataLoaded() && !user.hasDeposit()}
       />
-      <AllowanceSummary
-        isVisible={user.hasKnownAllowance() && user.hasEnoughAllowance()}
-      />
+      <DepositSummary isVisible={user.hasDeposit()} />
     </motion.div>
   );
 };

@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import { DeleteResult } from "mongodb";
 
 type UserIdType = string;
@@ -5,15 +6,17 @@ type UserIdType = string;
 type EthereumAddressType = `0x${string}`;
 type NonceType = number;
 
+export type Deposit = {
+  isCurrent: boolean;
+  isValid: boolean;
+  nonce: bigint;
+};
+
 export interface IUser {
-  id: UserIdType;
+  _id: UserIdType;
   nonce: NonceType;
   walletAddress: EthereumAddressType;
-  deposits: Array<{
-    isCurrent: boolean;
-    id: string;
-    isValid: boolean;
-  }>;
+  deposits: Deposit[];
 }
 
 export interface IUserService {
@@ -24,13 +27,5 @@ export interface IUserService {
   ): Promise<IUser | null>;
   findById(userId: UserIdType): Promise<IUser | null>;
   deleteUser(userId: UserIdType): Promise<DeleteResult>;
-  addDeposit({
-    userId,
-    isValid,
-    id,
-  }: {
-    userId: UserIdType;
-    isValid: boolean;
-    id: string;
-  }): Promise<void>;
+  addDeposit(userId: string, deposit: Deposit): Promise<void>;
 }
