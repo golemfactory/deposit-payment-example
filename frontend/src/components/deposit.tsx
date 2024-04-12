@@ -56,10 +56,12 @@ export const Deposit = ({
           <CreateDepositForm
             isVisible={user.hasDepositDataLoaded() && !user.hasDeposit()}
           />
-          <ExtendDepositForm
-            isVisible={isExtendFormVisible}
-            hide={hideExtendForm}
-          />
+          {user.hasDeposit() && (
+            <ExtendDepositForm
+              isVisible={isExtendFormVisible}
+              hide={hideExtendForm}
+            />
+          )}
         </>
       )}
 
