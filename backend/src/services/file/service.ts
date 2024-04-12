@@ -19,7 +19,8 @@ type WorkerType = {
   queue: any[];
   addFileToQueue: (fileId: string) => void;
 };
-
+//@ts-ignore
+let executor;
 class Worker {
   constructor(public context: WorkContext & { allocation: Allocation }) {}
   private stateSubject: BehaviorSubject<string> = new BehaviorSubject(
@@ -107,7 +108,6 @@ export const fileService = (
         //@ts-ignore
         this.workers[userId] = new Worker(null);
 
-        let executor;
         const isMockMode = container.cradle.mode === "mock";
         if (isMockMode) {
           await sleep(1000);
@@ -192,6 +192,8 @@ export const fileService = (
         .run(`cat /golem/output/temp/metadata.json`)
         .end();
 
+      //@ts-ignore
+      executor.shutdown();
       return JSON.parse((results[3].stdout || "null") as string);
     },
     async processFile(fileName: string, userId: string, depositId: bigint) {
