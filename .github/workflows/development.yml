@@ -10,9 +10,8 @@ jobs:
   build:
     runs-on: deposit-dev
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: "recursive"
-
       - name: Where am I
         run: pwd
+
+      - name: Who am I
+        run: whoami
