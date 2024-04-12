@@ -1,6 +1,9 @@
 #Location: .github/workflows/custom_config.yml
 
 name: Build and push containers to Github Container Registry and apply rolling update
+defaults:
+  run:
+    shell: bash -ieo pipefail {0}
 on:
   push:
     branches:
