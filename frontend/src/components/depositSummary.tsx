@@ -3,8 +3,15 @@ import { formatEther } from "viem";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
 import { Button, Input } from "react-daisyui";
-export const DepositSummary = () => {
+import dayjs from "dayjs";
+import { snapshot } from "viem/actions";
+export const DepositSummary = ({
+  showExtendDeposit,
+}: {
+  showExtendDeposit: () => void;
+}) => {
   const { data } = useUserCurrentDeposit();
+
   console.log("data", data);
   return (
     <motion.div
@@ -23,43 +30,51 @@ export const DepositSummary = () => {
     >
       <h3>
         <CheckCircleIcon
-          className="h-8 inline"
+          className="h-8 inline mb-1 mr-2"
           style={{
             color: "#00ff003c",
           }}
         />{" "}
-        <span
-          style={{
-            color: "#0C14D4f3",
-          }}
-        >
-          Deposit Summary
-        </span>
+        <span>Deposit created</span>
       </h3>
       <br></br>
       <div className="text-sm flex flex-col justify-between">
         <div>
-          <span>Amount: </span>
-          //@ts-ignore
-          <span>{formatEther(data?.amount || 0n)}</span>
+          <div>
+            <span className="text-golemblue-transparent">Amount: </span>
+            <span>
+              {formatEther((data as { amount: bigint })?.amount || 0n)}
+            </span>
+          </div>
+          <div>
+            <span className="text-golemblue-transparent">Fee: </span>
+            <span>
+              {formatEther((data as { feeAmount: bigint })?.feeAmount || 0n)}
+            </span>
+          </div>
+          <div>
+            <span className="text-golemblue-transparent">Valid to: </span>
+            <span>
+              {dayjs(
+                Number((data as { validTo: bigint })?.validTo) * 1000
+              ).toString()}
+            </span>
+          </div>
         </div>
         <div className="mt-4">
           <Button
             size="sm"
-            color="primary"
-            className="mr-2 px-6"
+            style={{
+              backgroundColor: "#181ea9a6",
+            }}
+            className="mr-2 px-6 bg-golemblue-transparent border-none"
             onClick={() => {
               console.log("Approve");
+              showExtendDeposit();
             }}
           >
-            top up
+            Extend
           </Button>
-          <Input
-            size="sm"
-            placeholder="Enter amount"
-            className="w-40"
-            type="number"
-          ></Input>
         </div>
       </div>
     </motion.div>

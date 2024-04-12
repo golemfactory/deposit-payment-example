@@ -19,7 +19,6 @@ const variants = {
 export const Register = () => {
   const { user } = useUser();
   const { address } = useAccount();
-  console.log("user", user.state);
   return (
     <motion.div
       style={{

@@ -25,7 +25,7 @@ export function useAllowance(): {
     address: config.GLMContractAddress[chainId],
     abi: abi,
     functionName: "allowance",
-    args: [address, config.requestorWalletAddress[chainId]],
+    args: [address, config.depositContractAddress[chainId]],
   });
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export function useApprove() {
           address: config.GLMContractAddress[chainId],
           abi: abi,
           functionName: "approve",
-          args: [config.requestorWalletAddress[chainId], balance.data?.value],
+          args: [config.depositContractAddress[chainId], balance.data?.value],
         });
         setTxHash(hash);
       } catch (e) {

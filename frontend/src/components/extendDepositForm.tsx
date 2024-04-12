@@ -1,21 +1,31 @@
 import dayjs from "dayjs";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCreateDeposit } from "hooks/depositContract/useDeposit";
-import { useSaveDeposit } from "hooks/useSaveDeposit";
-
-import { useEffect, useState } from "react";
+import {
+  useExtendDeposit,
+  useUserCurrentDeposit,
+} from "hooks/depositContract/useDeposit";
+import { useUser } from "hooks/useUser";
+import { useEffect } from "react";
 import { Button, Card, Input, Loading } from "react-daisyui";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
-
-export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
+import { XMarkIcon } from "@heroicons/react/16/solid";
+export const ExtendDepositForm = ({
+  isVisible,
+  hide,
+}: {
+  isVisible: boolean;
+  hide: () => void;
+}) => {
   const {
     data,
-    createDeposit,
-    setFee,
-    setAmount,
+    extendDeposit,
+    setAdditionalAmount,
+    setNewValidToTimestamp,
+    setAdditionalFee,
+    setNonce,
     isPending,
-    setValidToTimestamp,
-  } = useCreateDeposit();
+    newValidToTimeStamp,
+  } = useExtendDeposit();
 
   const {
     isSuccess: isSuccessTransaction,
@@ -25,38 +35,33 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
     hash: data,
   });
 
-  const {
-    saveDeposit,
-    isSuccess: isSuccessSaveDeposit,
-    isError: isErrorSaveDeposit,
-  } = useSaveDeposit();
+  const { user } = useUser();
+
+  const { data: currentDeposit } = useUserCurrentDeposit();
+
+  useEffect(() => {
+    if (user.currentDeposit) {
+      setNonce(user.currentDeposit?.nonce);
+    }
+  }, [isSuccessTransaction]);
+
+  useEffect(() => {
+    if (currentDeposit) {
+      console.log("currentDeposit", currentDeposit);
+      // @ts-ignore
+      setNewValidToTimestamp(currentDeposit.validTo);
+    }
+  }, [currentDeposit]);
+
+  useEffect(() => {
+    if (isSuccessTransaction) {
+      hide();
+    }
+  }, [isSuccessTransaction]);
   const { address } = useAccount();
-  const [nonce, setNonce] = useState(0);
   if (!address) {
     throw new Error("Address not found");
   }
-  useEffect(() => {
-    if (isSuccessTransaction) {
-      setTimeout(() => {
-        saveDeposit({
-          nonce,
-          funder: address,
-        });
-      }, 1000);
-    }
-  }, [isSuccessTransaction, nonce]);
-
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  useEffect(() => {
-    if (isPending) {
-      setIsProcessing(true);
-    }
-
-    if (isErrorSaveDeposit || isSuccessSaveDeposit) {
-      setIsProcessing(false);
-    }
-  }, [isPending, isErrorSaveDeposit, isSuccessSaveDeposit]);
 
   return (
     <AnimatePresence>
@@ -71,27 +76,33 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
               borderColor: "#ffffff14",
               fontFamily: "Kanit-Light",
               backgroundColor: "#0000005b",
-              scale: "1",
+              scale: "1.2",
             }}
           >
             <Card.Body>
-              <Card.Title tag="h2">Deposit needed</Card.Title>
-              <Card.Title tag="h4"></Card.Title>
+              <Card.Title tag="h2">
+                <div className="flex flex-row justify-between w-full">
+                  <div>Extend deposit</div>
+                  <XMarkIcon
+                    onClick={() => {
+                      hide();
+                    }}
+                    className="cursor-pointer w-8 h-8 text-white"
+                  />
+                </div>
+              </Card.Title>
+
               <Card.Body>
                 <div className="w-[40vw] mb-4">
-                  In order to pay for the service deposit in GLMs is needed. We
-                  intentionally render here form with fee and valid to timestamp
-                  for idea presentation purposes (try to set fee smaller than
-                  10% of amount) In real world scenario both fee and valid to
-                  timestamp should be calculated by the backend.
+                  Deposit is extendable at any time.
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <Input
                     className="inline"
-                    placeholder="Amount"
+                    placeholder="Additional amount"
                     bordered={true}
                     onChange={(e) => {
-                      setAmount(Number(e.target.value));
+                      setAdditionalAmount(Number(e.target.value));
                     }}
                     style={{
                       color: "gray",
@@ -99,9 +110,9 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
                   />
                   <Input
                     className="inline"
-                    placeholder="Fee"
+                    placeholder="Additional Fee"
                     onChange={(e) => {
-                      setFee(Number(e.target.value));
+                      setAdditionalFee(Number(e.target.value));
                     }}
                     style={{
                       color: "gray",
@@ -110,8 +121,12 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
                   <Input
                     type="date"
                     placeholder="Valid to timestamp"
+                    //@ts-ignore
+                    value={dayjs(Number(newValidToTimeStamp) * 1000).format(
+                      "YYYY-MM-DD"
+                    )}
                     onChange={(e) => {
-                      setValidToTimestamp(dayjs(e.target.value).unix());
+                      setNewValidToTimestamp(dayjs(e.target.value).unix());
                     }}
                     style={{
                       color: "gray",
@@ -123,19 +138,17 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
               <Card.Actions className="justify-end">
                 <Button
                   onClick={async () => {
-                    const { nonce } = await createDeposit();
-                    console.log("nonce", nonce);
-                    setNonce(nonce);
+                    await extendDeposit();
                   }}
-                  className="bg-primary !text-white border-none text-lg font-light "
+                  className=" !text-white border-none text-lg font-light "
                   style={{
                     backgroundColor: "#181ea9a6",
                   }}
                 >
-                  {isProcessing ? (
+                  {isPending || isLoadingTransaction ? (
                     <Loading variant="infinity" />
                   ) : (
-                    "Make deposit"
+                    "Extend deposit"
                   )}
                 </Button>{" "}
               </Card.Actions>

@@ -20,7 +20,7 @@ export const Allowance = () => {
   return (
     <motion.div
       style={{
-        position: "fixed",
+        position: "absolute",
       }}
       animate={user.hasEnoughAllowance() ? "onTop" : "onCenter"}
       variants={variants}

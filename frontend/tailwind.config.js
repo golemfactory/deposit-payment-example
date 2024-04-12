@@ -11,6 +11,7 @@ module.exports = {
     },
     colors: {
       "golemblue": "#0C14D4",
+      "golemblue-transparent": "#181ea9a6",
       "primary": "#181EA9",
       "neutral-grey-300": "#404B63",
       "neutral-grey-200": "#A2A3B9",

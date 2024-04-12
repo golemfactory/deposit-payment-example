@@ -6,8 +6,10 @@ import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { useUser } from "hooks/useUser";
 import { useAccount } from "wagmi";
+import { formatEther, parseEther } from "viem";
 export function useCreateDeposit() {
-  const { data, isError, isSuccess, writeContractAsync } = useWriteContract();
+  const { data, isError, isSuccess, isPending, isIdle, writeContractAsync } =
+    useWriteContract();
   const chainId = useChainId();
   const [fee, setFee] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -16,6 +18,7 @@ export function useCreateDeposit() {
   return {
     createDeposit: async () => {
       const nonce = Math.floor(Math.random() * 1000000);
+
       await writeContractAsync({
         address: config.depositContractAddress[chainId],
         abi: abi,
@@ -39,6 +42,8 @@ export function useCreateDeposit() {
     isError,
     isSuccess,
     setFee,
+    isPending,
+    isIdle,
     setValidToTimestamp,
     setAmount,
   };
@@ -61,4 +66,38 @@ export function useUserCurrentDeposit() {
     functionName: "getDepositByNonce",
     args: [user.currentDeposit.nonce || BigInt(0), address],
   });
+}
+
+export function useExtendDeposit() {
+  const { data, isError, isSuccess, writeContractAsync, isPending } =
+    useWriteContract();
+  const chainId = useChainId();
+  const [validToTimestamp, setNewValidToTimestamp] = useState(0);
+  const [additionalAmount, setAdditionalAmount] = useState(0);
+  const [additionalFee, setAdditionalFee] = useState(0);
+  const [nonce, setNonce] = useState(0n);
+  return {
+    extendDeposit: async () => {
+      await writeContractAsync({
+        address: config.depositContractAddress[chainId],
+        abi: abi,
+        functionName: "extendDeposit",
+        args: [
+          BigInt(nonce),
+          parseEther(additionalAmount.toString()),
+          parseEther(additionalFee.toString()),
+          BigInt(validToTimestamp),
+        ],
+      });
+    },
+    data,
+    isError,
+    isSuccess,
+    isPending,
+    newValidToTimeStamp: validToTimestamp,
+    setNewValidToTimestamp,
+    setNonce,
+    setAdditionalAmount,
+    setAdditionalFee,
+  };
 }

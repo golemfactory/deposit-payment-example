@@ -10,18 +10,18 @@ export const AllowanceSummary = ({ isVisible }: { isVisible: boolean }) => {
     <SummaryCard isVisible={isVisible}>
       <h3>
         <CheckCircleIcon
-          className="h-8 inline"
+          className="h-8 inline mr-2 mb-1"
           style={{
             color: "#00ff003c",
           }}
         />{" "}
-        Allowance Summary
+        Allowance Given
       </h3>
-      <p>
+      <p className="text-sm flex flex-col justify-between mt-4">
         Left: {Number(formatEther(data || 0n)).toFixed(3)} GLM (minial :{" "}
         {formatEther(config.minimalAllowance)})
       </p>
-      <p>Spent: x GLM </p>
+      <p className="text-sm flex flex-col justify-between">Spent: x GLM </p>
     </SummaryCard>
   );
 };

@@ -136,16 +136,16 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
       console.log("userData", userData);
       setIsRegistered(true);
     }
-    if (currentDeposit) {
-      console.log("currentDeposit", currentDeposit);
-      dispatch({ kind: UserAction.HAS_DEPOSIT, payload: { currentDeposit } });
-    } else {
-      if (userData?.deposits) {
-        console.log("aaa");
-        dispatch({ kind: UserAction.HAS_NO_DEPOSIT });
+    if (user.allowanceAmount) {
+      if (currentDeposit) {
+        dispatch({ kind: UserAction.HAS_DEPOSIT, payload: { currentDeposit } });
+      } else {
+        if (userData?.deposits) {
+          dispatch({ kind: UserAction.HAS_NO_DEPOSIT });
+        }
       }
     }
-  }, [isUserLoading, userData]);
+  }, [isUserLoading, userData, user.allowanceAmount]);
 
   const { isFetched, isLoading: isLoadingAllowance, data } = useAllowance();
 

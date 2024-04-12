@@ -24,7 +24,7 @@ export const RegisterSummary = ({ isVisible }: { isVisible: boolean }) => {
         >
           <div className="inline">
             <CheckCircleIcon
-              className="h-8 inline"
+              className="h-8 inline mb-1 mr-2"
               style={{
                 color: "#00ff003c",
               }}

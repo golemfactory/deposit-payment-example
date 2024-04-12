@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useProcessFile } from "hooks/useUploadFile";
 import { Button } from "react-daisyui";
-import { RegisterButton } from "./components/RegisterButton";
+
 export const FileUploader = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const { upload } = useProcessFile();
@@ -31,7 +31,7 @@ export const FileUploader = () => {
   };
 
   return (
-    <div>
+    <div className="w-screen flex justify-center absolute top-[30vh]">
       <input
         type="file"
         onChange={handleFileChange}
@@ -42,7 +42,10 @@ export const FileUploader = () => {
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className="p-4 border-dashed border-2 border-gray-300 rounded-lg"
+        className=" p-20  border-dashed border-2 border-golemblue-transparent rounded-lg"
+        style={{
+          backgroundColor: "#ffffff14",
+        }}
         // style={{
         //   border: "2px dashed #aaa",
         //   padding: "20px",
@@ -56,7 +59,10 @@ export const FileUploader = () => {
           onClick={() => {
             fileInputRef.current?.click();
           }}
-          color="primary"
+          className="ml-4 bg-golemblue-transparent border-none text-white"
+          style={{
+            backgroundColor: "#181ea9a6",
+          }}
         >
           Click to Upload
         </Button>

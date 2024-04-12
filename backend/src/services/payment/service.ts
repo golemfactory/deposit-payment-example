@@ -25,16 +25,18 @@ export const paymentService = (
       const data = await publicClient.readContract({
         address: contractAddress,
         abi: abi,
-        functionName: "getDeposit2",
+        functionName: "getDepositByNonce",
         args: [BigInt(nonce), user.walletAddress],
       });
 
+      console.log("data", data);
+      console.log("nonce", nonce);
       if (!data) {
         throw new Error(
           `Deposit not found with nonce ${nonce} and funder ${user.walletAddress}`
         );
       }
-
+      // @ts-ignore
       const { amount, feeAmount } = data;
 
       const feeRatio = Number(BigDecimal.default.divide(feeAmount, amount));

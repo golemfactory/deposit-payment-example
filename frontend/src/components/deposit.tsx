@@ -5,6 +5,8 @@ import { ApproveForm } from "./approveForm";
 import { CreateDepositForm } from "./createDepositForm";
 import { DepositSummary } from "./depositSummary";
 import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
+import { ExtendDepositForm } from "./extendDepositForm";
 
 const variants = {
   onTop: {
@@ -13,29 +15,57 @@ const variants = {
   },
   onCenter: {
     top: "30vh",
+    left: "30vw",
   },
 };
 
-export const Deposit = () => {
+export const Deposit = ({
+  isExtendFormVisible,
+  showExtendForm,
+  hideExtendForm,
+}: {
+  isExtendFormVisible: boolean;
+  showExtendForm: () => void;
+  hideExtendForm: () => void;
+}) => {
   const { user } = useUser();
-  console.log("Deposit rendered", user.hasDeposit());
   const { address } = useAccount();
+
+  const [position, setPosition] = useState("onCenter");
+
+  useEffect(() => {
+    if (user.hasDeposit()) {
+      setPosition("onTop");
+    }
+    if (isExtendFormVisible) {
+      console.log("showExtendDepositForm");
+      setPosition("onCenter");
+    }
+  }, [user.hasDeposit(), isExtendFormVisible]);
   return (
     <motion.div
       style={{
         position: "absolute",
       }}
-      animate={user.hasDeposit() ? "onTop" : "onCenter"}
+      animate={position}
       variants={variants}
       transition={{ duration: 0.5 }}
     >
       {user.hasDepositDataLoaded() && address && (
-        <CreateDepositForm
-          isVisible={user.hasDepositDataLoaded() && !user.hasDeposit()}
-        />
+        <>
+          <CreateDepositForm
+            isVisible={user.hasDepositDataLoaded() && !user.hasDeposit()}
+          />
+          <ExtendDepositForm
+            isVisible={isExtendFormVisible}
+            hide={hideExtendForm}
+          />
+        </>
       )}
 
-      {user.hasDeposit() && <DepositSummary />}
+      {user.hasDeposit() && !isExtendFormVisible && (
+        <DepositSummary showExtendDeposit={showExtendForm} />
+      )}
     </motion.div>
   );
 };
