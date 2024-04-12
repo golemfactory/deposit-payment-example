@@ -26,3 +26,8 @@ jobs:
         run: |
           cd /home/ubuntu/golem/deposit-payment-example
           /home/ubuntu/.nvm/versions/node/v21.7.3/bin/pnpm install
+
+      - name: build
+        run: |
+          cd /home/ubuntu/golem/deposit-payment-example
+          /home/ubuntu/.nvm/versions/node/v21.7.3/bin/pnpm run build:all
