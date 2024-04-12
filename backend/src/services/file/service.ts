@@ -192,8 +192,7 @@ export const fileService = (
         .run(`cat /golem/output/temp/metadata.json`)
         .end();
 
-      //@ts-ignore
-      executor.shutdown();
+      worker.context.activity.stop();
       return JSON.parse((results[3].stdout || "null") as string);
     },
     async processFile(fileName: string, userId: string, depositId: bigint) {
