@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useProcessFile } from "hooks/useUploadFile";
 import { Button } from "react-daisyui";
+import { ScanResults } from "components/ScanResults";
 
 export const FileUploader = () => {
   const [files, setFiles] = useState<FileList | null>(null);
@@ -67,6 +68,7 @@ export const FileUploader = () => {
           Click to Upload
         </Button>
       </div>
+      <ScanResults />
     </div>
   );
 };

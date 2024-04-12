@@ -74,10 +74,10 @@ export const fileService = (
   contractAddress: any
 ): {
   workers: Record<string, Worker>;
-  getUserWorker: (userId: string) => Promise<Worker>;
+  getUserWorker: (userId: string, depositId: bigint) => Promise<Worker>;
   scanFileOnGolem: (fileName: string, worker: Worker) => Promise<any>;
   resultStream: Subject<IScanResult>;
-  processFile: (fileName: string, userId: string) => void;
+  processFile: (fileName: string, userId: string, depositId: bigint) => void;
   init: () => void;
 } => {
   console.log("creating file service", contractAddress);
@@ -91,7 +91,7 @@ export const fileService = (
         //scanResultModel.create(result);
       });
     },
-    async getUserWorker(userId: string) {
+    async getUserWorker(userId: string, depositId: bigint) {
       return new Promise(async (resolve, reject) => {
         const hasWorker = this.workers[userId];
         const isWorkerConnected =
@@ -124,9 +124,10 @@ export const fileService = (
             allocation: {
               deposit: {
                 contract: contractAddress,
-                id: "0x1",
+                id: depositId.toString(16),
               },
             },
+            budget: 12,
           });
           console.log("Executor created ");
           executor.events.on("end", (event: any) => {
@@ -140,6 +141,15 @@ export const fileService = (
               //@ts-ignore
               workerContext.allocation =
                 ctx.activity.agreement.proposal.demand.allocation;
+
+              console.log(
+                "Connected to Golem",
+                ctx.activity.agreement.proposal.demand.allocation.id
+              );
+              container.cradle.userService.setCurrentAllocationId(
+                userId,
+                ctx.activity.agreement.proposal.demand.allocation.id
+              );
 
               //@ts-ignore
               this.workers[userId].context = workerContext;
@@ -184,11 +194,12 @@ export const fileService = (
 
       return JSON.parse((results[3].stdout || "null") as string);
     },
-    async processFile(fileName: string, userId: string) {
+    async processFile(fileName: string, userId: string, depositId: bigint) {
       userId = userId || "default";
 
-      const worker = await this.getUserWorker(userId);
+      const worker = await this.getUserWorker(userId, depositId);
 
+      console.log("has worker");
       worker.addFileToQueue(fileName);
 
       await worker.isFree(fileName);
@@ -196,6 +207,7 @@ export const fileService = (
       worker.setState("busy");
 
       const scanResult = await this.scanFileOnGolem(fileName, worker);
+
       worker.setState("free");
 
       if (scanResult) {

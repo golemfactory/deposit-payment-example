@@ -11,6 +11,9 @@ async function processFile(file: File): Promise<{ result: boolean }> {
     {
       method: "POST",
       body: formData,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
     }
   );
   console.log(response);

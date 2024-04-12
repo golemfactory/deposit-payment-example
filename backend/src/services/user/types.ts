@@ -12,11 +12,21 @@ export type Deposit = {
   nonce: bigint;
 };
 
+export type DepositData = {
+  amount: bigint;
+  feeAmount: bigint;
+  spender: string;
+  validTo: bigint;
+  id: bigint;
+  nonce: bigint;
+};
+
 export interface IUser {
   _id: UserIdType;
   nonce: NonceType;
   walletAddress: EthereumAddressType;
   deposits: Deposit[];
+  currentAllocationId: string;
 }
 
 export interface IUserService {
@@ -28,4 +38,9 @@ export interface IUserService {
   findById(userId: UserIdType): Promise<IUser | null>;
   deleteUser(userId: UserIdType): Promise<DeleteResult>;
   addDeposit(userId: string, deposit: Deposit): Promise<void>;
+  getCurrentDeposit(userId: UserIdType): Promise<DepositData | null>;
+  setCurrentAllocationId(
+    userId: UserIdType,
+    allocationId: string
+  ): Promise<void>;
 }

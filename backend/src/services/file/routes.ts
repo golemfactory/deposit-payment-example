@@ -16,6 +16,7 @@ export const fileService = fastifyPlugin(
           properties: {},
         },
       },
+      onRequest: [fastify.authenticate],
       handler: async (request, reply) => {
         const data = await request.file();
 
@@ -28,7 +29,20 @@ export const fileService = fastifyPlugin(
           data.file,
           fs.createWriteStream(`${DIR_NAME}/${data.filename}`)
         );
-        container.cradle.fileService.processFile(data?.filename, "");
+
+        const deposit = await container.cradle.userService.getCurrentDeposit(
+          request.user._id
+        );
+
+        if (!deposit) {
+          throw new Error("Cant process file without deposit");
+        }
+        console.log("deposit", deposit);
+        container.cradle.fileService.processFile(
+          data?.filename,
+          request.user._id,
+          deposit.id
+        );
         reply.send({ message: "File uploaded" });
       },
     });

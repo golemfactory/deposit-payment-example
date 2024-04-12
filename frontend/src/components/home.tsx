@@ -10,6 +10,7 @@ import { useState } from "react";
 
 export function Home() {
   const [extendVisible, setExtendVisible] = useState(false);
+  const { user } = useUser();
   return (
     <div className="w-screen h-screen flex justify-center ">
       <ConnectWallet />
@@ -25,7 +26,7 @@ export function Home() {
         }}
       />
 
-      {!extendVisible && <FileUploader />}
+      {!extendVisible && user.hasDeposit() && <FileUploader />}
     </div>
   );
 }

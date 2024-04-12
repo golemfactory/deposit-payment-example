@@ -13,6 +13,10 @@ const schema = new mongoose.Schema<IUser>(
       required: true,
       index: { unique: true },
     },
+    currentAllocation: {
+      type: Number,
+      required: true,
+    },
     deposits: [
       {
         id: {

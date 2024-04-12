@@ -2,7 +2,7 @@ import { createPublicClient, http } from "viem";
 import { holesky } from "viem/chains";
 import { abi } from "./abi.js";
 import BigDecimal from "js-big-decimal";
-import { Deposit } from "../user/types.js";
+import { Deposit, DepositData } from "../user/types.js";
 import { container } from "../../di.js";
 
 export const publicClient = createPublicClient({
@@ -15,6 +15,18 @@ export const paymentService = (
   serviceFee: string
 ) => {
   return {
+    getDeposit: async (
+      nonce: bigint,
+      walletAddress: string
+    ): Promise<DepositData> => {
+      // @ts-ignore
+      return publicClient.readContract({
+        address: contractAddress,
+        abi: abi,
+        functionName: "getDepositByNonce",
+        args: [BigInt(nonce), walletAddress],
+      });
+    },
     saveDeposit: async (userId: string, nonce: string) => {
       const userService = container.cradle.userService;
       const user = await userService.findById(userId);

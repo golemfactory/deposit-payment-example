@@ -13,8 +13,7 @@ export const userService = fastifyPlugin(
         if (!u) {
           throw new Error(`User not found with id ${user._id}`);
         }
-        console.log("a", u);
-        const x = {
+        return {
           walletAddress: u.walletAddress,
           _id: u._id.toString(),
           nonce: u.nonce.toString(),
@@ -26,7 +25,6 @@ export const userService = fastifyPlugin(
             };
           }),
         };
-        return x;
       },
     });
 
