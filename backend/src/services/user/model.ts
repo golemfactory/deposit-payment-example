@@ -13,8 +13,8 @@ const schema = new mongoose.Schema<IUser>(
       required: true,
       index: { unique: true },
     },
-    currentAllocation: {
-      type: Number,
+    currentAllocationId: {
+      type: String,
       required: true,
     },
     deposits: [
