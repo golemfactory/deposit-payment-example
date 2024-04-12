@@ -16,13 +16,13 @@ jobs:
       - name: Who am I
         run: whoami
 
-      - Name: checkout
+      - name: checkout
         run: |
           cd /home/ubuntu/golem/deposit-payment-example
           git pull
           git submodule update --init --recursive
 
-      - Name: install dependencies
+      - name: install dependencies
         run: |
           cd /home/ubuntu/golem/deposit-payment-example
           pnpm install

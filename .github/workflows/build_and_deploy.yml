@@ -4,7 +4,7 @@ name: Build and push containers to Github Container Registry and apply rolling u
 on:
   push:
     branches:
-      - develop
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
