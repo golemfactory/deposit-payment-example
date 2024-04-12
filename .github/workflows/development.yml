@@ -25,4 +25,4 @@ jobs:
       - name: install dependencies
         run: |
           cd /home/ubuntu/golem/deposit-payment-example
-          pnpm install
+          /home/ubuntu/.nvm/versions/node/v21.7.3/bin/pnpm install
