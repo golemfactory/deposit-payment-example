@@ -30,7 +30,6 @@ export class Yagna {
   }
 
   async observeDebitNoteEvents() {
-    return;
     debugLog("payments", "observing events");
     while (this.isRunning) {
       debugLog(

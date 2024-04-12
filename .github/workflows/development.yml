@@ -1,0 +1,18 @@
+#Location: .github/workflows/custom_config.yml
+
+name: Build and push containers to Github Container Registry and apply rolling update
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: deposit-development
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+
+      - name: Where am I
+        run: pwd
