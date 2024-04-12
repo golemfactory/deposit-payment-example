@@ -18,7 +18,8 @@ jobs:
 
       - name: checkout
         run: |
-          cd /home/ubuntu/golem/deposit-payment-example
+          cd /home/ubuntu/golem
+          git clone https://${GITHUB_TOKEN}@github.com/golemfactory/deposit-payment-example.git
           git pull
           git submodule update --init --recursive
 
