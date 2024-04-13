@@ -1,7 +1,9 @@
 services:
   # application service
   backend:
-    image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
+    build:
+      context: ../
+      dockerfile: Dockerfile
     command: pnpm run start
     working_dir: /app/backend
     environment:
@@ -21,9 +23,13 @@ services:
     depends_on:
       - yagna
       - mongo
+    volumes:
+      - ../:/app
 
   frontend:
-    image: ghcr.io/golemfactory/deposit_example:${DEPLOY_BRANCH:-latest}
+    build:
+      context: ../
+      dockerfile: Dockerfile
     command: pnpm run start
     working_dir: /app/frontend
     environment:
@@ -42,6 +48,8 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    volumes:
+      - ../:/app
   # yagna service
   yagna:
     build:
