@@ -1,0 +1,34 @@
+#Location: .github/workflows/custom_config.yml
+
+name: Reboot
+defaults:
+  run:
+    shell: bash -ieo pipefail {0}
+on:
+  manual:
+    inputs:
+      environment:
+        description: 'Environment to reboot'
+        required: true
+        default: 'dev'
+        options:
+          - dev
+
+jobs:
+  build:
+    runs-on: deposit-dev
+    steps:
+      - name: Where am I
+        run: pwd
+
+      - name: Who am I
+        run: whoami
+
+      - name: Restart docker images
+        run: |
+          cd /home/ubuntu/golem/deposit-payment-example/deploy
+          docker-compose down
+          docker-compose up -d mongo yagna
+          sleep 20
+          docker-compose up -d
+          
