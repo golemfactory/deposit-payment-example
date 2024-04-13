@@ -37,3 +37,7 @@ jobs:
         env:
           VITE_BACKEND_URL: https://deposit.dev.golem.network
 
+      - name: Restart docker images
+        run: |
+          cd /home/ubuntu/golem/deposit-payment-example/deploy
+          docker-compose restart backend frontend
