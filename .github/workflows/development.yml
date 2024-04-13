@@ -35,5 +35,5 @@ jobs:
           cd /home/ubuntu/golem/deposit-payment-example
           /home/ubuntu/.nvm/versions/node/v21.7.3/bin/pnpm run build:all
         env:
-          BACKEND_URL: https://deposit.dev.golem.network
+          VITE_BACKEND_URL: https://deposit.dev.golem.network
 
