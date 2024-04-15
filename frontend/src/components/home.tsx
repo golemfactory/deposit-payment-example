@@ -2,11 +2,10 @@ import { useUser } from "hooks/useUser";
 import { ConnectWallet } from "./connectWallet";
 import { Allowance } from "./allowace";
 import { Register } from "./register";
-import { useAccount } from "wagmi";
-import { useUserData } from "hooks/userUserData";
 import { Deposit } from "./deposit";
 import { FileUploader } from "./Uploader";
 import { useState } from "react";
+import { useLogin } from "hooks/useLogin";
 
 export function Home() {
   const [extendVisible, setExtendVisible] = useState(false);

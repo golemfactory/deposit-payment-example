@@ -49,7 +49,7 @@ container.register({
 });
 
 container.register({
-  mode: awilix.asValue("real"),
+  mode: awilix.asValue("mock"),
 });
 
 container.register({

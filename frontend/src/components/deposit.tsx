@@ -42,6 +42,7 @@ export const Deposit = ({
       setPosition("onCenter");
     }
   }, [user.hasDeposit(), isExtendFormVisible]);
+
   return (
     <motion.div
       style={{

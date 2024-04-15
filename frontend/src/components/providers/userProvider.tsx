@@ -1,5 +1,6 @@
 import { config } from "config";
 import { useAllowance } from "hooks/GLM/useGLMApprove";
+import { useLogin } from "hooks/useLogin";
 import { useUserData } from "hooks/userUserData";
 import {
   PropsWithChildren,
@@ -9,6 +10,7 @@ import {
   useState,
 } from "react";
 import { match } from "ts-pattern";
+import { set } from "ts-pattern/dist/patterns";
 import { ReducerArgs } from "types/reducerArgs";
 
 import { UserState, UserAction, UserStateOrderValue } from "types/user";
@@ -28,20 +30,37 @@ interface UserInterface {
   isAtLeastAt(state: UserState): boolean;
   isConnected(): boolean;
   isRegistered(): boolean;
+  isLoggingIn(): boolean;
   hasKnownAllowance(): boolean;
   hasEnoughAllowance(): boolean;
   hasDepositDataLoaded(): boolean;
   hasDeposit(): boolean;
+  login(data: {
+    walletAddress: string;
+    messageSignature: string;
+    message: string;
+  }): void;
 }
 
-const withUserInterface = function (user: UserProps) {
+const withUserInterface = function (
+  user: UserProps,
+  login: (data: {
+    walletAddress: `0x${string}`;
+    messageSignature: `0x${string}`;
+    message: string;
+  }) => void
+) {
   return {
     ...user,
+    login,
     isAtLeastAt(state: UserState) {
       return UserStateOrderValue[user.state] >= UserStateOrderValue[state];
     },
     isConnected() {
       return this.isAtLeastAt(UserState.CONNECTED);
+    },
+    isLoggingIn() {
+      return this.state === UserState.LOGGING_IN;
     },
     isRegistered() {
       return this.isAtLeastAt(UserState.REGISTERED);
@@ -67,13 +86,14 @@ const withUserInterface = function (user: UserProps) {
 export const UserContext = createContext<{
   user: UserProps & UserInterface;
 }>({
-  user: withUserInterface({ state: UserState.DISCONNECTED }),
+  user: withUserInterface({ state: UserState.DISCONNECTED }, (data) => {}),
 });
 
 type Payload = {
   [UserAction.CONNECT]: never;
   [UserAction.DISCONNECT]: never;
   [UserAction.REGISTER]: never;
+  [UserAction.LOGIN]: never;
   [UserAction.ENOUGH_ALLOWANCE]: { allowanceAmount: bigint };
   [UserAction.NOT_ENOUGH_ALLOWANCE]: { allowanceAmount: bigint };
   [UserAction.LOADING]: never;
@@ -90,9 +110,11 @@ type Payload = {
 
 const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
   const { kind, payload = {} } = action;
+  console.log("user action", kind, payload);
   const state = match(kind)
     .with(UserAction.CONNECT, () => UserState.CONNECTED)
     .with(UserAction.DISCONNECT, () => UserState.DISCONNECTED)
+    .with(UserAction.LOGIN, () => UserState.LOGGING_IN)
     .with(UserAction.REGISTER, () => UserState.REGISTERED)
     .with(UserAction.ENOUGH_ALLOWANCE, () => UserState.GRANTED)
     .with(UserAction.NOT_ENOUGH_ALLOWANCE, () => UserState.NOT_GRANTED)
@@ -115,8 +137,10 @@ const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
 
 export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { isConnected } = useAccount();
+  const { login, tokens, isLoggingIn } = useLogin();
+
   const { userData, isLoading: isUserLoading } = useUserData();
-  //TODO : check if user is registered
+  //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
 
   const [user, dispatch] = useReducer(
@@ -129,14 +153,30 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   );
 
   useEffect(() => {
+    if (isLoggingIn) {
+      dispatch({ kind: UserAction.LOGIN });
+    }
+  }, [isLoggingIn]);
+
+  useEffect(() => {
+    if (tokens?.accessToken) {
+      console.log("registering", tokens);
+      dispatch({ kind: UserAction.REGISTER });
+      setIsRegistered(true);
+    }
+  }, [tokens]);
+
+  useEffect(() => {
     const currentDeposit = (userData?.deposits || []).find(
       (deposit) => deposit.isCurrent
     );
+
+    console.log("uyse", userData);
     if (!isUserLoading && userData?._id) {
-      console.log("userData", userData);
       setIsRegistered(true);
     }
-    if (user.allowanceAmount) {
+    if ((user.allowanceAmount || 0) >= config.minimalAllowance) {
+      console.log("enough allowance");
       if (currentDeposit) {
         dispatch({ kind: UserAction.HAS_DEPOSIT, payload: { currentDeposit } });
       } else {
@@ -173,7 +213,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   }, [isFetched, data, isRegistered]);
 
   return (
-    <UserContext.Provider value={{ user: withUserInterface(user) }}>
+    <UserContext.Provider value={{ user: withUserInterface(user, login) }}>
       {children}
     </UserContext.Provider>
   );

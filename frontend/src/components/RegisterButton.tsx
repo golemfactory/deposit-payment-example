@@ -1,15 +1,15 @@
 import { Button, Card, Loading } from "react-daisyui";
 import { useSignNonce } from "hooks/useSignNonce";
-import { useLogin } from "hooks/useLogin";
 import { useAccount } from "wagmi";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDebounce } from "hooks/useDebounce";
+import { useUser } from "hooks/useUser";
 export const RegisterButton = ({ isVisible }: { isVisible: boolean }) => {
   const { register, signature, message, isPending } = useSignNonce();
   const { address: walletAddress } = useAccount();
-  const { login, tokens, isWaiting } = useLogin();
-
+  const { user } = useUser();
+  // Add the missing 'login' property to the type definition
   if (!walletAddress) {
     throw new Error("Wallet address not found");
   }
@@ -23,20 +23,13 @@ export const RegisterButton = ({ isVisible }: { isVisible: boolean }) => {
 
   useEffect(() => {
     if (signature) {
-      login({
+      user.login({
         walletAddress,
         messageSignature: signature,
         message,
       });
     }
   }, [signature]);
-
-  useEffect(() => {
-    if (tokens) {
-      localStorage.setItem("accessToken", tokens.accessToken);
-      localStorage.setItem("refreshToken", tokens.refreshToken);
-    }
-  }, [tokens]);
 
   return (
     <AnimatePresence>
@@ -56,7 +49,6 @@ export const RegisterButton = ({ isVisible }: { isVisible: boolean }) => {
             }}
           >
             <Card.Body>
-              {/* <Card.Title tag="h2">Log in</Card.Title> */}
               <Card.Body>
                 Login to service with your wallet address to prove your wallet
                 ownership.
@@ -72,7 +64,7 @@ export const RegisterButton = ({ isVisible }: { isVisible: boolean }) => {
                     backgroundColor: "#181ea9a6",
                   }}
                 >
-                  {isWaiting || debouncedPending ? (
+                  {user.isLoggingIn() || debouncedPending ? (
                     <Loading variant="infinity" />
                   ) : (
                     "Register in service"
@@ -84,17 +76,5 @@ export const RegisterButton = ({ isVisible }: { isVisible: boolean }) => {
         </motion.div>
       )}
     </AnimatePresence>
-    //   <Button
-    //     onClick={() => {
-    //       register({ walletAddress });
-    //     }}
-    //     className="bg-primary !text-white border-none text-lg font-light "
-    //     style={{
-    //       backgroundColor: "#181ea9a6",
-    //     }}
-    //   >
-    //     Register in service
-    //   </Button>
-    // );
   );
 };

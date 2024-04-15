@@ -4,6 +4,7 @@ export enum UserState {
   // User is connected to the blockchain, we know their wallet address
   // but they have not registered with the service
   CONNECTED = "CONNECTED",
+  LOGGING_IN = "LOGGING_IN",
   // User has registered with the service but not yet allowance given
   REGISTERED = "REGISTERED",
   // User has given GLM allowance above a certain threshold
@@ -22,6 +23,7 @@ export enum UserAction {
   CONNECT = "CONNECT",
   DISCONNECT = "DISCONNECT",
   REGISTER = "REGISTER",
+  LOGIN = "LOGIN",
   APPROVE = "APPROVE",
   LOADING = "LOADING",
   ENOUGH_ALLOWANCE = "ENOUGH_ALLOWANCE",
@@ -33,12 +35,13 @@ export enum UserAction {
 export const UserStateOrderValue = {
   [UserState.DISCONNECTED]: 0,
   [UserState.CONNECTED]: 1,
-  [UserState.REGISTERED]: 2,
-  [UserState.GRANTED]: 4,
-  [UserState.NOT_GRANTED]: 4,
-  [UserState.LOADING]: 3,
-  [UserState.HAS_DEPOSIT]: 5,
-  [UserState.HAS_NO_DEPOSIT]: 5,
+  [UserState.LOGGING_IN]: 2,
+  [UserState.REGISTERED]: 3,
+  [UserState.GRANTED]: 5,
+  [UserState.NOT_GRANTED]: 5,
+  [UserState.LOADING]: 4,
+  [UserState.HAS_DEPOSIT]: 6,
+  [UserState.HAS_NO_DEPOSIT]: 6,
 };
 
 export type Deposit = {

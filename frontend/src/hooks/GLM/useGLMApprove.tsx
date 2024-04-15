@@ -32,7 +32,7 @@ export function useAllowance(): {
     if (!isFetching) {
       setTimeout(() => {
         const result = refetch();
-      }, 12000);
+      }, 1000);
     }
   }, [isFetching]);
 

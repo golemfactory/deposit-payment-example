@@ -6,7 +6,14 @@ const fetcher = (url: string) =>
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
-  }).then((res) => res.json());
+  })
+    .then((res) => {
+      console.log("refetch");
+      return res.json();
+    })
+    .catch((error) => {
+      console.error("Error fetching user data", error);
+    });
 
 export const useUserData = (): {
   userData?: UserData;
@@ -15,7 +22,8 @@ export const useUserData = (): {
 } => {
   const { data, error, isLoading } = useSWR<UserData>(
     `${import.meta.env.VITE_BACKEND_URL}/me`,
-    fetcher
+    fetcher,
+    { refreshInterval: 1000 }
   );
 
   return {

@@ -1,7 +1,7 @@
 import { UseMutateFunction, useMutation } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
-import { is, set } from "ramda";
 import { useEffect, useState } from "react";
+
 async function login({
   messageSignature,
   walletAddress,
@@ -36,33 +36,27 @@ type IUseLogin = {
     unknown
   >;
   tokens: { accessToken: string; refreshToken: string } | undefined;
-  isWaiting: boolean;
-  isError: boolean;
+  isLoggingIn: boolean;
+  isSuccess: boolean;
 };
 
 export function useLogin(): IUseLogin {
-  const [isWaiting, setIsWaiting] = useState(false);
-  const [isError, setIsError] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [tokens, setTokens] = useState<
     { accessToken: string; refreshToken: string } | undefined
-  >(undefined);
+  >({
+    accessToken: localStorage.getItem("accessToken") || "",
+    refreshToken: localStorage.getItem("refreshToken") || "",
+  });
 
-  const [verificationError, setVerificationError] =
-    useState<unknown>(undefined);
-
-  useEffect(() => {
-    if (verificationError) {
-      enqueueSnackbar(`Error signing message: ${verificationError}`, {
-        variant: "error",
-      });
-    }
-  }, [verificationError]);
-
-  // useEffect(() => {
-  //   setIsWaiting(!tokens);
-  // }, [tokens]);
-  const { mutate: loginMutation } = useMutation<
+  const {
+    mutate: loginMutation,
+    isSuccess,
+    isPending,
+    isError,
+    error,
+    data,
+  } = useMutation<
     { accessToken: string; refreshToken: string },
     unknown,
     {
@@ -73,25 +67,27 @@ export function useLogin(): IUseLogin {
     unknown
   >({
     mutationFn: login,
-    onSettled: () => {
-      console.log("settled");
-      setIsWaiting(true);
-    },
-    onSuccess: (data) => {
-      setTokens(data);
-      setIsWaiting(false);
-    },
-    onError: (error) => {
-      setVerificationError(error);
-      setIsWaiting(false);
-      setIsError(true);
-    },
   });
 
+  useEffect(() => {
+    if (isError) {
+      enqueueSnackbar(`Error signing message: ${error}`, {
+        variant: "error",
+      });
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      setTokens(data);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
+  }, [isSuccess, data]);
   return {
     login: loginMutation,
     tokens,
-    isWaiting,
-    isError,
+    isLoggingIn: isPending,
+    isSuccess,
   };
 }
