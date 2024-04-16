@@ -12,7 +12,6 @@ export const DepositSummary = ({
 }) => {
   const { data } = useUserCurrentDeposit();
 
-  console.log("data", data);
   return (
     <motion.div
       initial={{ opacity: 0 }}

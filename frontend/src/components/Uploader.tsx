@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useProcessFile } from "hooks/useUploadFile";
+import { useUploadFile } from "./providers/fileUploader";
 import { Button } from "react-daisyui";
 import { ScanResults } from "components/ScanResults";
 
 export const FileUploader = () => {
   const [files, setFiles] = useState<FileList | null>(null);
-  const { upload } = useProcessFile();
+  const { upload } = useUploadFile();
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFiles(e.target.files);
@@ -32,7 +32,7 @@ export const FileUploader = () => {
   };
 
   return (
-    <div className="w-screen flex justify-center absolute top-[30vh]">
+    <div className="w-[30vw] flex flex-col justify-center absolute top-[30vh]">
       <input
         type="file"
         onChange={handleFileChange}
@@ -45,7 +45,7 @@ export const FileUploader = () => {
         onDrop={handleDrop}
         className=" p-20  border-dashed border-2 border-golemblue-transparent rounded-lg"
         style={{
-          backgroundColor: "#ffffff14",
+          backgroundColor: "#0000005b",
         }}
         // style={{
         //   border: "2px dashed #aaa",
@@ -58,6 +58,7 @@ export const FileUploader = () => {
         Drag & Drop files here or{" "}
         <Button
           onClick={() => {
+            console.log("WRTD");
             fileInputRef.current?.click();
           }}
           className="ml-4 bg-golemblue-transparent border-none text-white"
@@ -68,6 +69,7 @@ export const FileUploader = () => {
           Click to Upload
         </Button>
       </div>
+      <div className="mt-10"></div>
       <ScanResults />
     </div>
   );

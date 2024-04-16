@@ -1,16 +1,22 @@
-import { useSnackbar } from "notistack";
-import { useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  PropsWithChildren,
+  useCallback,
+} from "react";
+
 import useSWRMutation from "swr/mutation";
-import { useSignMessage } from "wagmi";
+
 import axios from "axios";
 import { useMap } from "@uidotdev/usehooks";
 
 export const useUploadedFiles = () => {
   const files = useMap<string>();
 
-  const setProgress = useCallback((id: string, progress: number) => {
+  const setProgress = (id: string, progress: number) => {
+    console.log("setting progress", id, progress);
     files.set(id, progress);
-  }, []);
+  };
 
   const removeFile = useCallback((id: string) => {
     files.delete(id);
@@ -24,6 +30,26 @@ export const useUploadedFiles = () => {
     getProgress,
     removeFile,
   };
+};
+
+const FileUploaderContext = createContext({
+  files: new Map<string, number>(),
+  setProgress: (id: string, progress: number) => {},
+  removeFile: (id: string) => {},
+});
+
+export const useFileUploader = () => {
+  return useContext(FileUploaderContext);
+};
+
+export const FileUploaderProvider = ({ children }: PropsWithChildren) => {
+  const { files, setProgress, removeFile } = useUploadedFiles();
+
+  return (
+    <FileUploaderContext.Provider value={{ files, setProgress, removeFile }}>
+      {children}
+    </FileUploaderContext.Provider>
+  );
 };
 
 async function processFile(
@@ -43,13 +69,13 @@ async function processFile(
       },
 
       onUploadProgress: (progressEvent) => {
-        console.log("progressEvent", progressEvent);
-
+        console.log("onprogress axios", progressEvent);
         if (!progressEvent.total) return;
 
         const progress = Math.round(
           (progressEvent.loaded / progressEvent.total) * 100
         );
+        onProgress(file.name, progress);
         // setProgress(progress);
       },
     }
@@ -63,9 +89,10 @@ async function processFile(
 export function useProcessFile(): {
   upload: (file: File) => void;
 } {
-  const { setProgress } = useUploadedFiles();
+  const { setProgress } = useFileUploader();
 
   const onProgress = (name: string, progress: number) => {
+    console.log("progress", name, progress);
     setProgress(name, progress);
   };
   const { trigger } = useSWRMutation(["scanResult", onProgress], processFile);
@@ -77,4 +104,7 @@ export function useProcessFile(): {
 
 export function useUploadFile() {
   const { upload } = useProcessFile();
+  return {
+    upload,
+  };
 }

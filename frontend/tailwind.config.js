@@ -33,6 +33,9 @@ module.exports = {
 
       "notistack-red": "#d32f2f",
       "notistack-green": "#43a047",
+
+      "transparent-red": "#d32f2f7f",
+      "transparent-green": "#43a0477f",
       // golemblue: '#0c14d4',
       // primary: '#181ea9',
       // secondary: '#f6f8fc',

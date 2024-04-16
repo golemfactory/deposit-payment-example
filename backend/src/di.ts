@@ -5,6 +5,7 @@ import { paymentService } from "./services/payment/index.js";
 import { fileService } from "./services/file/service.js";
 import * as GolemSDK from "@golem-sdk/task-executor";
 import { Yagna } from "./services/yagna/service.js";
+import { TaskExecutor } from "@golem-sdk/task-executor";
 export const container = awilix.createContainer<{
   db: Promise<typeof mongoose>;
   userService: typeof userService;
@@ -19,7 +20,7 @@ export const container = awilix.createContainer<{
   contractAddress: string;
   serviceFee: string;
   mode: "mock" | "real";
-  Yagna: any;
+  Yagna: Yagna;
 }>({
   injectionMode: InjectionMode.CLASSIC,
   strict: true,
@@ -49,7 +50,7 @@ container.register({
 });
 
 container.register({
-  mode: awilix.asValue("mock"),
+  mode: awilix.asValue("real"),
 });
 
 container.register({

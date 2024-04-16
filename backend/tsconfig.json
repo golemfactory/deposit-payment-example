@@ -20,5 +20,10 @@
     "**/*.tsx",
 
   ],
+
+  "paths" : {
+    "services/*": ["src/services/*"],
+    "errors/*": ["src/errors/*"],
+  },
   "exclude": ["node_modules"]
 }

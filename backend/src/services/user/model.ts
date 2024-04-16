@@ -19,36 +19,16 @@ const schema = new mongoose.Schema<IUser>(
     },
     deposits: [
       {
-        id: {
-          type: BigInt,
-          required: true,
-        },
-        spender: {
-          type: String,
-          required: true,
-        },
-        amount: {
-          type: BigInt,
-          required: true,
-        },
-        feeAmount: {
-          type: BigInt,
-          required: true,
-        },
         isCurrent: {
           type: Boolean,
           required: true,
         },
         nonce: {
-          type: BigInt,
+          type: Number,
           required: true,
         },
         isValid: {
           type: Boolean,
-          required: true,
-        },
-        validTo: {
-          type: BigInt,
           required: true,
         },
       },

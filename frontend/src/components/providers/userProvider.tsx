@@ -110,7 +110,6 @@ type Payload = {
 
 const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
   const { kind, payload = {} } = action;
-  console.log("user action", kind, payload);
   const state = match(kind)
     .with(UserAction.CONNECT, () => UserState.CONNECTED)
     .with(UserAction.DISCONNECT, () => UserState.DISCONNECTED)
@@ -160,7 +159,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
 
   useEffect(() => {
     if (tokens?.accessToken) {
-      console.log("registering", tokens);
       dispatch({ kind: UserAction.REGISTER });
       setIsRegistered(true);
     }
@@ -171,7 +169,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
       (deposit) => deposit.isCurrent
     );
 
-    console.log("uyse", userData);
     if (!isUserLoading && userData?._id) {
       setIsRegistered(true);
     }
@@ -187,7 +184,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     }
   }, [isUserLoading, userData, user.allowanceAmount]);
 
-  const { isFetched, isLoading: isLoadingAllowance, data } = useAllowance();
+  const { isFetched, data } = useAllowance();
 
   useEffect(() => {
     if (isConnected) {
