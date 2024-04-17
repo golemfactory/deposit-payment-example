@@ -54,16 +54,6 @@ export const fileService = fastifyPlugin(
       },
     });
 
-    fastify.post("/create-allocation", {
-      onRequest: [fastify.authenticate],
-      handler: async (request, reply) => {
-        try {
-          await container.cradle.Yagna.createExecutor(request.user._id);
-        } catch (e) {
-          reply.code(500).send({ message: "something went wrong" });
-        }
-      },
-    });
     done();
   }
 );

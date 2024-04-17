@@ -17,6 +17,10 @@ export enum UserState {
   HAS_DEPOSIT = "HAS_DEPOSIT",
   // User has not deposited GLM
   HAS_NO_DEPOSIT = "HAS_NO_DEPOSIT",
+  // User has allocatio
+  HAS_ALLOCATION = "HAS_ALLOCATION",
+  // User has no allocation
+  HAS_NO_ALLOCATION = "HAS_NO_ALLOCATION",
 }
 
 export enum UserAction {
@@ -30,6 +34,8 @@ export enum UserAction {
   NOT_ENOUGH_ALLOWANCE = "NOT_ENOUGH_ALLOWANCE",
   HAS_DEPOSIT = "HAS_DEPOSIT",
   HAS_NO_DEPOSIT = "HAS_NO_DEPOSIT",
+  HAS_ALLOCATION = "HAS_ALLOCATION",
+  HAS_NO_ALLOCATION = "HAS_NO_ALLOCATION",
 }
 
 export const UserStateOrderValue = {
@@ -42,6 +48,8 @@ export const UserStateOrderValue = {
   [UserState.LOADING]: 4,
   [UserState.HAS_DEPOSIT]: 6,
   [UserState.HAS_NO_DEPOSIT]: 6,
+  [UserState.HAS_ALLOCATION]: 7,
+  [UserState.HAS_NO_ALLOCATION]: 7,
 };
 
 export type Deposit = {
@@ -54,6 +62,9 @@ export type Deposit = {
 export type UserData = {
   _id: string;
   nonce: number;
+  currentAllocation: {
+    id: string;
+  };
   deposits: {
     isCurrent: boolean;
     isValid: boolean;

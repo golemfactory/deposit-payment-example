@@ -12,6 +12,7 @@ import { Worker } from "./worker.js";
 import { WorkContext } from "@golem-sdk/golem-js";
 import { Task } from "node_modules/@golem-sdk/task-executor/dist/task.js";
 import { TaskExecutor } from "@golem-sdk/task-executor";
+import { formatEther } from "viem";
 export class Yagna {
   public debitNoteEvents: Subject<any>;
   private paymentService: YaTsClient.PaymentApi.RequestorService;
@@ -45,6 +46,10 @@ export class Yagna {
       return this.userContext.data.get(userId)?.worker;
     },
   };
+
+  getUserAllocation(userId: string) {
+    return this.userContext.getExecutor(userId)?.allocation;
+  }
 
   constructor(YagnaConfig: { appKey: string; apiUrl: string }) {
     this.YagnaConfig = YagnaConfig;
@@ -88,7 +93,7 @@ export class Yagna {
         expirationSec: Number(userDeposit.validTo) - dayjs().unix() - 1000,
       },
       agreementMaxPoolSize: 1,
-      budget: Number(userDeposit.amount),
+      budget: Number(formatEther(userDeposit.amount)),
     });
 
     this.userContext.setExecutor(userId, executor);

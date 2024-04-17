@@ -2,6 +2,7 @@ import { config } from "config";
 import { useAllowance } from "hooks/GLM/useGLMApprove";
 import { useLogin } from "hooks/useLogin";
 import { useUserData } from "hooks/userUserData";
+
 import {
   PropsWithChildren,
   createContext,
@@ -9,10 +10,9 @@ import {
   useReducer,
   useState,
 } from "react";
-import { match } from "ts-pattern";
-import { set } from "ts-pattern/dist/patterns";
-import { ReducerArgs } from "types/reducerArgs";
 
+import { match } from "ts-pattern";
+import { ReducerArgs } from "types/reducerArgs";
 import { UserState, UserAction, UserStateOrderValue } from "types/user";
 import { useAccount } from "wagmi";
 
@@ -24,6 +24,7 @@ type UserProps = {
     isValid: boolean;
     nonce: bigint;
   };
+  currentAllocation?: unknown;
 };
 
 interface UserInterface {
@@ -35,6 +36,7 @@ interface UserInterface {
   hasEnoughAllowance(): boolean;
   hasDepositDataLoaded(): boolean;
   hasDeposit(): boolean;
+  hasAllocation(): boolean;
   login(data: {
     walletAddress: string;
     messageSignature: string;
@@ -49,7 +51,7 @@ const withUserInterface = function (
     messageSignature: `0x${string}`;
     message: string;
   }) => void
-) {
+): UserProps & UserInterface {
   return {
     ...user,
     login,
@@ -80,6 +82,9 @@ const withUserInterface = function (
     hasDeposit() {
       return !!user.currentDeposit;
     },
+    hasAllocation() {
+      return !!user.currentAllocation;
+    },
   };
 };
 
@@ -106,6 +111,10 @@ type Payload = {
     };
   };
   [UserAction.HAS_NO_DEPOSIT]: never;
+  [UserAction.HAS_ALLOCATION]: {
+    currentAllocation: unknown;
+  };
+  [UserAction.HAS_NO_ALLOCATION]: never;
 };
 
 const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
@@ -120,6 +129,8 @@ const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
     .with(UserAction.LOADING, () => UserState.LOADING)
     .with(UserAction.HAS_DEPOSIT, () => UserState.HAS_DEPOSIT)
     .with(UserAction.HAS_NO_DEPOSIT, () => UserState.HAS_NO_DEPOSIT)
+    .with(UserAction.HAS_ALLOCATION, () => UserState.HAS_ALLOCATION)
+    .with(UserAction.HAS_NO_ALLOCATION, () => UserState.HAS_NO_ALLOCATION)
     .otherwise(() => user.state);
 
   const newUser = {
@@ -185,6 +196,21 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   }, [isUserLoading, userData, user.allowanceAmount]);
 
   const { isFetched, data } = useAllowance();
+
+  //track allocation
+  useEffect(() => {
+    if (user.currentDeposit) {
+      console.log("current deposit", user.currentDeposit);
+      if (userData?.currentAllocation) {
+        dispatch({
+          kind: UserAction.HAS_ALLOCATION,
+          payload: { currentAllocation: userData.currentAllocation },
+        });
+      } else {
+        dispatch({ kind: UserAction.HAS_NO_ALLOCATION });
+      }
+    }
+  }, [userData?.currentAllocation, user.currentDeposit]);
 
   useEffect(() => {
     if (isConnected) {

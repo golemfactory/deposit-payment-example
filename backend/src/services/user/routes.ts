@@ -8,16 +8,19 @@ export const userService = fastifyPlugin(
       onRequest: [fastify.authenticate],
       handler: async (request: FastifyRequest, reply) => {
         const userService = container.cradle.userService;
-        const user = request.user;
-        const u = await userService.findById(user._id);
-        if (!u) {
-          throw new Error(`User not found with id ${user._id}`);
+        const requestUser = request.user;
+        const user = await userService.findById(requestUser._id);
+        if (!user) {
+          throw new Error(`User not found with id ${requestUser._id}`);
         }
         return {
-          walletAddress: u.walletAddress,
-          _id: u._id.toString(),
-          nonce: u.nonce.toString(),
-          deposits: u.deposits.map((d) => {
+          walletAddress: user.walletAddress,
+          _id: user._id.toString(),
+          nonce: user.nonce.toString(),
+          currentAllocation: {
+            id: user.currentAllocationId,
+          },
+          deposits: user.deposits.map((d) => {
             return {
               isCurrent: d.isCurrent,
               isValid: d.isValid,
@@ -27,7 +30,6 @@ export const userService = fastifyPlugin(
         };
       },
     });
-
     done();
   }
 );

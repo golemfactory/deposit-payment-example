@@ -25,7 +25,7 @@ export const useUserData = (): {
     fetcher,
     { refreshInterval: 5000 }
   );
-
+  console.log("data", data);
   return {
     userData: data,
     error,

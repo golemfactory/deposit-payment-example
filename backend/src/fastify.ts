@@ -8,6 +8,7 @@ import { fileService } from "./services/file/routes.js";
 import { userService } from "./services/user/routes.js";
 import { FastifySSEPlugin } from "fastify-sse-v2";
 import fastifyMultipart from "@fastify/multipart";
+import { Yagna } from "./services/yagna/routes.js";
 
 export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   const fastify = Fastify({
@@ -29,7 +30,7 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   fastify.register(paymentService);
   fastify.register(fileService);
   fastify.register(userService);
-
+  fastify.register(Yagna);
   fastify.listen(
     { port: Number(process.env.PORT), host: process.env.HOST },
     (err) => {

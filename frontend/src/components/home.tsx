@@ -6,6 +6,7 @@ import { Deposit } from "./deposit";
 import { FileUploader } from "./Uploader";
 import { useState } from "react";
 import { useLogin } from "hooks/useLogin";
+import { GolemManager } from "./GolemManager";
 
 export function Home() {
   const [extendVisible, setExtendVisible] = useState(false);
@@ -24,8 +25,8 @@ export function Home() {
           setExtendVisible(false);
         }}
       />
-
-      {!extendVisible && user.hasDeposit() && <FileUploader />}
+      <GolemManager />
+      {!extendVisible && user.hasAllocation() && <FileUploader />}
     </div>
   );
 }
