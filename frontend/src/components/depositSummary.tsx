@@ -10,8 +10,8 @@ export const DepositSummary = ({
 }: {
   showExtendDeposit: () => void;
 }) => {
-  const { data } = useUserCurrentDeposit();
-
+  const readDepositResult = useUserCurrentDeposit();
+  const data = readDepositResult?.data;
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -40,19 +40,19 @@ export const DepositSummary = ({
       <div className="text-sm flex flex-col justify-between">
         <div>
           <div>
-            <span className="text-golemblue-transparent">Amount: </span>
+            <span className="text-lg">Amount: </span>
             <span>
               {formatEther((data as { amount: bigint })?.amount || 0n)}
             </span>
           </div>
           <div>
-            <span className="text-golemblue-transparent">Fee: </span>
+            <span className="text-lg">Fee: </span>
             <span>
               {formatEther((data as { feeAmount: bigint })?.feeAmount || 0n)}
             </span>
           </div>
           <div>
-            <span className="text-golemblue-transparent">Valid to: </span>
+            <span className="text-lg">Valid to: </span>
             <span>
               {dayjs(
                 Number((data as { validTo: bigint })?.validTo) * 1000
@@ -68,7 +68,6 @@ export const DepositSummary = ({
             }}
             className="mr-2 px-6 bg-golemblue-transparent border-none"
             onClick={() => {
-              console.log("Approve");
               showExtendDeposit();
             }}
           >

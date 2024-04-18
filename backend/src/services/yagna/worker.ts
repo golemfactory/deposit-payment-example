@@ -1,4 +1,8 @@
-import { Allocation, WorkContext } from "@golem-sdk/golem-js";
+import {
+  Allocation,
+  WorkContext,
+  ActivityStateEnum,
+} from "@golem-sdk/golem-js";
 import { BehaviorSubject } from "rxjs";
 
 type WorkerType = {
@@ -48,13 +52,15 @@ export class Worker {
       });
     });
   }
-  isConnected(): Promise<void> {
+  isConnected(): Promise<boolean> {
     return new Promise((resolve) => {
-      const subscription = this.state$.subscribe((state) => {
+      const subscription = this.state$.subscribe(async (state) => {
         if (state !== "connecting") {
           console.log("Worker is connected now");
           // subscription.unsubscribe();
-          resolve();
+          const state = await this.context?.getState();
+          console.log("state", state);
+          resolve(ActivityStateEnum.Ready === state);
         }
       });
     });

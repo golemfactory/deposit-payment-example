@@ -1,7 +1,10 @@
 import { config } from "config";
 import { useAllowance } from "hooks/GLM/useGLMApprove";
+import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
 import { useLogin } from "hooks/useLogin";
 import { useUserData } from "hooks/userUserData";
+import { use } from "i18next";
+import { abi as depositContractAbi } from "hooks/depositContract/abi";
 
 import {
   PropsWithChildren,
@@ -14,8 +17,8 @@ import {
 import { match } from "ts-pattern";
 import { ReducerArgs } from "types/reducerArgs";
 import { UserState, UserAction, UserStateOrderValue } from "types/user";
-import { useAccount } from "wagmi";
-
+import { useAccount, useReadContract } from "wagmi";
+import { useChainId } from "hooks/useChainId";
 type UserProps = {
   state: UserState;
   allowanceAmount?: bigint;
@@ -25,6 +28,9 @@ type UserProps = {
     nonce: bigint;
   };
   currentAllocation?: unknown;
+  currentActivity?: {
+    id: string;
+  };
 };
 
 interface UserInterface {
@@ -110,11 +116,18 @@ type Payload = {
       nonce: number;
     };
   };
-  [UserAction.HAS_NO_DEPOSIT]: never;
+  [UserAction.HAS_NO_DEPOSIT]: {
+    currentDeposit: null;
+  };
   [UserAction.HAS_ALLOCATION]: {
     currentAllocation: unknown;
+    currentActivity: {
+      id: string;
+    };
   };
-  [UserAction.HAS_NO_ALLOCATION]: never;
+  [UserAction.HAS_NO_ALLOCATION]: {
+    currentAllocation: null;
+  };
 };
 
 const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
@@ -146,9 +159,10 @@ const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
 };
 
 export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { login, tokens, isLoggingIn } = useLogin();
-
+  const chainId = useChainId();
+  const [currentDepositNonce, setCurrentDepositNonce] = useState(0);
   const { userData, isLoading: isUserLoading } = useUserData();
   //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
@@ -161,6 +175,16 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
         : { state: UserState.CONNECTED }
       : { state: UserState.DISCONNECTED }
   );
+
+  const { data: depositData } = useReadContract({
+    address: config.depositContractAddress[chainId],
+    abi: depositContractAbi,
+    functionName: "getDepositByNonce",
+    args: [currentDepositNonce || BigInt(0), address],
+    query: {
+      refetchInterval: 1000,
+    },
+  });
 
   useEffect(() => {
     if (isLoggingIn) {
@@ -179,38 +203,54 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     const currentDeposit = (userData?.deposits || []).find(
       (deposit) => deposit.isCurrent
     );
-
     if (!isUserLoading && userData?._id) {
       setIsRegistered(true);
     }
     if ((user.allowanceAmount || 0) >= config.minimalAllowance) {
-      console.log("enough allowance");
       if (currentDeposit) {
+        setCurrentDepositNonce(currentDeposit.nonce);
+      }
+      //@ts-ignore
+      if (currentDeposit && depositData?.amount) {
         dispatch({ kind: UserAction.HAS_DEPOSIT, payload: { currentDeposit } });
       } else {
         if (userData?.deposits) {
-          dispatch({ kind: UserAction.HAS_NO_DEPOSIT });
+          dispatch({
+            kind: UserAction.HAS_NO_DEPOSIT,
+            payload: { currentDeposit: null },
+          });
         }
       }
     }
-  }, [isUserLoading, userData, user.allowanceAmount]);
+  }, [isUserLoading, userData, user.allowanceAmount, depositData]);
 
   const { isFetched, data } = useAllowance();
 
   //track allocation
   useEffect(() => {
+    console.log("user.currentDeposit", user.currentActivity);
     if (user.currentDeposit) {
-      console.log("current deposit", user.currentDeposit);
-      if (userData?.currentAllocation) {
+      if (userData?.currentAllocation.id) {
         dispatch({
           kind: UserAction.HAS_ALLOCATION,
-          payload: { currentAllocation: userData.currentAllocation },
+          payload: {
+            currentAllocation: userData.currentAllocation,
+            currentActivity: userData.currentActivity,
+          },
         });
       } else {
-        dispatch({ kind: UserAction.HAS_NO_ALLOCATION });
+        console.log("no allocation");
+        dispatch({
+          kind: UserAction.HAS_NO_ALLOCATION,
+          payload: { currentAllocation: null },
+        });
       }
     }
-  }, [userData?.currentAllocation, user.currentDeposit]);
+  }, [
+    userData?.currentActivity,
+    userData?.currentAllocation,
+    user.currentDeposit,
+  ]);
 
   useEffect(() => {
     if (isConnected) {

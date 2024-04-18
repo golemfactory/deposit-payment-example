@@ -1,10 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCreateAllocation } from "hooks/useCreateAllocation";
-import { Button, Card, Loading } from "react-daisyui";
-
+import { Card, Loading } from "react-daisyui";
+import { Button } from "./atoms/button";
 export const GolemManagerForm = ({ isVisible }: { isVisible: boolean }) => {
   const { createAllocation, isCreating } = useCreateAllocation();
-
   return (
     <AnimatePresence>
       {isVisible && (

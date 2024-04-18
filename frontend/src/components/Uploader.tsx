@@ -27,7 +27,6 @@ export const FileUploader = () => {
     event.preventDefault();
     const files = event.dataTransfer.files;
     // Handle the dropped files
-    console.log(files);
     setFiles(files);
   };
 

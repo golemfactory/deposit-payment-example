@@ -65,6 +65,9 @@ export type UserData = {
   currentAllocation: {
     id: string;
   };
+  currentActivity: {
+    id: string;
+  };
   deposits: {
     isCurrent: boolean;
     isValid: boolean;

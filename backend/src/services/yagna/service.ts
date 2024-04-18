@@ -16,6 +16,7 @@ import { formatEther } from "viem";
 export class Yagna {
   public debitNoteEvents: Subject<any>;
   private paymentService: YaTsClient.PaymentApi.RequestorService;
+  private activityService: YaTsClient.MarketApi.RequestorService;
   private isRunning: boolean = true;
   private YagnaConfig: { appKey: string; apiUrl: string };
   private lastDebitNoteEventTimestamp: string = new Date().toISOString();
@@ -31,13 +32,19 @@ export class Yagna {
     setExecutor: (userId: string, executor: TaskExecutor) => {
       this.userContext.data.set(userId, { executor });
     },
-    getExecutor: (userId: string) => {
-      return this.userContext.data.get(userId)?.executor;
+    getExecutor: async (userId: string) => {
+      const existingExecutor = this.userContext.data.get(userId)?.executor;
+      if (existingExecutor) {
+        console.log("executor exists");
+        return existingExecutor;
+      }
+      console.log("creating executor");
+      return await this.createExecutor(userId);
     },
-    setWorker: (userId: string, worker: Worker) => {
-      const executor = this.userContext.getExecutor(userId);
+    setWorker: async (userId: string, worker: Worker) => {
+      const executor = await this.userContext.getExecutor(userId);
       if (!executor) {
-        throw new Error(ErrorCode.NO_ALLOCATION);
+        throw new Error({ code: ErrorCode.NO_ALLOCATION });
       } else {
         this.userContext.data.set(userId, { executor, worker });
       }
@@ -47,8 +54,29 @@ export class Yagna {
     },
   };
 
-  getUserAllocation(userId: string) {
-    return this.userContext.getExecutor(userId)?.allocation;
+  async getUserAllocation(userId: string) {
+    console.log("getting user allocation");
+    const user = await container.cradle.userService.getUserById(userId);
+    if (!user) {
+      throw new Error({ code: ErrorCode.USER_NOT_FOUND });
+    }
+    const allocationId = user.currentAllocationId;
+    console.log("allocationId", allocationId);
+    if (!allocationId) {
+      return null;
+    }
+
+    const allocation = await this.paymentService.getAllocation(allocationId);
+    if (!allocation) {
+      throw new Error({
+        code: ErrorCode.ALLOCATION_NOT_FOUND,
+        payload: {
+          allocationId,
+        },
+      });
+    }
+    console.log("allocation gettersd", allocation);
+    return allocation;
   }
 
   constructor(YagnaConfig: { appKey: string; apiUrl: string }) {
@@ -62,10 +90,26 @@ export class Yagna {
       },
     });
 
+    const activityClient = new YaTsClient.MarketApi.Client({
+      BASE: `${YagnaConfig.apiUrl}/market-api/v1`,
+      HEADERS: {
+        Authorization: `Bearer ${YagnaConfig.appKey}`,
+      },
+    });
+
     this.paymentService = paymentClient.requestor;
+    this.activityService = activityClient.requestor;
   }
   stop() {
     this.isRunning = false;
+  }
+
+  releaseAllocation(allocationId: string) {
+    return this.paymentService.releaseAllocation(allocationId);
+  }
+
+  releaseAgreement(activityId: string) {
+    return this.activityService.terminateAgreement(activityId);
   }
   //task executor creates allocation as well
   async createExecutor(userId: string) {
@@ -73,10 +117,20 @@ export class Yagna {
     const userDeposit = await userService.getCurrentDeposit(userId);
 
     if (!userDeposit) {
-      throw new Error(ErrorCode.NO_DEPOSIT);
+      throw new Error({ code: ErrorCode.NO_DEPOSIT });
     }
 
     const TaskExecutor = container.cradle.GolemSDK.TaskExecutor;
+
+    const allocation = (await this.getUserAllocation(userId)) || {
+      deposit: {
+        contract: container.cradle.contractAddress,
+        id: userDeposit.id.toString(16),
+      },
+      expirationSec: Number(userDeposit.validTo) - dayjs().unix() - 1000,
+    };
+
+    console.log("allocation", allocation);
 
     const executor = await TaskExecutor.create({
       package: "pociejewski/clamav:latest",
@@ -84,30 +138,30 @@ export class Yagna {
       yagnaOptions: {
         apiKey: container.cradle.YagnaConfig.appKey,
       },
-      allocation: {
-        deposit: {
-          contract: container.cradle.contractAddress,
-          id: userDeposit.id.toString(16),
-        },
-        //TODO: would be better to accept timestamp not expiration from now
-        expirationSec: Number(userDeposit.validTo) - dayjs().unix() - 1000,
-      },
+      allocation: allocation,
       agreementMaxPoolSize: 1,
       budget: Number(formatEther(userDeposit.amount)),
     });
 
     this.userContext.setExecutor(userId, executor);
+    container.cradle.userService.setCurrentAllocationId(
+      userId,
+      executor.allocation.id
+    );
+    return executor;
   }
 
   //task executor creates agreement and activity
   async getUserWorker(userId: string): Promise<Worker> {
     return new Promise(async (resolve, reject) => {
       const worker = this.userContext.getWorker(userId);
-
+      console.log("getting user worker", worker);
       if (worker) {
-        await worker.isConnected();
-        resolve(worker);
-        return;
+        const isConnected = await worker.isConnected();
+        if (isConnected) {
+          resolve(worker);
+          return;
+        }
       }
 
       //@ts-ignore
@@ -126,16 +180,21 @@ export class Yagna {
         const userService = container.cradle.userService;
         const userDeposit = await userService.getCurrentDeposit(userId);
         if (!userDeposit) {
-          throw new Error(ErrorCode.NO_DEPOSIT);
+          throw new Error({ code: ErrorCode.NO_DEPOSIT });
         }
-        const executor = this.userContext.getExecutor(userId);
+        const executor = await this.userContext.getExecutor(userId);
         if (!executor) {
-          throw new Error(ErrorCode.NO_ALLOCATION);
+          throw new Error({ code: ErrorCode.NO_ALLOCATION });
         }
         executor
           .run(async (ctx: WorkContext) => {
             newWorker.context = ctx;
+
             newWorker.setState("free");
+            container.cradle.userService.setCurrentActivityId(
+              userId,
+              ctx.activity.agreement.id
+            );
             resolve(newWorker);
           })
           .catch((e: any) => {

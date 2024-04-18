@@ -58,11 +58,45 @@ export const userService: IUserService = {
     return userModel.deleteOne({ id: userId });
   },
 
+  getUserById: async (userId: string) => {
+    return userModel.findOne({ _id: userId });
+  },
+
   setCurrentAllocationId: async (userId: string, allocationId: string) => {
     console.log("setting allocation id", userId, allocationId);
     await userModel.updateOne(
       { _id: userId },
       { currentAllocationId: allocationId }
+    );
+  },
+  async getUserDTO(userId: string) {
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new Error(`User not found with id ${userId}`);
+    }
+    return {
+      walletAddress: user.walletAddress,
+      _id: user._id.toString(),
+      nonce: user.nonce.toString(),
+      currentAllocation: {
+        id: user.currentAllocationId,
+      },
+      currentActivity: {
+        id: user.currentActivityId,
+      },
+      deposits: user.deposits.map((d) => {
+        return {
+          isCurrent: d.isCurrent,
+          isValid: d.isValid,
+          nonce: d.nonce.toString(),
+        };
+      }),
+    };
+  },
+  setCurrentActivityId: async (userId: string, activityId: string) => {
+    await userModel.updateOne(
+      { _id: userId },
+      { currentActivityId: activityId }
     );
   },
 
@@ -76,11 +110,16 @@ export const userService: IUserService = {
       }
     );
     const user = await userModel.findOne({ _id: userId });
+
     const up = await userModel.updateOne(
       { _id: userId },
       {
         $push: {
-          deposits: deposit,
+          deposits: {
+            nonce: Number(deposit.nonce),
+            isCurrent: deposit.isCurrent,
+            isValid: deposit.isValid,
+          },
         },
       }
     );

@@ -4,10 +4,11 @@ import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 import { GolemManagerForm } from "./GolemManagerForm";
 import { GolemManagerSummary } from "./GolemManagerSummary";
+import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
 
 const variants = {
   onTop: {
-    top: "585px",
+    top: "615px",
     left: "30px",
     opacity: 1,
   },
@@ -23,21 +24,19 @@ const variants = {
 
 export const GolemManager = () => {
   const { user } = useUser();
-  const { address } = useAccount();
 
   const [position, setPosition] = useState("hidden");
-
   useEffect(() => {
-    console.log("user", user, user.hasAllocation());
     if (user.hasAllocation()) {
       setPosition("onTop");
     } else {
       if (user.hasDeposit()) {
         setPosition("onCenter");
+      } else {
+        setPosition("hidden");
       }
     }
-  }, [user.state]);
-
+  }, [user.hasDeposit(), user.hasAllocation()]);
   return (
     <motion.div
       style={{

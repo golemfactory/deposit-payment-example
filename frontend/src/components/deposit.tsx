@@ -34,11 +34,13 @@ export const Deposit = ({
   const [position, setPosition] = useState("onCenter");
 
   useEffect(() => {
+    if (isExtendFormVisible) {
+      setPosition("onCenter");
+      return;
+    }
     if (user.hasDeposit()) {
       setPosition("onTop");
-    }
-    if (isExtendFormVisible) {
-      console.log("showExtendDepositForm");
+    } else {
       setPosition("onCenter");
     }
   }, [user.hasDeposit(), isExtendFormVisible]);

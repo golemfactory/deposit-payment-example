@@ -28,7 +28,7 @@ export const config: Config<[typeof holesky]> = {
     [holesky.id]: "0x8888888815bf4db87e57b609a50f938311eed068",
   },
   requestorWalletAddress: {
-    [holesky.id]: "0xc6b6818d452e4c821d32423677092316a6b705e7",
+    [holesky.id]: "0x2df23cf840a1149646c7eaa426b493db808d31af",
   },
-  minimalAllowance: parseEther("50"),
+  minimalAllowance: parseEther("10"),
 };

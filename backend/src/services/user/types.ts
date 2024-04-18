@@ -26,6 +26,7 @@ export interface IUser {
   walletAddress: EthereumAddressType;
   deposits: Deposit[];
   currentAllocationId: string;
+  currentActivityId: string;
 }
 
 export interface IUserService {
@@ -42,4 +43,7 @@ export interface IUserService {
     userId: UserIdType,
     allocationId: string
   ): Promise<void>;
+  getUserById(userId: UserIdType): Promise<IUser | null>;
+  setCurrentActivityId(userId: UserIdType, activityId: string): Promise<void>;
+  getUserDTO(userId: UserIdType): Promise<any>;
 }

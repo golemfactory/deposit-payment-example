@@ -8,7 +8,6 @@ const fetcher = (url: string) =>
     },
   })
     .then((res) => {
-      console.log("refetch");
       return res.json();
     })
     .catch((error) => {
@@ -23,9 +22,8 @@ export const useUserData = (): {
   const { data, error, isLoading } = useSWR<UserData>(
     `${import.meta.env.VITE_BACKEND_URL}/me`,
     fetcher,
-    { refreshInterval: 5000 }
+    { refreshInterval: 1000 }
   );
-  console.log("data", data);
   return {
     userData: data,
     error,

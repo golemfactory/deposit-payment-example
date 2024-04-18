@@ -16,6 +16,9 @@ const schema = new mongoose.Schema<IUser>(
     currentAllocationId: {
       type: String,
     },
+    currentActivityId: {
+      type: String,
+    },
     deposits: [
       {
         isCurrent: {

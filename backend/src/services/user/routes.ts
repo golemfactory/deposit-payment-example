@@ -20,6 +20,9 @@ export const userService = fastifyPlugin(
           currentAllocation: {
             id: user.currentAllocationId,
           },
+          currentActivity: {
+            id: user.currentActivityId,
+          },
           deposits: user.deposits.map((d) => {
             return {
               isCurrent: d.isCurrent,

@@ -14,7 +14,6 @@ export const useUploadedFiles = () => {
   const files = useMap<string>();
 
   const setProgress = (id: string, progress: number) => {
-    console.log("setting progress", id, progress);
     files.set(id, progress);
   };
 
@@ -69,7 +68,6 @@ async function processFile(
       },
 
       onUploadProgress: (progressEvent) => {
-        console.log("onprogress axios", progressEvent);
         if (!progressEvent.total) return;
 
         const progress = Math.round(
@@ -92,7 +90,6 @@ export function useProcessFile(): {
   const { setProgress } = useFileUploader();
 
   const onProgress = (name: string, progress: number) => {
-    console.log("progress", name, progress);
     setProgress(name, progress);
   };
   const { trigger } = useSWRMutation(["scanResult", onProgress], processFile);

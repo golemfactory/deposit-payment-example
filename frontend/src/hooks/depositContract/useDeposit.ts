@@ -1,7 +1,7 @@
 import { useReadContract, useWriteContract } from "wagmi";
 
 import { abi } from "./abi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { useUser } from "hooks/useUser";
@@ -53,19 +53,34 @@ export function useUserCurrentDeposit() {
   const { user } = useUser();
   const { address } = useAccount();
 
-  if (!address) {
-    throw new Error("No account found");
-  }
-  if (!user.currentDeposit) {
-    throw new Error("No deposit found");
-  }
-
-  return useReadContract({
+  const { data, refetch, isFetching } = useReadContract({
     address: config.depositContractAddress[useChainId()],
     abi: abi,
     functionName: "getDepositByNonce",
-    args: [user.currentDeposit.nonce || BigInt(0), address],
+    args: [user?.currentDeposit?.nonce || BigInt(0), address],
   });
+
+  useEffect(() => {
+    if (!isFetching) {
+      const timeout = setTimeout(() => {
+        refetch();
+      }, 1000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [isFetching]);
+
+  return { data } as {
+    data: {
+      amount: bigint;
+      feeAmount: bigint;
+      validTo: bigint;
+    };
+    isError: boolean;
+    isSuccess: boolean;
+    isPending: boolean;
+  };
 }
 
 export function useExtendDeposit() {
