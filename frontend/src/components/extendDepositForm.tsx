@@ -47,7 +47,7 @@ export const ExtendDepositForm = ({
 
   useEffect(() => {
     if (currentDeposit) {
-      setNewValidToTimestamp(currentDeposit.validTo);
+      setNewValidToTimestamp(Number(currentDeposit.validTo));
     }
   }, [currentDeposit]);
 

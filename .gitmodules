@@ -14,4 +14,4 @@
 [submodule "yagna"]
 	path = yagna
 	url = https://github.com/golemfactory/yagna.git
-  branch = js-sdk-deposit-poc
+  branch = deposits

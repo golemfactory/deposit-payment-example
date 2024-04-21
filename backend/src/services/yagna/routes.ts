@@ -8,7 +8,14 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
     handler: async (request, reply) => {
       const requestUser = request.user;
       const Yagna = container.cradle.Yagna;
-      await Yagna.createExecutor(requestUser._id);
+      try {
+        await Yagna.createExecutor(requestUser._id);
+      } catch (e) {
+        console.log("error", e);
+        reply.code(500).send({
+          message: "Unable to create executor",
+        });
+      }
       const allocation = await Yagna.getUserAllocation(requestUser._id);
       console.log("allocation", allocation);
       if (!allocation) {
