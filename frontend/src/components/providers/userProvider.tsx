@@ -1,9 +1,7 @@
 import { config } from "config";
 import { useAllowance } from "hooks/GLM/useGLMApprove";
-import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
 import { useLogin } from "hooks/useLogin";
 import { useUserData } from "hooks/userUserData";
-import { use } from "i18next";
 import { abi as depositContractAbi } from "hooks/depositContract/abi";
 
 import {
