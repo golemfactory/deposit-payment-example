@@ -5,18 +5,19 @@ import { container } from "../../di.js";
 import { CustomError as Error } from "../../errors/error.js";
 import { ErrorCode } from "../../errors/codes.js";
 import dayjs from "dayjs";
+import bigDecimal from "js-big-decimal";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 import { Worker } from "./worker.js";
 import { WorkContext } from "@golem-sdk/golem-js";
-import { Task } from "node_modules/@golem-sdk/task-executor/dist/task.js";
 import { TaskExecutor } from "@golem-sdk/task-executor";
 import { formatEther } from "viem";
 export class Yagna {
   public debitNoteEvents: Subject<any>;
   private paymentService: YaTsClient.PaymentApi.RequestorService;
   private activityService: YaTsClient.MarketApi.RequestorService;
+  private identityService: YaTsClient.IdentityApi.DefaultService;
   private isRunning: boolean = true;
   private YagnaConfig: { appKey: string; apiUrl: string };
   private lastDebitNoteEventTimestamp: string = new Date().toISOString();
@@ -35,10 +36,8 @@ export class Yagna {
     getExecutor: async (userId: string) => {
       const existingExecutor = this.userContext.data.get(userId)?.executor;
       if (existingExecutor) {
-        console.log("executor exists");
         return existingExecutor;
       }
-      console.log("creating executor");
       return await this.createExecutor(userId);
     },
     setWorker: async (userId: string, worker: Worker) => {
@@ -54,35 +53,9 @@ export class Yagna {
     },
   };
 
-  async getUserAllocation(userId: string) {
-    console.log("getting user allocation");
-    const user = await container.cradle.userService.getUserById(userId);
-    if (!user) {
-      throw new Error({ code: ErrorCode.USER_NOT_FOUND });
-    }
-    const allocationId = user.currentAllocationId;
-    console.log("allocationId", allocationId);
-    if (!allocationId) {
-      return null;
-    }
-
-    const allocation = await this.paymentService.getAllocation(allocationId);
-    if (!allocation) {
-      throw new Error({
-        code: ErrorCode.ALLOCATION_NOT_FOUND,
-        payload: {
-          allocationId,
-        },
-      });
-    }
-    console.log("allocation gettersd", allocation);
-    return allocation;
-  }
-
   constructor(YagnaConfig: { appKey: string; apiUrl: string }) {
     this.YagnaConfig = YagnaConfig;
     this.debitNoteEvents = new Subject();
-    console.log("Yagna config", YagnaConfig);
     const paymentClient = new YaTsClient.PaymentApi.Client({
       BASE: `${YagnaConfig.apiUrl}/payment-api/v1`,
       HEADERS: {
@@ -99,10 +72,41 @@ export class Yagna {
 
     this.paymentService = paymentClient.requestor;
     this.activityService = activityClient.requestor;
+    this.identityService = new YaTsClient.IdentityApi.Client({
+      BASE: `${YagnaConfig.apiUrl}`,
+      HEADERS: {
+        Authorization: `Bearer ${YagnaConfig.appKey}`,
+      },
+    }).default;
   }
+
+  async getUserAllocation(userId: string) {
+    const user = await container.cradle.userService.getUserById(userId);
+    if (!user) {
+      throw new Error({ code: ErrorCode.USER_NOT_FOUND });
+    }
+    const allocationId = user.currentAllocationId;
+    if (!allocationId) {
+      return null;
+    }
+
+    const allocation = await this.paymentService.getAllocation(allocationId);
+    if (!allocation) {
+      throw new Error({
+        code: ErrorCode.ALLOCATION_NOT_FOUND,
+        payload: {
+          allocationId,
+        },
+      });
+    }
+    return allocation;
+  }
+
   stop() {
     this.isRunning = false;
   }
+
+  // I would prefer this methods to be on the Allocation
 
   releaseAllocation(allocationId: string) {
     return this.paymentService.releaseAllocation(allocationId);
@@ -111,6 +115,23 @@ export class Yagna {
   releaseAgreement(activityId: string) {
     return this.activityService.terminateAgreement(activityId);
   }
+
+  async getRequestorWalletAddress() {
+    return (await this.identityService.getIdentity()).identity;
+  }
+
+  async topUpAllocation(allocationId: string, amount: number) {
+    const currentAllocation =
+      await this.paymentService.getAllocation(allocationId);
+
+    const currentAmount = new bigDecimal.default(currentAllocation.totalAmount);
+    const additionalAmount = new bigDecimal.default(amount);
+
+    return this.paymentService.amendAllocation(allocationId, {
+      totalAmount: currentAmount.add(additionalAmount).getValue(),
+    });
+  }
+
   //task executor creates allocation as well
   async createExecutor(userId: string) {
     const userService = container.cradle.userService;
@@ -130,8 +151,6 @@ export class Yagna {
       expirationSec: Number(userDeposit.validTo) - dayjs().unix() - 1000,
     };
 
-    console.log("allocation", allocation);
-
     const executor = await TaskExecutor.create({
       package: "pociejewski/clamav:latest",
       //here I would like to be able to pass SUBNET but i have to do that usiong env
@@ -140,7 +159,8 @@ export class Yagna {
       },
       allocation: allocation,
       agreementMaxPoolSize: 1,
-      budget: Number(formatEther(userDeposit.amount)),
+      //@ts-ignore
+      budget: formatEther(userDeposit.amount),
     });
 
     this.userContext.setExecutor(userId, executor);
@@ -155,7 +175,6 @@ export class Yagna {
   async getUserWorker(userId: string): Promise<Worker> {
     return new Promise(async (resolve, reject) => {
       const worker = this.userContext.getWorker(userId);
-      console.log("getting user worker", worker);
       if (worker) {
         const isConnected = await worker.isConnected();
         if (isConnected) {

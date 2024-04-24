@@ -5,7 +5,6 @@ import { Register } from "./register";
 import { Deposit } from "./deposit";
 import { FileUploader } from "./Uploader";
 import { useState } from "react";
-import { useLogin } from "hooks/useLogin";
 import { GolemManager } from "./GolemManager";
 
 export function Home() {
@@ -15,7 +14,7 @@ export function Home() {
     <div className="w-screen h-screen flex justify-center ">
       <ConnectWallet />
       <Register />
-      <Allowance />
+      <Allowance isFormVisible={!extendVisible} />
       <Deposit
         showExtendForm={() => {
           setExtendVisible(true);
@@ -25,7 +24,7 @@ export function Home() {
           setExtendVisible(false);
         }}
       />
-      <GolemManager />
+      <GolemManager isFormVisible={!extendVisible} />
       {!extendVisible && user.hasAllocation() && <FileUploader />}
     </div>
   );

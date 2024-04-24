@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import { Button, Card, Input, Loading } from "react-daisyui";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { XMarkIcon } from "@heroicons/react/16/solid";
+import { useTopUpAllocation } from "hooks/useTopUpAllocation";
+import { add } from "ramda";
 export const ExtendDepositForm = ({
   isVisible,
   hide,
@@ -17,6 +19,7 @@ export const ExtendDepositForm = ({
   hide: () => void;
 }) => {
   const {
+    additionalAmount,
     data,
     extendDeposit,
     setAdditionalAmount,
@@ -38,10 +41,14 @@ export const ExtendDepositForm = ({
   const { user } = useUser();
 
   const { data: currentDeposit } = useUserCurrentDeposit();
-
+  const { trigger: topUp, isMutating: isAmendingAllocation } =
+    useTopUpAllocation();
   useEffect(() => {
     if (user.currentDeposit) {
       setNonce(user.currentDeposit?.nonce);
+    }
+    if (isSuccessTransaction && additionalAmount > 0) {
+      topUp(additionalAmount);
     }
   }, [isSuccessTransaction]);
 
@@ -143,7 +150,7 @@ export const ExtendDepositForm = ({
                     backgroundColor: "#181ea9a6",
                   }}
                 >
-                  {isPending || isLoadingTransaction ? (
+                  {isPending || isLoadingTransaction || isAmendingAllocation ? (
                     <Loading variant="infinity" />
                   ) : (
                     "Extend deposit"

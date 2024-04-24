@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance } from "fastify";
+import fastify, { FastifyInstance, FastifyRequest } from "fastify";
 import { container } from "../../di.js";
 import fastifyPlugin from "fastify-plugin";
 
@@ -53,25 +53,9 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
           ""
         );
 
-        return {
-          walletAddress: user.walletAddress,
-          _id: user._id.toString(),
-          nonce: user.nonce.toString(),
-          currentAllocation: {},
-          currentActivity: {
-            id: user.currentActivityId,
-          },
-          deposits: user.deposits.map((d) => {
-            return {
-              isCurrent: d.isCurrent,
-              isValid: d.isValid,
-              nonce: d.nonce.toString(),
-            };
-          }),
-        };
-        reply.code(200).send({
-          message: "Allocation released",
-        });
+        reply
+          .code(201)
+          .send(container.cradle.userService.getUserDTO(requestUser._id));
       }
     },
   });
@@ -84,7 +68,6 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       const user = await container.cradle.userService.getUserById(
         requestUser._id
       );
-      console.log("releasing agreement", user?.currentActivityId);
       const worker = await Yagna.getUserWorker(requestUser._id);
       await worker.context?.activity.stop();
       if (!user?.currentActivityId) {
@@ -92,28 +75,61 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
           message: "No agreement found",
         });
       } else {
-        // await Yagna.releaseAgreement(user.currentActivityId);
         container.cradle.userService.setCurrentActivityId(requestUser._id, "");
-
-        const res = {
-          walletAddress: user.walletAddress,
-          _id: user._id.toString(),
-          nonce: user.nonce.toString(),
-          currentAllocation: {
-            id: user.currentAllocationId,
-          },
-          currentActivity: {},
-          deposits: user.deposits.map((d) => {
-            return {
-              isCurrent: d.isCurrent,
-              isValid: d.isValid,
-              nonce: d.nonce.toString(),
-            };
-          }),
-        };
-        reply.code(200).send(res);
+        reply
+          .code(201)
+          .send(container.cradle.userService.getUserDTO(requestUser._id));
       }
     },
   });
+
+  fastify.get("/requestor", {
+    handler: async (request, reply) => {
+      const wallet = await container.cradle.Yagna.getRequestorWalletAddress();
+      reply.code(200).send({ wallet });
+    },
+  });
+
+  fastify.put("/top-up-allocation", {
+    onRequest: [fastify.authenticate],
+    schema: {
+      body: {
+        type: "object",
+        properties: {
+          amount: { type: "number" },
+        },
+        required: ["amount"],
+      },
+    },
+    handler: async (
+      request: FastifyRequest<{
+        Body: {
+          amount: number;
+        };
+      }>,
+      reply
+    ) => {
+      const requestUser = request.user;
+      const Yagna = container.cradle.Yagna;
+      const user = await container.cradle.userService.getUserById(
+        requestUser._id
+      );
+
+      if (!user?.currentAllocationId) {
+        reply.code(500).send({
+          message: "No allocation found",
+        });
+      } else {
+        await Yagna.topUpAllocation(
+          user.currentAllocationId,
+          request.body.amount
+        );
+        reply
+          .code(201)
+          .send(container.cradle.userService.getUserDTO(requestUser._id));
+      }
+    },
+  });
+
   done();
 });

@@ -14,9 +14,8 @@ const variants = {
   },
 };
 
-export const Allowance = () => {
+export const Allowance = ({ isFormVisible }: { isFormVisible: boolean }) => {
   const { user } = useUser();
-
   return (
     <motion.div
       style={{
@@ -27,7 +26,11 @@ export const Allowance = () => {
       transition={{ duration: 0.5 }}
     >
       <ApproveForm
-        isVisible={user.hasKnownAllowance() && !user.hasEnoughAllowance()}
+        isVisible={
+          isFormVisible &&
+          user.hasKnownAllowance() &&
+          !user.hasEnoughAllowance()
+        }
       />
       <AllowanceSummary
         isVisible={user.hasKnownAllowance() && user.hasEnoughAllowance()}

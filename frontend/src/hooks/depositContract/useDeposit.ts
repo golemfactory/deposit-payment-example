@@ -6,7 +6,8 @@ import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { useUser } from "hooks/useUser";
 import { useAccount } from "wagmi";
-import { formatEther, parseEther } from "viem";
+import { parseEther } from "viem";
+import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
 export function useCreateDeposit() {
   const { data, isError, isSuccess, isPending, isIdle, writeContractAsync } =
     useWriteContract();
@@ -14,6 +15,8 @@ export function useCreateDeposit() {
   const [fee, setFee] = useState(0);
   const [amount, setAmount] = useState(0);
   const [validToTimestamp, setValidToTimestamp] = useState(0);
+
+  const { data: requestorData } = useRequestorWalletAddress();
 
   return {
     createDeposit: async () => {
@@ -25,8 +28,7 @@ export function useCreateDeposit() {
         functionName: "createDeposit",
         args: [
           BigInt(nonce),
-          //@ts-ignore TODO : make sure only supportwed chains are allowed
-          config.requestorWalletAddress[chainId],
+          requestorData?.wallet,
           BigInt(amount * Math.pow(10, 18)),
           BigInt(fee * Math.pow(10, 18)),
           BigInt(0),
@@ -114,5 +116,8 @@ export function useExtendDeposit() {
     setNonce,
     setAdditionalAmount,
     setAdditionalFee,
+    additionalAmount,
+    additionalFee,
+    validToTimestamp,
   };
 }

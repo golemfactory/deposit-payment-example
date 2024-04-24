@@ -1,10 +1,8 @@
 import { motion } from "framer-motion";
 import { useUser } from "hooks/useUser";
-import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 import { GolemManagerForm } from "./GolemManagerForm";
 import { GolemManagerSummary } from "./GolemManagerSummary";
-import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
 
 const variants = {
   onTop: {
@@ -22,7 +20,7 @@ const variants = {
   },
 };
 
-export const GolemManager = () => {
+export const GolemManager = ({ isFormVisible }: { isFormVisible: boolean }) => {
   const { user } = useUser();
 
   const [position, setPosition] = useState("hidden");
@@ -46,7 +44,7 @@ export const GolemManager = () => {
       variants={variants}
       transition={{ duration: 0.5 }}
     >
-      <GolemManagerForm isVisible={!user.hasAllocation()} />
+      <GolemManagerForm isVisible={isFormVisible && !user.hasAllocation()} />
       <GolemManagerSummary isVisible={user.hasAllocation()} />
     </motion.div>
   );

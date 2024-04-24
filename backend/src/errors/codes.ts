@@ -5,6 +5,7 @@ export enum ErrorCode {
   NO_WORKER = "NO_WORKER",
   USER_NOT_FOUND = "USER_NOT_FOUND",
   ALLOCATION_NOT_FOUND = "ALLOCATION_NOT_FOUND",
+  ALLOCATION_TOP_UP_FAILED = "ALLOCATION_TOP_UP_FAILED",
 }
 
 export const errorMessages = {
@@ -18,6 +19,11 @@ export const errorMessages = {
   }: {
     allocationId: string;
   }) => `Allocation not found: ${allocationId}`,
+  [ErrorCode.ALLOCATION_TOP_UP_FAILED]: ({
+    allocationId,
+  }: {
+    allocationId: string;
+  }) => `Allocation top up failed: ${allocationId}`,
 };
 
 export type ErrorParams = {
