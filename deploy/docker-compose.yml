@@ -57,7 +57,7 @@ services:
       context: ./yagna
       dockerfile: Dockerfile
       args:
-        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta1
+        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta3
     command: yagna service run
     environment:
       - YAGNA_AUTOCONF_APPKEY=${YAGNA_APPKEY}
