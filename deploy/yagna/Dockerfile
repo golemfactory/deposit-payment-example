@@ -5,6 +5,8 @@ FROM python:latest
 # This tools are not needed but are helpful for debugging
 RUN apt-get update -y
 RUN apt-get install -y build-essential net-tools iputils-ping curl vim git wget unzip jq dnsutils tcpdump
+RUN apt-get install -y nodejs npm
+RUN npm install -g pnpm serve pm2
 RUN pip install --upgrade pip
 
 # Download official installer
