@@ -2,8 +2,10 @@ services:
   # application service
   backend:
     build:
-      context: ../
+      context: ./yagna
       dockerfile: Dockerfile
+      args:
+        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta3
     command: pnpm run start
     working_dir: /app/backend
     environment:
@@ -28,8 +30,10 @@ services:
 
   frontend:
     build:
-      context: ../
+      context: ./yagna
       dockerfile: Dockerfile
+      args:
+        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta3
     command: pnpm run start
     working_dir: /app/frontend
     environment:
