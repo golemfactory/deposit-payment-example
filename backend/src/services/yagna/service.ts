@@ -115,7 +115,6 @@ export class Yagna {
   }
 
   releaseAgreement(activityId: string) {
-    console.log("releasing agreement", activityId);
     return this.activityService.terminateAgreement(activityId);
   }
 
@@ -137,6 +136,7 @@ export class Yagna {
 
   //task executor creates allocation as well
   async createExecutor(userId: string) {
+    debugLog("payments", "creating executor", userId);
     const userService = container.cradle.userService;
     const userDeposit = await userService.getCurrentDeposit(userId);
 
@@ -154,7 +154,11 @@ export class Yagna {
       expirationSec: Number(userDeposit.validTo) - dayjs().unix() - 1000,
     };
 
-    console.log("crteaing executor", allocation);
+    //@ts-ignore
+    if (allocation?.id) {
+      debugLog("payments", "allocation already exists, reusing", allocation);
+    }
+
     const executor = await TaskExecutor.create({
       package: "pociejewski/clamav:latest",
       //here I would like to be able to pass SUBNET but i have to do that usiong env
@@ -177,6 +181,7 @@ export class Yagna {
 
   //task executor creates agreement and activity
   async getUserWorker(userId: string): Promise<Worker> {
+    debugLog("payments", "getting user worker", userId);
     return new Promise(async (resolve, reject) => {
       const worker = this.userContext.getWorker(userId);
       if (worker) {
@@ -214,6 +219,11 @@ export class Yagna {
             newWorker.context = ctx;
 
             newWorker.setState("free");
+            debugLog(
+              "payments",
+              "worker connected, agreement done",
+              ctx.activity.agreement.id
+            );
             container.cradle.userService.setCurrentActivityId(
               userId,
               ctx.activity.agreement.id
@@ -252,10 +262,8 @@ export class Yagna {
       );
 
       debitNoteEvents.forEach((event: any) => {
-        console.log("debit note event", event);
         const debitNoteId = event.debitNoteId;
         const debitNote = this.paymentService.getDebitNote(debitNoteId);
-        console.log("debit note", debitNote);
         this.debitNoteEvents.next(debitNote);
         this.lastDebitNoteEventTimestamp = event.eventDate;
       });
@@ -271,7 +279,6 @@ export class Yagna {
       );
 
       invoiceEvents.forEach((event: any) => {
-        console.log("invoice event", event);
         this.debitNoteEvents.next(event);
         this.lastInvoiceEventTimestamp = event.eventDate;
       });

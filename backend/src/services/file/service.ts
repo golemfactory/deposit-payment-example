@@ -8,6 +8,8 @@ import { Worker } from "../yagna/worker.js";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const DIR_NAME = fileURLToPath(new URL("../../../../temp/", import.meta.url));
 
+import { debugLog } from "../../utils.js";
+
 export const fileService = (
   GolemSDK: typeof sdk,
   contractAddress: any
@@ -18,8 +20,6 @@ export const fileService = (
   processFile: (fileName: string, userId: string, depositId: bigint) => void;
   init: () => void;
 } => {
-  console.log("creating file service", contractAddress);
-
   return {
     resultStream: new Subject<IScanResult>(),
     workers: {},
@@ -43,12 +43,10 @@ export const fileService = (
         }
       }
 
-      console.log("Scanning file on Golem", fileName);
-
       //TODO handle errors and timeouts
       //but it seems that there was no try to find another one
       //this is task executor abstraction so it should handle it for me
-
+      debugLog("file", "Scanning file on Golem", fileName);
       const results = await worker.context
         ?.beginBatch()
         .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
@@ -62,14 +60,17 @@ export const fileService = (
       return JSON.parse((results[3].stdout || "null") as string);
     },
     async processFile(fileName: string, userId: string) {
+      debugLog("file", "Processing file", fileName);
       const worker = await container.cradle.Yagna.getUserWorker(userId);
       worker.addFileToQueue(fileName);
       await worker.isFree(fileName);
+      debugLog("file", "Worker is free", fileName);
       worker.setState("busy");
       const scanResult = await this.scanFileOnGolem(fileName, worker);
+      debugLog("file", "Scan result", fileName, scanResult);
       worker.setState("free");
+
       if (scanResult) {
-        console.log("scanResult", scanResult);
         this.resultStream.next({
           result: scanResult.Viruses ? fileStatus.INFECTED : fileStatus.CLEAN,
           id: fileName,

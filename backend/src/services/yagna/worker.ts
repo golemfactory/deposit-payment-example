@@ -45,8 +45,6 @@ export class Worker {
       const subscription = this.state$.subscribe((state) => {
         const isFirstInQueue = this.queue[this.queue.length - 1] === fileId;
         if (state === "free" && isFirstInQueue) {
-          console.log("Worker is free now");
-          // subscription.unsubscribe();
           resolve();
         }
       });
@@ -56,10 +54,7 @@ export class Worker {
     return new Promise((resolve) => {
       const subscription = this.state$.subscribe(async (state) => {
         if (state !== "connecting") {
-          console.log("Worker is connected now");
-          // subscription.unsubscribe();
           const state = await this.context?.getState();
-          console.log("state", state);
           resolve(ActivityStateEnum.Ready === state);
         }
       });

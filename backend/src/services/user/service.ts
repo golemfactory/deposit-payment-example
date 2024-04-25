@@ -27,7 +27,6 @@ export const userService: IUserService = {
   },
   //@ts-ignore
   findById: async (userId: string) => {
-    console.log("find by id", userId);
     return userModel.findOne({ _id: userId });
   },
   //@ts-ignore

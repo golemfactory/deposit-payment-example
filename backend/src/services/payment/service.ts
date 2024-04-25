@@ -40,9 +40,6 @@ export const paymentService = (
         functionName: "getDepositByNonce",
         args: [BigInt(nonce), user.walletAddress],
       });
-
-      console.log("data", data);
-      console.log("nonce", nonce);
       if (!data) {
         throw new Error(
           `Deposit not found with nonce ${nonce} and funder ${user.walletAddress}`
@@ -61,7 +58,6 @@ export const paymentService = (
       if (feeRatio < Number(serviceFee)) {
         documentDeposit.isValid = false;
       }
-      console.log("going to add deposit");
       userService.addDeposit(userId, documentDeposit);
     },
   };

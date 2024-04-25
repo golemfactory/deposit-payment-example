@@ -17,7 +17,6 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
         });
       }
       const allocation = await Yagna.getUserAllocation(requestUser._id);
-      console.log("allocation", allocation);
       if (!allocation) {
         reply.code(500).send({
           message: "Unable to create allocation",

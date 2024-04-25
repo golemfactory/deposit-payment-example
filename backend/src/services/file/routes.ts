@@ -46,7 +46,6 @@ export const fileService = fastifyPlugin(
         if (!deposit) {
           throw new Error("Cant process file without deposit");
         }
-        console.log("deposit", deposit);
         container.cradle.fileService.processFile(
           data?.filename,
           request.user._id,

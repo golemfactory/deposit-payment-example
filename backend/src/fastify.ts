@@ -12,7 +12,7 @@ import { Yagna } from "./services/yagna/routes.js";
 
 export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   const fastify = Fastify({
-    logger: true,
+    logger: false,
   });
 
   fastify.register(fastifySensible);
