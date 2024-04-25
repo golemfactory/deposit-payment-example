@@ -11,7 +11,7 @@ services:
     environment:
       - YAGNA_APPKEY=${YAGNA_APPKEY}
       - YAGNA_API_URL=http://yagna:7465
-      - GSB_URL=http://yagna:7464
+      - GSB_URL=tcp://yagna:7464
       - JWT_SECRET=dup]a
       - JWT_TOKEN_EXPIRATION=1d
       - JWT_REFRESH_TOKEN_EXPIRATION=7d
@@ -40,7 +40,7 @@ services:
     environment:
       - YAGNA_APPKEY=${YAGNA_APPKEY}
       - YAGNA_API_URL=http://yagna:7465
-      - GSB_URL=http://yagna:7464
+      - GSB_URL=tcp://yagna:7464
       - JWT_SECRET=dup]a
       - JWT_TOKEN_EXPIRATION=1d
       - JWT_REFRESH_TOKEN_EXPIRATION=7d
@@ -69,6 +69,7 @@ services:
       - YAGNA_AUTOCONF_APPKEY=${YAGNA_APPKEY}
       - YAGNA_AUTOCONF_ID_SECRET=${YAGNA_PRIVATE_KEY}
       - YAGNA_API_URL=http://0.0.0.0:7465
+      - GSB_URL=tcp://0.0.0.0:7464
       - SUBNET=${SUBNET}
       - YA_NET_BIND_URL=udp://0.0.0.0:0
   # mongo service
