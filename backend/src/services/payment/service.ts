@@ -46,6 +46,7 @@ export const paymentService = (
         );
       }
       // @ts-ignore
+
       const { amount, feeAmount } = data;
 
       const feeRatio = Number(BigDecimal.default.divide(feeAmount, amount));

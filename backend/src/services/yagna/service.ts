@@ -115,6 +115,7 @@ export class Yagna {
   }
 
   releaseAgreement(activityId: string) {
+    debugLog("payments", "releasing agreement", activityId);
     return this.activityService.terminateAgreement(activityId);
   }
 

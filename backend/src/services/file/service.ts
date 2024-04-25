@@ -24,10 +24,7 @@ export const fileService = (
     resultStream: new Subject<IScanResult>(),
     workers: {},
     init() {
-      this.resultStream.subscribe((result) => {
-        //TODO : save to db
-        //scanResultModel.create(result);
-      });
+      this.resultStream.subscribe();
     },
 
     async scanFileOnGolem(fileName: string, worker: Worker) {
@@ -46,7 +43,6 @@ export const fileService = (
       //TODO handle errors and timeouts
       //but it seems that there was no try to find another one
       //this is task executor abstraction so it should handle it for me
-      debugLog("file", "Scanning file on Golem", fileName);
       const results = await worker.context
         ?.beginBatch()
         .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
@@ -55,7 +51,6 @@ export const fileService = (
         .run(`cat /golem/output/temp/metadata.json`)
         .end();
 
-      worker.context?.activity.stop();
       //@ts-ignore
       return JSON.parse((results[3].stdout || "null") as string);
     },
