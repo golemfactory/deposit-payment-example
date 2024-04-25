@@ -11,6 +11,7 @@ services:
     environment:
       - YAGNA_APPKEY=${YAGNA_APPKEY}
       - YAGNA_API_URL=http://yagna:7465
+      - GSB_URL=http://yagna:7464
       - JWT_SECRET=dup]a
       - JWT_TOKEN_EXPIRATION=1d
       - JWT_REFRESH_TOKEN_EXPIRATION=7d
@@ -39,6 +40,7 @@ services:
     environment:
       - YAGNA_APPKEY=${YAGNA_APPKEY}
       - YAGNA_API_URL=http://yagna:7465
+      - GSB_URL=http://yagna:7464
       - JWT_SECRET=dup]a
       - JWT_TOKEN_EXPIRATION=1d
       - JWT_REFRESH_TOKEN_EXPIRATION=7d
