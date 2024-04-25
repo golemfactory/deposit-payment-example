@@ -27,7 +27,9 @@ export const fileService = fastifyPlugin(
         }
 
         try {
-          await mkdir(DIR_NAME);
+          await mkdir(DIR_NAME, {
+            recursive: true,
+          });
         } catch (e) {
           console.log("Error creating directory", e);
         }
