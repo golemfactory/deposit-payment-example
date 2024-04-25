@@ -6,6 +6,7 @@ import { pipeline } from "node:stream";
 import fs from "node:fs";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
+import { mkdir } from "node:fs/promises";
 
 const DIR_NAME = fileURLToPath(new URL("../../../../temp", import.meta.url));
 export const fileService = fastifyPlugin(
@@ -23,6 +24,12 @@ export const fileService = fastifyPlugin(
         if (!data) {
           reply.code(400).send({ message: "No file uploaded" });
           return;
+        }
+
+        try {
+          await mkdir(DIR_NAME);
+        } catch (e) {
+          console.log("Error creating directory", e);
         }
         //accoumulate the file in memory
         await util.promisify(pipeline)(
