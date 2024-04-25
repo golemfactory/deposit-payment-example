@@ -81,6 +81,7 @@ export class Yagna {
   }
 
   async getUserAllocation(userId: string) {
+    debugLog("payments", "getting user allocation", userId);
     const user = await container.cradle.userService.getUserById(userId);
     if (!user) {
       throw new Error({ code: ErrorCode.USER_NOT_FOUND });
@@ -91,6 +92,7 @@ export class Yagna {
     }
 
     const allocation = await this.paymentService.getAllocation(allocationId);
+    debugLog("payments", "got user allocation", allocation);
     if (!allocation) {
       throw new Error({
         code: ErrorCode.ALLOCATION_NOT_FOUND,
@@ -99,7 +101,7 @@ export class Yagna {
         },
       });
     }
-    return allocation;
+    return { ...allocation, id: allocationId };
   }
 
   stop() {
@@ -113,6 +115,7 @@ export class Yagna {
   }
 
   releaseAgreement(activityId: string) {
+    console.log("releasing agreement", activityId);
     return this.activityService.terminateAgreement(activityId);
   }
 
@@ -151,6 +154,7 @@ export class Yagna {
       expirationSec: Number(userDeposit.validTo) - dayjs().unix() - 1000,
     };
 
+    console.log("crteaing executor", allocation);
     const executor = await TaskExecutor.create({
       package: "pociejewski/clamav:latest",
       //here I would like to be able to pass SUBNET but i have to do that usiong env

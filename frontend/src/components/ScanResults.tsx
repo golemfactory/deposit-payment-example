@@ -4,7 +4,7 @@ import { Card, Progress, RadialProgress } from "react-daisyui";
 import { motion } from "framer-motion";
 import { useFileUploader } from "./providers/fileUploader";
 import { P, match } from "ts-pattern";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const ScanResults = () => {
   //TODO merge two hooks into one
@@ -67,6 +67,18 @@ export const ScanResults = () => {
 };
 
 const PendingCard = (result: { id: string; data: { progress: number } }) => {
+  const [processing, setProcessing] = useState(false);
+
+  useEffect(() => {
+    if (result.data.progress === 100) {
+      setTimeout(() => {
+        setProcessing(true);
+      }, 1000);
+    } else {
+      setProcessing(false);
+    }
+  }, [result.data.progress]);
+
   return (
     <Card
       className="p-4 bg-[#0000005b] m-2 !text-white rounded-md border-none"
@@ -74,18 +86,36 @@ const PendingCard = (result: { id: string; data: { progress: number } }) => {
         color: "white",
       }}
     >
-      <div>
-        <Card.Title></Card.Title>
-        <Card.Body>
-          <div className="grid gap-4 items-center">
-            <h1 className="italic text-2xl">{result.id}</h1> Uploading
-            <RadialProgress value={result.data.progress}>
-              {result.data.progress}%
-            </RadialProgress>
-          </div>
-        </Card.Body>
-        <Card.Actions className="justify-end"></Card.Actions>
-      </div>
+      {processing && (
+        <div>
+          <Card.Title>{result.id}</Card.Title>
+          <Card.Body>
+            <div className="grid grid-cols-3 gap-4 items-center">
+              <h1 className="italic text-2xl col-span-3">
+                Processing file on Golem
+              </h1>{" "}
+            </div>
+          </Card.Body>
+          <Card.Actions className="justify-end"></Card.Actions>
+        </div>
+      )}
+      {!processing && (
+        <div>
+          <Card.Title>{result.id}</Card.Title>
+          <Card.Body>
+            <div className="grid grid-cols-3 gap-4 items-center">
+              <h1 className="italic text-2xl col-span-1">Uploading</h1>{" "}
+              <RadialProgress
+                value={result.data.progress}
+                className="col-span-2"
+              >
+                {result.data.progress}%
+              </RadialProgress>
+            </div>
+          </Card.Body>
+          <Card.Actions className="justify-end"></Card.Actions>
+        </div>
+      )}
     </Card>
   );
 };
@@ -108,9 +138,10 @@ const InfectedCard = (result: {
           color: "white",
         }}
       >
+        <Card.Title>{result.id}</Card.Title>
         <Card.Body>
           <div className="flex gap-4 items-center">
-            <h1 className="italic text-2xl">{result.id}</h1> Infected
+            <h1 className="italic text-2xl">Infected</h1>
           </div>
           <div className="flex flex-col">
             <h2 className="text-left">Detected viruses:</h2>
@@ -138,9 +169,10 @@ const CleanCard = (result: { id: string; data: object }) => {
       }}
     >
       <div>
+        <Card.Title>{result.id}</Card.Title>
         <Card.Body>
           <div className="flex gap-4 items-center">
-            <h1 className="italic text-2xl">{result.id}</h1> Clean
+            <h1 className="italic text-2xl">Clean</h1>
           </div>
         </Card.Body>
         <Card.Actions className="justify-end"></Card.Actions>

@@ -7,7 +7,7 @@ import fs from "node:fs";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 
-const DIR_NAME = fileURLToPath(new URL("../../../../temp/", import.meta.url));
+const DIR_NAME = fileURLToPath(new URL("../../../../temp", import.meta.url));
 export const fileService = fastifyPlugin(
   (fastify: FastifyInstance, opts, done) => {
     fastify.post("/process-file", {

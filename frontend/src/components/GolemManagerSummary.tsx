@@ -55,7 +55,7 @@ export const GolemManagerSummary = ({ isVisible }: { isVisible: boolean }) => {
               )}
             </Button>
           </div>
-          {user?.currentActivity?.id && (
+          {/* {user?.currentActivity?.id && (
             <div>
               <div className="inline">
                 <CheckCircleIcon
@@ -82,7 +82,7 @@ export const GolemManagerSummary = ({ isVisible }: { isVisible: boolean }) => {
                 </Button>
               </div>
             </div>
-          )}
+          )} */}
         </motion.div>
       )}
     </AnimatePresence>
