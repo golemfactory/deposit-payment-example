@@ -185,8 +185,10 @@ export class Yagna {
     return new Promise(async (resolve, reject) => {
       const worker = this.userContext.getWorker(userId);
       if (worker) {
+        debugLog("payments", "worker found", userId);
         const isConnected = await worker.isConnected();
         if (isConnected) {
+          debugLog("payments", "worker connected", userId);
           resolve(worker);
           return;
         }
@@ -195,10 +197,12 @@ export class Yagna {
       //@ts-ignore
 
       const isMockMode = container.cradle.mode === "mock";
-
+      debugLog("payments", "creating worker", userId);
       const newWorker = new Worker();
       this.userContext.setWorker(userId, newWorker);
       newWorker.setState("connecting");
+
+      debugLog("payments", "creating worker", userId);
       if (isMockMode) {
         await sleep(1000);
         newWorker.setState("free");
@@ -214,6 +218,8 @@ export class Yagna {
         if (!executor) {
           throw new Error({ code: ErrorCode.NO_ALLOCATION });
         }
+
+        debugLog("payments", "creating agreement", userId);
         executor
           .run(async (ctx: WorkContext) => {
             newWorker.context = ctx;
