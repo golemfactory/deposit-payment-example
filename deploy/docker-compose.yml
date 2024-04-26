@@ -5,7 +5,7 @@ services:
       context: ./yagna
       dockerfile: Dockerfile
       args:
-        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta3
+        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta4
     command: pnpm run start
     working_dir: /app/backend
     environment:
@@ -34,7 +34,7 @@ services:
       context: ./yagna
       dockerfile: Dockerfile
       args:
-        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta3
+        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta4
     command: pnpm run start
     working_dir: /app/frontend
     environment:
@@ -63,7 +63,7 @@ services:
       context: ./yagna
       dockerfile: Dockerfile
       args:
-        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta3
+        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta4
     command: yagna service run
     environment:
       - YAGNA_AUTOCONF_APPKEY=${YAGNA_APPKEY}
