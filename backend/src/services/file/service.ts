@@ -45,7 +45,7 @@ export const fileService = (
       //this is task executor abstraction so it should handle it for me
       const results = await worker.context
         ?.beginBatch()
-        .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
+        .uploadFile(`ftp://127.0.0.1/${fileName}`, `/golem/workdir/${fileName}`)
         .run(`/golem/scripts/clamscan-json.sh /golem/workdir/${fileName}`)
         .run("ls /golem/output/")
         .run(`cat /golem/output/temp/metadata.json`)

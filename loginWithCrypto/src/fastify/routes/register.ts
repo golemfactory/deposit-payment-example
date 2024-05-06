@@ -20,7 +20,6 @@ export const register: RouteOptions = {
     const { walletAddress } = req.body;
     // @ts-ignore temporary
     const { userService } = req.routeOptions.config;
-    console.log("registering user", walletAddress);
     const user = await userService.registerUser(walletAddress);
     rep.send(user);
   },

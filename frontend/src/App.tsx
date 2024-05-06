@@ -8,6 +8,7 @@ import { UserProvider } from "components/providers/userProvider";
 import { FileUploaderProvider } from "components/providers/fileUploader";
 import { formatEther } from "viem";
 
+console.log("DUPA");
 function App() {
   return (
     //@ts-ignore

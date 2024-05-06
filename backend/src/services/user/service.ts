@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
 import { container } from "../../di.js";
 const randomNonce = () => {
-  return Math.floor(Math.random() * 10000000);
+  return Math.floor(Math.random() * 10000000000);
 };
 
 export const userService: IUserService = {
