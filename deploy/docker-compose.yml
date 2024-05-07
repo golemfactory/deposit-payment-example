@@ -2,17 +2,14 @@ services:
   # application service
   backend:
     build:
-      context: ./yagna
+      context: ./backend
       dockerfile: Dockerfile
-      args:
-        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta4
-    command: pnpm run start
     working_dir: /app/backend
     environment:
       - YAGNA_APPKEY=${YAGNA_APPKEY}
       - YAGNA_API_URL=http://yagna:7465
       - GSB_URL=tcp://yagna:7464
-      - JWT_SECRET=dup]a
+      - JWT_SECRET=dupa
       - JWT_TOKEN_EXPIRATION=1d
       - JWT_REFRESH_TOKEN_EXPIRATION=7d
       - JWT_ISSUER=golem.network
@@ -31,26 +28,12 @@ services:
 
   frontend:
     build:
-      context: ./yagna
+      context: ./frontend
       dockerfile: Dockerfile
       args:
         - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta4
     command: pnpm run start
     working_dir: /app/frontend
-    environment:
-      - YAGNA_APPKEY=${YAGNA_APPKEY}
-      - YAGNA_API_URL=http://yagna:7465
-      - GSB_URL=tcp://yagna:7464
-      - JWT_SECRET=dup]a
-      - JWT_TOKEN_EXPIRATION=1d
-      - JWT_REFRESH_TOKEN_EXPIRATION=7d
-      - JWT_ISSUER=golem.network
-      - MONGO_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/
-      - HOST=0.0.0.0
-      - PORT=5174
-      - DB_NAME=depositDB
-      - DEPOSIT_CONTRACT_ADDRESS=0xA3D86ebF4FAC94114526f4D09C3fA093898347a6
-
     ports:
       - "3000:3000"
     depends_on:
