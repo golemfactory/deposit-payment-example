@@ -186,10 +186,10 @@ export class Yagna {
     return new Promise(async (resolve, reject) => {
       const worker = this.userContext.getWorker(userId);
       if (worker) {
-        debugLog("payments", "worker found", userId);
+        debugLog("yagna", "worker found", userId);
         const isConnected = await worker.isConnected();
         if (isConnected) {
-          debugLog("payments", "worker connected", userId);
+          debugLog("yagna", "worker connected", userId);
           resolve(worker);
           return;
         }
@@ -198,12 +198,11 @@ export class Yagna {
       //@ts-ignore
 
       const isMockMode = container.cradle.mode === "mock";
-      debugLog("payments", "creating worker", userId);
+      debugLog("yagna", "creating worker", userId);
       const newWorker = new Worker();
       this.userContext.setWorker(userId, newWorker);
       newWorker.setState("connecting");
 
-      debugLog("payments", "creating worker", userId);
       if (isMockMode) {
         await sleep(1000);
         newWorker.setState("free");
