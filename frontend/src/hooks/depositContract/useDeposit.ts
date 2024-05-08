@@ -21,7 +21,7 @@ export function useCreateDeposit() {
   return {
     createDeposit: async () => {
       const nonce = Math.floor(Math.random() * 1000000);
-
+      console.log("c", config.depositContractAddress[chainId], requestorData);
       await writeContractAsync({
         address: config.depositContractAddress[chainId],
         abi: abi,

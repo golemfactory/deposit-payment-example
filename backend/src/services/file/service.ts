@@ -28,6 +28,7 @@ export const fileService = (
     },
 
     async scanFileOnGolem(fileName: string, worker: Worker) {
+      debugLog("file", "Scanning file on Golem", fileName);
       const isMockMode = container.cradle.mode === "mock";
 
       if (isMockMode) {

@@ -34,6 +34,7 @@ export const login: RouteOptions = {
       message: message,
     });
 
+    console.log("is ok", isOk);
     if (isOk) {
       const user = await userService.findByWalletAddress(walletAddress);
       if (!user) {
