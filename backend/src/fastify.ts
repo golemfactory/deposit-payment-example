@@ -15,9 +15,6 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
     logger: false,
   });
 
-  fastify.addHook("onRoute", (routeOptions) => {
-    routeOptions.url = `/api${routeOptions.url}`;
-  });
 
   fastify.register(fastifySensible);
   fastify.register(fastifyMultipart);
