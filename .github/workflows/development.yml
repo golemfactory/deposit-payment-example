@@ -40,4 +40,6 @@ jobs:
       - name: Restart docker images
         run: |
           cd /home/ubuntu/golem/deposit-payment-example/deploy
-          docker-compose restart backend frontend
+          docker-compose build 
+          docker-compose stop backend frontend 
+          docker-compose up -d 
