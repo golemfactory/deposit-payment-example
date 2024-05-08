@@ -7,12 +7,9 @@ export const userService = fastifyPlugin(
     fastify.get("/me", {
       onRequest: [fastify.authenticate],
       handler: async (request: FastifyRequest, reply) => {
-        console.log("using mongo uri", container.cradle.connectionString);
         const userService = container.cradle.userService;
         const requestUser = request.user;
         const user = await userService.findById(requestUser._id);
-
-        console.log("user", user);
         if (!user) {
           throw new Error(`User not found with id ${requestUser._id}`);
         }
