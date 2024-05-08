@@ -22,7 +22,7 @@ export const useUserData = (): {
   const { data, error, isLoading } = useSWR<UserData>(
     `${import.meta.env.VITE_BACKEND_URL}/me`,
     fetcher,
-    { refreshInterval: 10000 }
+    { refreshInterval: 1000 }
   );
   return {
     userData: data,
