@@ -49,12 +49,11 @@ export const fileService = (
           ?.beginBatch()
           .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
           .run(`/golem/scripts/clamscan-json.sh /golem/workdir/${fileName}`)
-          .run("ls /golem/output/")
           .run(`cat /golem/output/temp/metadata.json`)
           .end();
-
+        debugLog("file", "result", results ? results[2].stdout : "no results");
         //@ts-ignore
-        return JSON.parse((results[3].stdout || "null") as string);
+        return JSON.parse((results[2].stdout || "null") as string);
       } catch (err) {
         debugLog("file", "Error scannin file", err);
         return null;
