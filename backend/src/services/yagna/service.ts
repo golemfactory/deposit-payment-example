@@ -162,7 +162,6 @@ export class Yagna {
 
     const executor = await TaskExecutor.create({
       package: "pociejewski/clamav:latest",
-      //here I would like to be able to pass SUBNET but i have to do that usiong env
       yagnaOptions: {
         apiKey: container.cradle.YagnaConfig.appKey,
       },
@@ -171,7 +170,7 @@ export class Yagna {
       //@ts-ignore
       budget: formatEther(userDeposit.amount),
       enableLogging : true, 
-
+      subnetTag : 'pociej_own'
     });
 
     this.userContext.setExecutor(userId, executor);
