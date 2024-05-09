@@ -7,7 +7,7 @@ import fs from "node:fs";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 import { mkdir } from "node:fs/promises";
-import { debugLog } from "src/utils.js";
+import { debugLog } from "../../utils.js";
 
 const DIR_NAME = fileURLToPath(new URL("../../../../temp", import.meta.url));
 export const fileService = fastifyPlugin(
