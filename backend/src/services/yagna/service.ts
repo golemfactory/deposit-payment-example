@@ -10,7 +10,7 @@ import bigDecimal from "js-big-decimal";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 import { Worker } from "./worker.js";
-import { WorkContext } from "@golem-sdk/golem-js";
+import { WorkContext } from "@golem-sdk/golem-js"
 import { TaskExecutor } from "@golem-sdk/task-executor";
 import { formatEther } from "viem";
 export class Yagna {
