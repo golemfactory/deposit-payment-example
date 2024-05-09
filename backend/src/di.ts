@@ -5,7 +5,7 @@ import { paymentService } from "./services/payment/index.js";
 import { fileService } from "./services/file/service.js";
 import * as GolemSDK from "@golem-sdk/task-executor";
 import { Yagna } from "./services/yagna/service.js";
-import { TaskExecutor } from "@golem-sdk/task-executor";
+
 export const container = awilix.createContainer<{
   db: Promise<typeof mongoose>;
   userService: typeof userService;

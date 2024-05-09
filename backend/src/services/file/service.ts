@@ -44,16 +44,22 @@ export const fileService = (
       //TODO handle errors and timeouts
       //but it seems that there was no try to find another one
       //this is task executor abstraction so it should handle it for me
-      const results = await worker.context
-        ?.beginBatch()
-        .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
-        .run(`/golem/scripts/clamscan-json.sh /golem/workdir/${fileName}`)
-        .run("ls /golem/output/")
-        .run(`cat /golem/output/temp/metadata.json`)
-        .end();
+      try {
+        const results = await worker.context
+          ?.beginBatch()
+          .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
+          .run(`/golem/scripts/clamscan-json.sh /golem/workdir/${fileName}`)
+          .run("ls /golem/output/")
+          .run(`cat /golem/output/temp/metadata.json`)
+          .end();
 
-      //@ts-ignore
-      return JSON.parse((results[3].stdout || "null") as string);
+        //@ts-ignore
+        return JSON.parse((results[3].stdout || "null") as string);
+      }  catch(err) {
+        debugLog("file","Error scannin file", err); 
+        return null; 
+      }
+
     },
     async processFile(fileName: string, userId: string) {
       debugLog("file", "Processing file", fileName);
