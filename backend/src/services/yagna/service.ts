@@ -170,6 +170,8 @@ export class Yagna {
       agreementMaxPoolSize: 1,
       //@ts-ignore
       budget: formatEther(userDeposit.amount),
+      enableLogging : true, 
+
     });
 
     this.userContext.setExecutor(userId, executor);
@@ -238,6 +240,7 @@ export class Yagna {
           })
           .catch((e: any) => {
             console.log("Error", e);
+            reject(); 
           });
       }
     });

@@ -7,6 +7,7 @@ import fs from "node:fs";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 import { mkdir } from "node:fs/promises";
+import { debugLog } from "src/utils.js";
 
 const DIR_NAME = fileURLToPath(new URL("../../../../temp", import.meta.url));
 export const fileService = fastifyPlugin(
@@ -57,6 +58,7 @@ export const fileService = fastifyPlugin(
     fastify.get("/scan-result", {
       handler: (request, reply) => {
         container.cradle.fileService.resultStream.subscribe((result) => {
+          debugLog("publishing result on sse channel",result);  
           reply.sse({ data: JSON.stringify(result), id: uuidv4() });
         });
       },
