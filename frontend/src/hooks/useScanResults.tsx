@@ -6,10 +6,12 @@ export const useScanResults = () => {
   const scanResults = useRef<object[]>([]);
   const { removeFile } = useFileUploader();
   const { data, error } = useSWRSubscription("scanResult", (key, { next }) => {
-    const eventSource = new EventSource(
-      `${import.meta.env.VITE_BACKEND_URL}/scan-result`
+    const eventSource = new WebSocket(
+      `${import.meta.env.VITE_BACKEND_URL.replace('http','ws')}/scan-result`
     );
-    eventSource.onmessage = (event) => {
+    
+    eventSource.addEventListener('message',(event) => {
+      console.log("event",event); 
       const file = JSON.parse(event.data);
       const newResults = R.uniqWith(
         // @ts-ignore
@@ -19,7 +21,7 @@ export const useScanResults = () => {
       scanResults.current = newResults;
       removeFile(file.id);
       next(null, newResults);
-    };
+    });
 
     return () => eventSource.close();
   });

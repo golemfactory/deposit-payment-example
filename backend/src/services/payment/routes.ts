@@ -18,6 +18,7 @@ export const paymentService = fastifyPlugin(
       //@ts-ignore TODO: add declaration in auth module so ts-ignore is not needed
       onRequest: [fastify.authenticate],
       handler: async (request, reply) => {
+        console.log("wtf creating deposit"); 
         const paymentService = container.cradle.paymentService;
         // @ts-ignore
         // TODO: make sure request.body is the right type
@@ -26,6 +27,8 @@ export const paymentService = fastifyPlugin(
           // @ts-ignore
           request.body.nonce
         );
+
+        console.log("res",res); 
         return res;
       },
     });

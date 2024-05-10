@@ -55,14 +55,21 @@ export const fileService = fastifyPlugin(
         reply.send({ message: "File uploaded" });
       },
     });
-    fastify.get("/scan-result", {
-      handler: (request, reply) => {
+    fastify.get("/ws", {websocket : true},  (socket) => {
+        setInterval( () => {
+          console.log("sending message")
+          socket.send("lalala"); 
+        },2000)
+      }
+    ),
+    fastify.get("/scan-result", {websocket : true}, 
+      (socket) => {
         container.cradle.fileService.resultStream.subscribe((result) => {
           debugLog("publishing result on sse channel",result);  
-          reply.sse({ data: JSON.stringify(result), id: uuidv4() });
+          socket.send(JSON.stringify(result));
         });
       },
-    });
+    );
 
     done();
   }
