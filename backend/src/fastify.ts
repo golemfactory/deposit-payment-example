@@ -9,6 +9,7 @@ import { userService } from "./services/user/routes.js";
 import { FastifySSEPlugin } from "fastify-sse-v2";
 import fastifyMultipart from "@fastify/multipart";
 import { Yagna } from "./services/yagna/routes.js";
+import websocket from '@fastify/websocket'
 
 export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   const fastify = Fastify({
@@ -22,7 +23,7 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   fastify.register(fastifySensible);
   fastify.register(fastifyMultipart);
   fastify.register(FastifySSEPlugin);
-
+  fastify.register(websocket);
   fastify.register(cors, {
     origin: "*",
   });

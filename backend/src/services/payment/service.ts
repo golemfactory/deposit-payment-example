@@ -30,10 +30,11 @@ export const paymentService = (
     saveDeposit: async (userId: string, nonce: string) => {
       const userService = container.cradle.userService;
       const user = await userService.findById(userId);
+      console.log("saving deposit"); 
       if (!user) {
         throw new Error(`User not found with id ${userId}`);
       }
-
+      console.log('has user')
       const data = await publicClient.readContract({
         address: contractAddress,
         abi: abi,
@@ -45,8 +46,8 @@ export const paymentService = (
           `Deposit not found with nonce ${nonce} and funder ${user.walletAddress}`
         );
       }
+            console.log("has data",data);
       // @ts-ignore
-
       const { amount, feeAmount } = data;
 
       const feeRatio = Number(BigDecimal.default.divide(feeAmount, amount));
@@ -59,6 +60,8 @@ export const paymentService = (
       if (feeRatio < Number(serviceFee)) {
         documentDeposit.isValid = false;
       }
+
+      console.log("eeeee");
       userService.addDeposit(userId, documentDeposit);
     },
   };
