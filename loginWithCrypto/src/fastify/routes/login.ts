@@ -28,7 +28,6 @@ export const login: RouteOptions = {
       signature,
     });
 
-    console.log("walletAddress", walletAddress);
     const user = await userService.findByWalletAddress(walletAddress);
 
     if (!user) {
