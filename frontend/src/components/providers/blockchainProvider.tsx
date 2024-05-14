@@ -26,8 +26,6 @@ const wagmiConfig = defaultWagmiConfig({
 });
 
 function createMessage({ nonce, address, chainId }: any) {
-  console.log("createMessage", nonce, address, chainId);
-  console.log("goubg to call constructor");
   const message = new SiweMessage({
     version: "1",
     domain: window.location.host,
@@ -38,9 +36,6 @@ function createMessage({ nonce, address, chainId }: any) {
     statement: "Sign in with ethereum",
   });
 
-  console.log("after constructor");
-
-  console.log("message", message);
   return message.prepareMessage();
 }
 
@@ -63,7 +58,6 @@ const siweConfig = createSIWEConfig({
     }
     const responseData = await response.json();
 
-    console.log("nonce response", responseData.nonce.toString());
     return responseData.nonce.toString();
   },
   getSession: async () => {
@@ -73,6 +67,23 @@ const siweConfig = createSIWEConfig({
     };
   },
   verifyMessage: async ({ message, signature }) => {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message, signature }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error logging in: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
+
     return true;
   },
   signOut: async () => {
