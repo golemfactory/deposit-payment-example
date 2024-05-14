@@ -51,6 +51,7 @@ export const fileService = (
           .run(`/golem/scripts/clamscan-json.sh /golem/workdir/${fileName}`)
           .run(`cat /golem/output/temp/metadata.json`)
           .end();
+        debugLog("file", "results", results);
         debugLog("file", "result", results ? results[2].stdout : "no results");
         //@ts-ignore
         return JSON.parse((results[2].stdout || "null") as string);
