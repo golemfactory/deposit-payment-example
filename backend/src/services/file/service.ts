@@ -48,7 +48,7 @@ export const fileService = (
         const results = await worker.context
           ?.beginBatch()
           .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
-          .run(`/golem/scripts/clamscan-json.sh /golem/workdir/${fileName}`)
+          .run(`/golem/scripts/clamscan-json.sh "/golem/workdir/${fileName}"`)
           .run(`cat /golem/output/temp/metadata.json`)
           .end();
         debugLog("file", "results", results);
