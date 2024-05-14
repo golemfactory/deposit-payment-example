@@ -19,7 +19,7 @@ type Config<Chains extends Chain[]> = {
 };
 
 export const config: Config<[typeof holesky]> = {
-  supportedChains: [holesky, polygon] as const,
+  supportedChains: [holesky] as const,
   projectId: "20bd2ed396d80502980b6d2a3fb425f4",
   depositContractAddress: {
     [holesky.id]: "0xA3D86ebF4FAC94114526f4D09C3fA093898347a6",

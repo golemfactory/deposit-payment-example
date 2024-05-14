@@ -226,7 +226,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
 
   //track allocation
   useEffect(() => {
-    console.log("user.currentDeposit", user.currentActivity);
     if (user.currentDeposit) {
       if (userData?.currentAllocation.id) {
         dispatch({
@@ -237,7 +236,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
           },
         });
       } else {
-        console.log("no allocation");
         dispatch({
           kind: UserAction.HAS_NO_ALLOCATION,
           payload: { currentAllocation: null },

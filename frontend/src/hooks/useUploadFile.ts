@@ -43,8 +43,6 @@ async function processFile(
       },
 
       onUploadProgress: (progressEvent) => {
-        console.log("progressEvent", progressEvent);
-
         if (!progressEvent.total) return;
 
         const progress = Math.round(

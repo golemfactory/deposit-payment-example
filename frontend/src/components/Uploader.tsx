@@ -46,18 +46,10 @@ export const FileUploader = () => {
         style={{
           backgroundColor: "#0000005b",
         }}
-        // style={{
-        //   border: "2px dashed #aaa",
-        //   padding: "20px",
-        //   marginBottom: "20px",
-        //   borderRadius: "5px",
-
-        // }}
       >
         Drag & Drop files here or{" "}
         <Button
           onClick={() => {
-            console.log("WRTD");
             fileInputRef.current?.click();
           }}
           className="ml-4 bg-golemblue-transparent border-none text-white"

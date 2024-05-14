@@ -124,7 +124,6 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
                 <Button
                   onClick={async () => {
                     const { nonce } = await createDeposit();
-                    console.log("nonce", nonce);
                     setNonce(nonce);
                   }}
                   className="bg-primary !text-white border-none text-lg font-light "
