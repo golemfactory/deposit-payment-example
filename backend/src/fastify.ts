@@ -9,7 +9,7 @@ import { userService } from "./services/user/routes.js";
 import { FastifySSEPlugin } from "fastify-sse-v2";
 import fastifyMultipart from "@fastify/multipart";
 import { Yagna } from "./services/yagna/routes.js";
-import websocket from '@fastify/websocket'
+import websocket from "@fastify/websocket";
 
 export const startupFastifyServer = async (): Promise<FastifyInstance> => {
   const fastify = Fastify({

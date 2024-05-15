@@ -9,7 +9,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const DIR_NAME = fileURLToPath(new URL("../../../../temp/", import.meta.url));
 
 import { debugLog } from "../../utils.js";
-
+import { createHmac } from "crypto";
 export const fileService = (
   GolemSDK: typeof sdk,
   contractAddress: any
@@ -18,6 +18,7 @@ export const fileService = (
   scanFileOnGolem: (fileName: string, worker: Worker) => Promise<any>;
   resultStream: Subject<IScanResult>;
   processFile: (fileName: string, userId: string, depositId: bigint) => void;
+  hashFileName: (fileName: string) => string;
   init: () => void;
 } => {
   return {
@@ -27,17 +28,23 @@ export const fileService = (
       this.resultStream.subscribe();
     },
 
+    hashFileName(fileName: string) {
+      const secret = "65mkkmk4kkm";
+      return createHmac("sha256", secret).update(fileName).digest("hex");
+    },
+
     async scanFileOnGolem(fileName: string, worker: Worker) {
       debugLog("file", "Scanning file on Golem", fileName);
       const isMockMode = container.cradle.mode === "mock";
+      const fileNameHash = this.hashFileName(fileName);
 
       if (isMockMode) {
         await sleep(Math.random() * 3000);
         const isVirus = fileName.includes("virus");
         if (isVirus) {
-          return virusScanResult(fileName);
+          return virusScanResult(fileNameHash);
         } else {
-          return successScanResult(fileName);
+          return successScanResult(fileNameHash);
         }
       }
 
@@ -47,8 +54,13 @@ export const fileService = (
       try {
         const results = await worker.context
           ?.beginBatch()
-          .uploadFile(`${DIR_NAME}${fileName}`, `/golem/workdir/${fileName}`)
-          .run(`/golem/scripts/clamscan-json.sh "/golem/workdir/${fileName}"`)
+          .uploadFile(
+            `${DIR_NAME}${fileName}`,
+            `/golem/workdir/${fileNameHash}`
+          )
+          .run(
+            `/golem/scripts/clamscan-json.sh "/golem/workdir/${fileNameHash}"`
+          )
           .run(`cat /golem/output/temp/metadata.json`)
           .end();
         debugLog("file", "results", results);

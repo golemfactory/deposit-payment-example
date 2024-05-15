@@ -5,7 +5,7 @@ temp_dir=/golem/output/temp
 rm -rf $temp_dir/*
 mkdir $temp_dir
 
-clamscan --gen-json --leave-temps --tempdir=$temp_dir $file_name
+clamscan --gen-json --leave-temps --tempdir=$temp_dir "$file_name"
 
 metadata_file=$(find $temp_dir -name "metadata.json" -type f)
 
