@@ -28,6 +28,7 @@
     "react-daisyui": "^5.0.0",
     "react-dom": "^18.2.0",
     "siwe": "^2.3.2",
+    "socket.io-client": "^4.7.5",
     "swr": "^2.2.5",
     "ts-pattern": "^5.1.1",
     "usehooks-ts": "^3.1.0",

@@ -3,10 +3,10 @@ import useSWRMutation from "swr/mutation";
 
 export const useCreateAllocation = () => {
   const { trigger, isMutating } = useSWRMutation(
-    `${import.meta.env.VITE_BACKEND_URL}/me`,
+    `${import.meta.env.VITE_BACKEND_HTTP_URL}/me`,
     function () {
       return axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/create-allocation`
+        `${import.meta.env.VITE_BACKEND_HTTP_URL}/create-allocation`
       );
     }
   );

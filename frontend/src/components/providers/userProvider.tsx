@@ -161,7 +161,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { login, tokens, isLoggingIn } = useLogin();
   const chainId = useChainId();
   const [currentDepositNonce, setCurrentDepositNonce] = useState(0);
-  const { userData, isLoading: isUserLoading } = useUserData();
+  const { data: userData, isLoading: isUserLoading } = useUserData();
   //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
 
@@ -199,7 +199,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
 
   useEffect(() => {
     const currentDeposit = (userData?.deposits || []).find(
-      (deposit) => deposit.isCurrent
+      (deposit: { isCurrent: boolean }) => deposit.isCurrent
     );
     if (!isUserLoading && userData?._id) {
       setIsRegistered(true);

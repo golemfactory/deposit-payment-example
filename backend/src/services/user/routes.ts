@@ -1,38 +1,75 @@
 import fastify, { FastifyInstance, FastifyRequest } from "fastify";
 import { container } from "../../di.js";
 import fastifyPlugin from "fastify-plugin";
-
+import { userModel } from "./model.js";
+import { jwtDecode } from "jwt-decode";
+import { set } from "mongoose";
 export const userService = fastifyPlugin(
   (fastify: FastifyInstance, opts, done) => {
-    fastify.get("/me", {
-      onRequest: [fastify.authenticate],
-      handler: async (request: FastifyRequest, reply) => {
-        const userService = container.cradle.userService;
-        const requestUser = request.user;
-        const user = await userService.findById(requestUser._id);
-        if (!user) {
-          throw new Error(`User not found with id ${requestUser._id}`);
-        }
-        return {
-          walletAddress: user.walletAddress,
-          _id: user._id.toString(),
-          nonce: user.nonce.toString(),
-          currentAllocation: {
-            id: user.currentAllocationId,
-          },
-          currentActivity: {
-            id: user.currentActivityId,
-          },
-          deposits: user.deposits.map((d) => {
-            return {
-              isCurrent: d.isCurrent,
-              isValid: d.isValid,
-              nonce: d.nonce.toString(),
-            };
-          }),
-        };
-      },
+    fastify.io.of("/me").use((socket, next) => {
+      const token = socket.handshake.auth.token;
+      if (!token) {
+        next(new Error("Authentication error"));
+      }
+      next();
     });
+
+    fastify.io.of("/me").on("connection", async (socket) => {
+      console.log("socket", socket.handshake.auth.token);
+
+      const user = jwtDecode<{
+        _id: string;
+      }>(socket.handshake.auth.token);
+
+      if (!user._id) {
+        throw new Error(`Wrong token`);
+      }
+      if (!user) {
+        throw new Error(
+          `User not found with id ${socket.handshake.auth.token}`
+        );
+      }
+
+      const userDTO = await container.cradle.userService.getUserDTO(user._id);
+      socket.emit("user", userDTO);
+      userModel
+        .watch(
+          [
+            {
+              $match: {
+                _id: user._id,
+              },
+            },
+          ],
+          {
+            fullDocument: "updateLookup",
+          }
+        )
+        .on("change", async () => {
+          const userDTO = await container.cradle.userService.getUserDTO(
+            user._id
+          );
+          socket.emit("user", userDTO);
+        });
+    });
+    // fastify.get(
+    //   "/me",
+    //   {
+    //     websocket: true,
+    //     onRequest: [fastify.authenticate],
+    //   },
+    //   async (socket, request) => {
+    //     console.log("socket", request.user._id);
+    //     const userService = container.cradle.userService;
+    //     const requestUser = request.user;
+    //     const user = await userService.findById(requestUser._id);
+    //     console.log("user", user);
+    //     if (!user) {
+    //       throw new Error(`User not found with id ${requestUser._id}`);
+    //     }
+
+    //   }
+    // );
     done();
   }
 );

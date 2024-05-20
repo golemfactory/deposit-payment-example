@@ -10,7 +10,7 @@ async function saveDeposit({
   nonce: number;
 }): Promise<{ result: boolean }> {
   const response = await fetch(
-    `${import.meta.env.VITE_BACKEND_URL}/create-deposit`,
+    `${import.meta.env.VITE_BACKEND_HTTP_URL}/create-deposit`,
     {
       method: "POST",
       headers: {

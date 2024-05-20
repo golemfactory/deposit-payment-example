@@ -10,9 +10,9 @@ import bigDecimal from "js-big-decimal";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 import { Worker } from "./worker.js";
-import { WorkContext } from "@golem-sdk/golem-js"
+import { WorkContext } from "@golem-sdk/golem-js";
 import { TaskExecutor } from "@golem-sdk/task-executor";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
 export class Yagna {
   public debitNoteEvents: Subject<any>;
   private paymentService: YaTsClient.PaymentApi.RequestorService;
@@ -80,6 +80,43 @@ export class Yagna {
     }).default;
   }
 
+  async createUserAllocation(userId: string) {
+    debugLog("payments", "creating user allocation", userId);
+    const userService = container.cradle.userService;
+    const userDeposit = await userService.getCurrentDeposit(userId);
+
+    if (!userDeposit) {
+      throw new Error({ code: ErrorCode.NO_DEPOSIT });
+    }
+    console.log("userDeposit", userDeposit);
+    try {
+      console.log("trying");
+      //@ts-ignore
+
+      const allocation = await this.paymentService.createAllocation({
+        totalAmount: formatEther(userDeposit.amount),
+        makeDeposit: false,
+        deposit: {
+          contract: container.cradle.contractAddress,
+          id: userDeposit.id.toString(16),
+          validate: {
+            flatFeeAmount: parseEther("23").toString(),
+          },
+        },
+      });
+
+      console.log("allocation", allocation);
+
+      container.cradle.userService.setCurrentAllocationId(
+        userId,
+        allocation.allocationId
+      );
+      return allocation;
+    } catch (e) {
+      console.log("error", e);
+    }
+    // @ts-ignore
+  }
   async getUserAllocation(userId: string) {
     debugLog("payments", "getting user allocation", userId);
     const user = await container.cradle.userService.getUserById(userId);
@@ -169,8 +206,8 @@ export class Yagna {
       agreementMaxPoolSize: 1,
       //@ts-ignore
       budget: formatEther(userDeposit.amount),
-      enableLogging : true, 
-      subnetTag : 'pociej_own'
+      enableLogging: true,
+      subnetTag: "pociej_own",
     });
 
     this.userContext.setExecutor(userId, executor);
@@ -239,7 +276,7 @@ export class Yagna {
           })
           .catch((e: any) => {
             console.log("Error", e);
-            reject(); 
+            reject();
           });
       }
     });

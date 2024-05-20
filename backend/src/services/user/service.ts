@@ -100,7 +100,7 @@ export const userService: IUserService = {
   },
 
   addDeposit: async (userId: string, deposit: Deposit) => {
-    console.log("adding deposit"); 
+    console.log("adding deposit");
     await userModel.updateOne(
       { _id: userId },
       {

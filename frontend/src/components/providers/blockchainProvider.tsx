@@ -7,6 +7,7 @@ import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { config } from "config";
+import { holesky } from "viem/chains";
 const queryClient = new QueryClient();
 
 function sleep(ms: number) {
@@ -39,11 +40,12 @@ function createMessage({ nonce, address, chainId }: any) {
   return message.prepareMessage();
 }
 
+// @ts-ignore
 const siweConfig = createSIWEConfig({
   createMessage,
   getNonce: async (address) => {
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/register`,
+      `${import.meta.env.VITE_BACKEND_HTTP_URL}/register`,
       {
         method: "POST",
         headers: {
@@ -58,16 +60,18 @@ const siweConfig = createSIWEConfig({
     }
     const responseData = await response.json();
 
+    console.log("nonce", responseData.nonce.toString());
     return responseData.nonce.toString();
   },
   getSession: async () => {
     return {
-      address: "0x8e2A131F99b4Dce031D3BceEb67b632c4d6C12fF",
+      address: "0xcC2f7D53e0c32B31d670efA7F5Ad01e581bB0A18",
       chainId: 1700,
     };
   },
   verifyMessage: async ({ message, signature }) => {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
+    console.log("message", message);
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_HTTP_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -86,16 +90,18 @@ const siweConfig = createSIWEConfig({
 
     return true;
   },
-  signOut: async () => {
-    return true;
-  },
-  signOutOnNetworkChange: true,
 });
 
 createWeb3Modal({
   wagmiConfig,
   projectId: config.projectId,
   siweConfig,
+  tokens: {
+    [holesky.id]: {
+      address: config.GLMContractAddress[holesky.id],
+      image: "./favicon.svg", //optional
+    },
+  },
   themeVariables: {
     "--w3m-font-family": "Kanit-Light",
     "--w3m-accent": "#181ea9a6",

@@ -8,13 +8,16 @@ async function signNonce({
 }: {
   walletAddress: `0x${string}`;
 }): Promise<{ nonce: number }> {
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ walletAddress }),
-  });
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_HTTP_URL}/register`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ walletAddress }),
+    }
+  );
   if (!response.ok)
     throw new Error(`Error registering user: ${response.statusText}`);
 
