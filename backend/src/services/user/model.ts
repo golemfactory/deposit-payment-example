@@ -31,7 +31,9 @@ const schema = new mongoose.Schema<IUser>(
         },
         isValid: {
           type: Boolean,
-          required: true,
+        },
+        id: {
+          type: String,
         },
       },
     ],

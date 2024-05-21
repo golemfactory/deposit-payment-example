@@ -112,6 +112,7 @@ type Payload = {
       isCurrent: boolean;
       isValid: boolean;
       nonce: number;
+      id: string;
     };
   };
   [UserAction.HAS_NO_DEPOSIT]: {
@@ -160,7 +161,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { isConnected, address } = useAccount();
   const { login, tokens, isLoggingIn } = useLogin();
   const chainId = useChainId();
-  const [currentDepositNonce, setCurrentDepositNonce] = useState(0);
+  const [currentDepositNonce, setCurrentDepositNonce] = useState(0n);
   const { data: userData, isLoading: isUserLoading } = useUserData();
   //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
@@ -178,6 +179,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     address: config.depositContractAddress[chainId],
     abi: depositContractAbi,
     functionName: "getDepositByNonce",
+    //@ts-ignore
     args: [currentDepositNonce || BigInt(0), address],
     query: {
       refetchInterval: 1000,

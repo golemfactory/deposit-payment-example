@@ -20,6 +20,7 @@ export const useUserData = () => {
 
   const { data, error } = useSWRSubscription("userData", (key, { next }) => {
     socket.on("user", (data) => {
+      console.log("data", data);
       setIsLoading(false);
       next(null, data);
     });

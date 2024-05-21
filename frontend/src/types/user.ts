@@ -72,5 +72,6 @@ export type UserData = {
     isCurrent: boolean;
     isValid: boolean;
     nonce: number;
+    id: string;
   }[];
 };

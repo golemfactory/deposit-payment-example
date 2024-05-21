@@ -100,9 +100,10 @@ export class Yagna {
           contract: container.cradle.contractAddress,
           id: userDeposit.id.toString(16),
           validate: {
-            flatFeeAmount: parseEther("23").toString(),
+            flatFeeAmount: parseEther("2").toString(),
           },
         },
+        timeout: "2024-05-25T05:19:31.034Z",
       });
 
       console.log("allocation", allocation);

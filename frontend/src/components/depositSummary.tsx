@@ -11,7 +11,6 @@ export const DepositSummary = ({
   showExtendDeposit: () => void;
 }) => {
   const readDepositResult = useUserCurrentDeposit();
-  const data = readDepositResult?.data;
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -41,22 +40,16 @@ export const DepositSummary = ({
         <div>
           <div>
             <span className="text-lg">Amount: </span>
-            <span>
-              {formatEther((data as { amount: bigint })?.amount || 0n)}
-            </span>
+            <span>{readDepositResult.amount}</span>
           </div>
           <div>
             <span className="text-lg">Fee: </span>
-            <span>
-              {formatEther((data as { feeAmount: bigint })?.feeAmount || 0n)}
-            </span>
+            <span>{readDepositResult.flatFeeAmount}</span>
           </div>
           <div>
             <span className="text-lg">Valid to: </span>
             <span>
-              {dayjs(
-                Number((data as { validTo: bigint })?.validTo) * 1000
-              ).toString()}
+              {dayjs(readDepositResult.validToTimestamp * 1000).toString()}
             </span>
           </div>
         </div>
