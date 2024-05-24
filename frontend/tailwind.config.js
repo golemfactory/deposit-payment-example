@@ -64,6 +64,18 @@ module.exports = {
             backgroundColor: "#F6F8FC",
             boxShadow: "0 0 10px 0 rgba(0,0,0,0.1)",
           },
+          ".stat-value": {
+            fontFamily: "Kanit",
+            fontSize: "20px",
+            fontWeight: 600,
+            lineHeight: "1.2rem",
+          },
+
+          ".stat": {
+            border: "none",
+            width: "20px",
+          },
+
           "primary": "#0C14D4",
           "secondary": "#F6F8FC",
           "accent": "#37cdbe",
