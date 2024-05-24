@@ -160,7 +160,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { isConnected, address } = useAccount();
   const { login, tokens, isLoggingIn } = useLogin();
   const chainId = useChainId();
-  const [currentDepositNonce, setCurrentDepositNonce] = useState(0);
+  const [currentDepositNonce, setCurrentDepositNonce] = useState(0n);
   const { userData, isLoading: isUserLoading } = useUserData();
   //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
@@ -178,6 +178,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     address: config.depositContractAddress[chainId],
     abi: depositContractAbi,
     functionName: "getDepositByNonce",
+    //@ts-ignore
     args: [currentDepositNonce || BigInt(0), address],
     query: {
       refetchInterval: 1000,
@@ -206,7 +207,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     }
     if ((user.allowanceAmount || 0) >= config.minimalAllowance) {
       if (currentDeposit) {
-        setCurrentDepositNonce(currentDeposit.nonce);
+        setCurrentDepositNonce(BigInt(currentDeposit.nonce));
       }
       //@ts-ignore
       if (currentDeposit && depositData?.amount) {

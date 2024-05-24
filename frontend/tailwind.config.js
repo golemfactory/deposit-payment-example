@@ -70,7 +70,7 @@ module.exports = {
           "--border-btn": "1px", // border width of buttons
           "--tab-border": "1px", // border width of tabs
           "--tab-radius": "0.5rem", // border radius of tabs
-          "--fallback-bc": "white", // fallback background color
+          "--fallback-bc": "black", // fallback background color
         },
       },
     ],

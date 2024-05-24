@@ -17,12 +17,7 @@ function App() {
           <BlockchainProvider>
             <SnackbarProvider autoHideDuration={50000}>
               <UserProvider>
-                <div
-                  id="app"
-                  className="grid grid-cols-12 gap-4 h-screen overflow-hidden"
-                >
-                  <Home />
-                </div>
+                <Home />
               </UserProvider>
             </SnackbarProvider>
           </BlockchainProvider>
