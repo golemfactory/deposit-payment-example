@@ -46,10 +46,13 @@ module.exports = {
       {
         golem: {
           ".btn": {
-            backgroundColor: "#0C14D4",
+            backgroundColor: "#181EA9",
+            color: "white",
+            fontWeight: 400,
+            fontSize: "16px",
           },
           ".btn:hover": {
-            backgroundColor: "#181EA9",
+            backgroundColor: "#0C14D4",
           },
           ".btn:focus": {
             backgroundColor: "#181EA9",
@@ -70,7 +73,7 @@ module.exports = {
           "--border-btn": "1px", // border width of buttons
           "--tab-border": "1px", // border width of tabs
           "--tab-radius": "0.5rem", // border radius of tabs
-          "--fallback-bc": "black", // fallback background color
+          "--fallback-b1": "transparent", // fallback text color
         },
       },
     ],

@@ -4,14 +4,12 @@
 
 
 body {
-    min-height: 100vh; 
-    margin: 0;
-    padding: 0;
+    background-image: url('/bgeffects.svg');
     background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed; 
-    overflow-x: hidden;
+    background-attachment: fixed;;
 }
+
+
 
  
 @font-face {
@@ -60,3 +58,5 @@ body {
   font-family: 'DM Mono';
   src: url('/fonts/DMMono-Regular.ttf') format('truetype');
 }
+
+

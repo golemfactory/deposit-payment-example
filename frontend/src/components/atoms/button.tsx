@@ -7,5 +7,5 @@ export const Button = ({
 }: PropsWithChildren<ButtonProps>) => {
   const className = ` ${style.button} ${props.className}`;
   props.className = className;
-  return <DaisyButton {...props}>{children}</DaisyButton>;
+  return <DaisyButton color="secondary">{children}</DaisyButton>;
 };
