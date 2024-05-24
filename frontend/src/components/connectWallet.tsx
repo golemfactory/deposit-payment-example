@@ -54,12 +54,19 @@ export const ConnectWallet = () => {
 
   useEffect(() => {
     try {
+      console.log("Adjusting styles");
+      console.log("GLM", GLM);
+      console.log("ETH", ETH);
       const slot = queryShadowRootDeep(pathToAccountText) as HTMLSlotElement;
       slot.style.fontSize = "16px";
       slot.style.fontWeight = "400";
       const textNode = slot.assignedNodes()[1] as Text;
       const balanceSummary = `GLM: ${formatBalance(GLM)} / ETH: ${formatBalance(ETH)}`;
-      textNode.textContent = balanceSummary;
+      if (ETH && GLM) {
+        setTimeout(() => {
+          textNode.textContent = balanceSummary;
+        }, 1000);
+      }
     } catch (e) {
       console.log("Text not found");
     }

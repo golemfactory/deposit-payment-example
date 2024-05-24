@@ -30,9 +30,9 @@ export const Layout = ({
     <Grid>
       <Modal ref={ref}>{layout.modalContent}</Modal>
       <div className="col-span-12 flex justify-between">{header}</div>
-      <div className="col-span-12 grid grid-cols-12">
-        <div className="col-span-2 flex flex-col">{left}</div>
-        <div className="col-span-8 flex justify-center">{center}</div>
+      <div className="col-span-12 grid grid-cols-12 gap-4">
+        <div className="col-span-3 flex flex-col">{left}</div>
+        <div className="col-span-6 flex justify-center">{center}</div>
       </div>
     </Grid>
   );

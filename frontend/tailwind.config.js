@@ -1,3 +1,5 @@
+const { m } = require("framer-motion");
+
 module.exports = {
   content: [
     "./src/**/*.{html,js,jsx,ts,tsx}",
@@ -57,6 +59,11 @@ module.exports = {
           ".btn:focus": {
             backgroundColor: "#181EA9",
           },
+          ".card": {
+            marginBottom: "1rem",
+            backgroundColor: "#F6F8FC",
+            boxShadow: "0 0 10px 0 rgba(0,0,0,0.1)",
+          },
           "primary": "#0C14D4",
           "secondary": "#F6F8FC",
           "accent": "#37cdbe",
@@ -74,6 +81,7 @@ module.exports = {
           "--tab-border": "1px", // border width of tabs
           "--tab-radius": "0.5rem", // border radius of tabs
           "--fallback-b1": "transparent", // fallback text color
+          "--fallback-b2": "#181EA9", // fallback background color
         },
       },
     ],

@@ -1,10 +1,20 @@
+import { Card } from "react-daisyui";
+
 export const Events = () => {
   return (
     <>
-      <div> Events Area</div>
-      <div> Event 1</div>
-      <div> Event 2</div>
-      <div> Event 3</div>
+      {["Event1", "Event2", "Event3", "Event4", "Event5"].map(
+        (event, index) => {
+          return (
+            <Card bordered={true} key={index}>
+              <Card.Body>
+                <Card.Title>Event {index + 1}</Card.Title>
+                This is the description of the event {index + 1}
+              </Card.Body>
+            </Card>
+          );
+        }
+      )}
     </>
   );
 };
