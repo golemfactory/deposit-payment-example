@@ -67,13 +67,16 @@ export function useApprove() {
   });
 
   return {
-    approve: async () => {
+    approve: async (val?: bigint) => {
       try {
         const hash = await writeContractAsync({
           address: config.GLMContractAddress[chainId],
           abi: abi,
           functionName: "approve",
-          args: [config.depositContractAddress[chainId], balance.data?.value],
+          args: [
+            config.depositContractAddress[chainId],
+            val || balance.data?.value,
+          ],
         });
         setTxHash(hash);
       } catch (e) {

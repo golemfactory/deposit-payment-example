@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { adjustShadowRootStyles, queryShadowRootDeep } from "utils/shadowRoot";
 import { flareTestnet } from "viem/chains";
 import { useAccount } from "wagmi";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useBalance } from "hooks/useBalance";
 import { formatBalance } from "utils/formatBalance";
 const variants = {

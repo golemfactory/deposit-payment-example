@@ -12,6 +12,7 @@ import { TopBar } from "./homePage/topBar";
 import { Events } from "./homePage/events";
 import { Status } from "./homePage/status";
 import { Action } from "./homePage/action";
+import { LayoutProvider } from "./providers/layoutProvider";
 
 // export function Home() {
 //   const [extendVisible, setExtendVisible] = useState(false);
@@ -39,19 +40,21 @@ import { Action } from "./homePage/action";
 export function Home() {
   console.log("rendering home");
   return (
-    <Layout
-      header={<TopBar />}
-      left={
-        <div>
-          <Events />
-        </div>
-      }
-      center={
-        <div className="w-full">
-          <Status />
-          <Action />
-        </div>
-      }
-    />
+    <LayoutProvider>
+      <Layout
+        header={<TopBar />}
+        left={
+          <div>
+            <Events />
+          </div>
+        }
+        center={
+          <div className="w-full">
+            <Status />
+            <Action />
+          </div>
+        }
+      />
+    </LayoutProvider>
   );
 }

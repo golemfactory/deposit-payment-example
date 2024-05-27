@@ -21,7 +21,9 @@ export function useCreateDeposit() {
   return {
     createDeposit: async () => {
       const nonce = Math.floor(Math.random() * 1000000);
-      console.log("c", config.depositContractAddress[chainId], requestorData);
+      if (!requestorData?.wallet) {
+        throw new Error("Requestor wallet address is not set");
+      }
       await writeContractAsync({
         address: config.depositContractAddress[chainId],
         abi: abi,
@@ -31,7 +33,6 @@ export function useCreateDeposit() {
           requestorData?.wallet,
           BigInt(amount * Math.pow(10, 18)),
           BigInt(fee * Math.pow(10, 18)),
-          BigInt(0),
           BigInt(validToTimestamp),
         ],
       });
@@ -59,7 +60,7 @@ export function useUserCurrentDeposit() {
     address: config.depositContractAddress[useChainId()],
     abi: abi,
     functionName: "getDepositByNonce",
-    args: [user?.currentDeposit?.nonce || BigInt(0), address],
+    args: [user?.currentDeposit?.nonce || BigInt(0), address || "0x"],
   });
 
   useEffect(() => {
@@ -73,16 +74,7 @@ export function useUserCurrentDeposit() {
     }
   }, [isFetching]);
 
-  return { data } as {
-    data: {
-      amount: bigint;
-      feeAmount: bigint;
-      validTo: bigint;
-    };
-    isError: boolean;
-    isSuccess: boolean;
-    isPending: boolean;
-  };
+  return { data };
 }
 
 export function useExtendDeposit() {

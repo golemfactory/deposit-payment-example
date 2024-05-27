@@ -32,7 +32,7 @@ module.exports = {
       "success-50": "#E8F6E8",
       "success-100": "#5BC281",
       "success-200": "#367946",
-
+      "white": "#FFFFFF",
       "notistack-red": "#d32f2f",
       "notistack-green": "#43a047",
 
@@ -74,6 +74,9 @@ module.exports = {
           ".stat": {
             border: "none",
             width: "20px",
+          },
+          ".modal-box": {
+            backgroundColor: "white",
           },
 
           "primary": "#0C14D4",

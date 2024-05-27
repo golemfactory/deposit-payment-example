@@ -11,7 +11,6 @@ export const Layout = ({
   left: ReactNode;
   center: ReactNode;
 }) => {
-  console.log("rendering layout");
   const layout = useLayout();
 
   const ref = useRef<HTMLDialogElement>(null);
@@ -20,15 +19,33 @@ export const Layout = ({
     ref.current?.showModal();
   }, [ref]);
 
+  const handleClose = useCallback(() => {
+    ref.current?.close();
+  }, [ref]);
+
   useEffect(() => {
     if (layout.isModalOpen) {
       handleShow();
+    } else {
+      handleClose();
     }
   }, [layout.isModalOpen, handleShow]);
 
   return (
     <Grid>
-      <Modal ref={ref}>{layout.modalContent}</Modal>
+      <Modal ref={ref}>
+        <button
+          onClick={layout.hideModal}
+          style={{
+            color: "black",
+          }}
+          className="hover:!bg-lightblue-50 bg-secondary btn btn-sm btn-circle !bg-white absolute right-3 top-3 ml-4"
+        >
+          ✕
+        </button>
+        <br></br>
+        {layout.modalContent}
+      </Modal>
       <div className="col-span-12 flex justify-between">{header}</div>
       <div className="col-span-12 grid grid-cols-12 gap-4">
         <div className="col-span-3 flex flex-col">{left}</div>
