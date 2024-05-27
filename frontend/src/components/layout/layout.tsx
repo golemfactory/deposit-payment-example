@@ -39,7 +39,7 @@ export const Layout = ({
           style={{
             color: "black",
           }}
-          className="hover:!bg-lightblue-50 bg-secondary btn btn-sm btn-circle !bg-white absolute right-3 top-3 ml-4"
+          className="hover:!bg-lightblue-50 bg-secondary btn btn-sm !bg-white absolute right-3 top-3 border-none"
         >
           ✕
         </button>

@@ -19,8 +19,7 @@ export const useUserData = () => {
   }, [accessToken]);
 
   const { data, error } = useSWRSubscription("userData", (key, { next }) => {
-    socket.on("user", (data) => {
-      console.log("data", data);
+    socket.on("user", (data: any) => {
       setIsLoading(false);
       next(null, data);
     });

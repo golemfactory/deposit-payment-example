@@ -26,15 +26,10 @@ export function useAllowance(): {
     abi: abi,
     functionName: "allowance",
     args: [address, config.depositContractAddress[chainId]],
+    query: {
+      refetchInterval: 1000,
+    },
   });
-
-  useEffect(() => {
-    if (!isFetching) {
-      setTimeout(() => {
-        const result = refetch();
-      }, 10000);
-    }
-  }, [isFetching]);
 
   assertOptionalBigInt(data);
 

@@ -1,17 +1,9 @@
-import { ComponentProps } from "react";
-
-export const GolemCoinIcon = (props: ComponentProps<"svg">) => {
-  return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      style={{
-        scale: "0.8",
-      }}
-      {...props}
     >
       <g filter="url(#filter0_bi_1472_11883)">
         <circle cx="12" cy="12" r="12" fill="#F6F8FC" />
@@ -65,5 +57,3 @@ export const GolemCoinIcon = (props: ComponentProps<"svg">) => {
         </filter>
       </defs>
     </svg>
-  );
-};

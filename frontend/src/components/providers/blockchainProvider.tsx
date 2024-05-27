@@ -70,7 +70,6 @@ const siweConfig = createSIWEConfig({
     };
   },
   verifyMessage: async ({ message, signature }) => {
-    console.log("message", message);
     const res = await fetch(`${import.meta.env.VITE_BACKEND_HTTP_URL}/login`, {
       method: "POST",
       headers: {
@@ -102,6 +101,7 @@ createWeb3Modal({
       image: "./favicon.svg", //optional
     },
   },
+  themeMode: "light",
   themeVariables: {
     "--w3m-font-family": "Kanit",
     "--w3m-accent": "#181ea9",

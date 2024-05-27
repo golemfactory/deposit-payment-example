@@ -48,59 +48,53 @@ const pathToConnectText = [
 ];
 
 export const ConnectWallet = () => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { GLM, ETH } = useBalance();
 
   useEffect(() => {
-    try {
-      console.log("Adjusting styles");
-      console.log("GLM", GLM);
-      console.log("ETH", ETH);
-      const slot = queryShadowRootDeep(pathToAccountText) as HTMLSlotElement;
-      slot.style.fontSize = "16px";
-      slot.style.fontWeight = "400";
-      const textNode = slot.assignedNodes()[1] as Text;
-      const balanceSummary = `GLM: ${formatBalance(GLM)} / ETH: ${formatBalance(ETH)}`;
-      if (ETH && GLM) {
-        setTimeout(() => {
-          textNode.textContent = balanceSummary;
-        }, 1000);
-      }
-    } catch (e) {
-      console.log("Text not found");
-    }
-  }, [isConnected, GLM, ETH]);
+    setTimeout(() => {
+      try {
+        const slot = queryShadowRootDeep(pathToAccountText) as HTMLSlotElement;
+        slot.style.fontSize = "16px";
+        slot.style.fontWeight = "400";
+        slot.style.color = "white";
+        const textNode = slot.assignedNodes()[1] as Text;
+        const balanceSummary = `GLM: ${formatBalance(GLM)} / ETH: ${formatBalance(ETH)}`;
+        if (ETH && GLM) {
+          setTimeout(() => {
+            textNode.textContent = balanceSummary;
+          }, 1000);
+        }
+      } catch (e) {}
+    }, 1000);
+  }, [isConnected, GLM, ETH, address]);
   useEffect(() => {
     setTimeout(() => {
       try {
         const button = queryShadowRootDeep(pathToAccountButton) as HTMLElement;
-
+        button.style.color = "white";
         button.style.borderRadius = "3px";
         button.style.backgroundColor = "#181ea9";
         button.style.padding = "0.5rem 1rem";
         button.style.fontSize = "16px";
         button.style.fontWeight = "400";
-      } catch (e) {
-        console.log("Button not found");
-      }
+      } catch (e) {}
 
       try {
         const button = queryShadowRootDeep(pathToConnectButton) as HTMLElement;
+        button.style.color = "white";
+
         button.style.fontSize = "16px";
         button.style.fontWeight = "100";
         button.style.borderRadius = "3px";
         button.style.backgroundColor = "#181ea9";
-      } catch (e) {
-        console.log("Button not found");
-      }
+      } catch (e) {}
 
       try {
         const text = queryShadowRootDeep(pathToConnectText) as HTMLElement;
         text.style.fontWeight = "400";
-        console.log("Text found", text);
-      } catch (e) {
-        console.log("Text not found");
-      }
+        text.style.color = "white";
+      } catch (e) {}
     }, 0);
   }, [isConnected]);
   return (

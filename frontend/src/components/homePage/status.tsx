@@ -1,21 +1,28 @@
 import { ApproveForm } from "components/approveForm";
+import { GLMAmountStat } from "components/atoms/GLMAmount";
 import { GolemCoinIcon } from "components/atoms/golem.coin.icon";
+import { ExtendDepositForm } from "components/extendDepositForm";
 import { useLayout } from "components/providers/layoutProvider";
+import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
 import { useUser } from "hooks/useUser";
 import { useCallback } from "react";
-import { Card, Stats } from "react-daisyui";
+import { Card, Loading, Stats } from "react-daisyui";
 import { formatEther } from "viem";
 
 export const Status = () => {
-  console.log("render status");
   const { user } = useUser();
   const { setModalContent, openModal, isModalOpen } = useLayout();
   const openExtendApproveModal = useCallback(() => {
-    console.log("isModalOpen", isModalOpen);
     setModalContent(<ApproveForm />);
-    console.log("openExtendApproveModal");
     openModal();
   }, []);
+
+  const openExtendDepositModal = useCallback(() => {
+    setModalContent(<ExtendDepositForm />);
+    openModal();
+  }, []);
+  const deposit = useUserCurrentDeposit();
+
   return (
     <Card>
       <Card.Body>
@@ -60,24 +67,39 @@ export const Status = () => {
           <div className="stats shadow mt-2">
             <div className="stat">
               <div className="stat-title">Deposit</div>
-              <div className="stat-value">OK</div>
+              <div className="stat-value">
+                {deposit.isFetching || deposit.isPending ? (
+                  <Loading variant="infinity" />
+                ) : user.hasDeposit() ? (
+                  "OK"
+                ) : (
+                  "-"
+                )}
+              </div>
             </div>
 
             <div className="stat">
               <div className="stat-title">Amount locked</div>
-              <div className="stat-value">1200</div>
+              <GLMAmountStat amount={Number(deposit.amount)} />
             </div>
             <div className="stat">
               <div className="stat-title">Fee locked</div>
-              <div className="stat-value">1200</div>
+              <GLMAmountStat amount={Number(deposit.flatFeeAmount)} />
             </div>
             <div className="stat">
-              <div className="stat-title">Amount spent</div>
-              <div className="stat-value">1200</div>
+              {/* <div className="stat-title">Amount spent</div>
+              <div className="stat-value"></div> */}
             </div>
-            <div className="stat">
-              <div className="stat-title">Fee spent</div>
-              <div className="stat-value">1200</div>
+            <div className="stat ">
+              <div className="stat-actions">
+                {user.hasDeposit() ? (
+                  <button className="btn" onClick={openExtendDepositModal}>
+                    Extend
+                  </button>
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
           </div>
           <div className="stats shadow mt-2 ">

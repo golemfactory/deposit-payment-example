@@ -47,18 +47,10 @@ export function useCreateDeposit() {
 
   return {
     createDeposit: async () => {
-<<<<<<< HEAD
-      const nonce = Math.floor(Math.random() * 1000000);
-      if (!requestorData?.wallet) {
-        throw new Error("Requestor wallet address is not set");
-      }
-      await writeContractAsync({
-=======
       if (!requestorData?.wallet) {
         throw new Error("Requestor data not found");
       }
       const writeResult = await writeContractAsync({
->>>>>>> develop
         address: config.depositContractAddress[chainId],
         abi: abi,
         functionName: "createDeposit",
@@ -97,39 +89,18 @@ export function useCreateDeposit() {
 export function useUserCurrentDeposit() {
   const { user } = useUser();
 
-<<<<<<< HEAD
-  const { data, refetch, isFetching } = useReadContract({
-    address: config.depositContractAddress[useChainId()],
-    abi: abi,
-    functionName: "getDepositByNonce",
-    args: [user?.currentDeposit?.nonce || BigInt(0), address || "0x"],
-  });
-=======
   const { data, refetch, isFetching, isError, isSuccess, isPending } =
     useReadContract({
       address: config.depositContractAddress[useChainId()],
       abi: abi,
       functionName: "deposits",
       //@ts-ignore
-      args: [BigInt(user?.currentDeposit?.id)],
+      args: [BigInt(user?.currentDeposit?.id || 0) || 0n],
+      query: {
+        refetchInterval: 10000,
+      },
     });
->>>>>>> develop
 
-  useEffect(() => {
-    if (!isFetching) {
-      console.log("refetching", data);
-      const timeout = setTimeout(() => {
-        refetch();
-      }, 10000);
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  }, [data]);
-
-<<<<<<< HEAD
-  return { data };
-=======
   return {
     amount: formatEther(data ? data[1] : 0n),
     flatFeeAmount: formatEther(data ? data[2] : 0n),
@@ -137,15 +108,17 @@ export function useUserCurrentDeposit() {
     isError,
     isSuccess,
     isPending,
+    isFetching,
   };
->>>>>>> develop
 }
 
 export function useExtendDeposit() {
   const { data, isError, isSuccess, writeContractAsync, isPending } =
     useWriteContract();
   const chainId = useChainId();
-  const [validToTimestamp, setNewValidToTimestamp] = useState(0);
+  const [validToTimestamp, setNewValidToTimestamp] = useState(
+    new Date().getTime() / 1000
+  );
   const [additionalAmount, setAdditionalAmount] = useState(0);
   const [additionalFee, setAdditionalFee] = useState(0);
   const [nonce, setNonce] = useState(0n);

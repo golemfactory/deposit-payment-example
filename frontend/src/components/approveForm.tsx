@@ -24,7 +24,7 @@ export const ApproveForm = () => {
           <div className="stat-title">Current</div>
           <div className="stat-value flex">
             <div className="leading-6">
-              {formatEther(user.allowanceAmount || 0n)}{" "}
+              {formatBalance(user.allowanceAmount || 0n)}{" "}
             </div>
             <GolemCoinIcon className="ml-1 " />
           </div>
@@ -34,7 +34,7 @@ export const ApproveForm = () => {
           <div className="stat-title">Minimal</div>
           <div className="stat-value flex ">
             <div className="leading-6">
-              {formatEther(config.minimalAllowance)}{" "}
+              {formatBalance(config.minimalAllowance)}{" "}
             </div>
             <GolemCoinIcon className="ml-1" />
           </div>
