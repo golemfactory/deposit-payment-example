@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
 import { container } from "../../di.js";
 const randomNonce = () => {
-  return Math.floor(Math.random() * 10000000);
+  return Math.floor(Math.random() * 10000000000);
 };
 
 export const userService: IUserService = {
@@ -88,6 +88,7 @@ export const userService: IUserService = {
           isCurrent: d.isCurrent,
           isValid: d.isValid,
           nonce: d.nonce.toString(),
+          id: d.id,
         };
       }),
     };
@@ -99,8 +100,22 @@ export const userService: IUserService = {
     );
   },
 
+  invalidateCurrentDeposit: async (userId: string) => {
+    await userModel
+      .updateOne(
+        { _id: userId },
+        {
+          $set: {
+            "deposits.$[elem].isValid": false,
+          },
+        },
+        {
+          arrayFilters: [{ "elem.isCurrent": true }],
+        }
+      )
+      .exec();
+  },
   addDeposit: async (userId: string, deposit: Deposit) => {
-    console.log("adding deposit"); 
     await userModel.updateOne(
       { _id: userId },
       {
@@ -109,9 +124,8 @@ export const userService: IUserService = {
         },
       }
     );
-    const user = await userModel.findOne({ _id: userId });
 
-    const up = await userModel.updateOne(
+    await userModel.updateOne(
       { _id: userId },
       {
         $push: {
@@ -119,6 +133,7 @@ export const userService: IUserService = {
             nonce: Number(deposit.nonce),
             isCurrent: deposit.isCurrent,
             isValid: deposit.isValid,
+            id: deposit.id,
           },
         },
       }

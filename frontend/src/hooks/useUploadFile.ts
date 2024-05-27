@@ -35,7 +35,7 @@ async function processFile(
   formData.append("file", file);
 
   const response = await axios.post(
-    `${import.meta.env.VITE_BACKEND_URL}/process-file`,
+    `${import.meta.env.VITE_BACKEND_HTTP_URL}/process-file`,
     formData,
     {
       headers: {
@@ -43,8 +43,6 @@ async function processFile(
       },
 
       onUploadProgress: (progressEvent) => {
-        console.log("progressEvent", progressEvent);
-
         if (!progressEvent.total) return;
 
         const progress = Math.round(

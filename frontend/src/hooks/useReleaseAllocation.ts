@@ -3,10 +3,10 @@ import useSWRMutation from "swr/mutation";
 
 export const useReleaseAllocation = () => {
   const { trigger } = useSWRMutation(
-    `${import.meta.env.VITE_BACKEND_URL}/me`,
+    `${import.meta.env.VITE_BACKEND_HTTP_URL}/me`,
     function () {
       return axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/release-allocation`
+        `${import.meta.env.VITE_BACKEND_HTTP_URL}/release-allocation`
       );
     }
   );

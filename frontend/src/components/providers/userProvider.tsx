@@ -112,6 +112,7 @@ type Payload = {
       isCurrent: boolean;
       isValid: boolean;
       nonce: number;
+      id: string;
     };
   };
   [UserAction.HAS_NO_DEPOSIT]: {
@@ -161,7 +162,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { login, tokens, isLoggingIn } = useLogin();
   const chainId = useChainId();
   const [currentDepositNonce, setCurrentDepositNonce] = useState(0n);
-  const { userData, isLoading: isUserLoading } = useUserData();
+  const { data: userData, isLoading: isUserLoading } = useUserData();
   //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
 
@@ -200,7 +201,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
 
   useEffect(() => {
     const currentDeposit = (userData?.deposits || []).find(
-      (deposit) => deposit.isCurrent
+      (deposit: { isCurrent: boolean }) => deposit.isCurrent
     );
     if (!isUserLoading && userData?._id) {
       setIsRegistered(true);
@@ -227,7 +228,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
 
   //track allocation
   useEffect(() => {
-    console.log("user.currentDeposit", user.currentActivity);
     if (user.currentDeposit) {
       if (userData?.currentAllocation.id) {
         dispatch({
@@ -238,7 +238,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
           },
         });
       } else {
-        console.log("no allocation");
         dispatch({
           kind: UserAction.HAS_NO_ALLOCATION,
           payload: { currentAllocation: null },

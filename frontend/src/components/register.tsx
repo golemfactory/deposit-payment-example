@@ -28,11 +28,6 @@ export const Register = () => {
       variants={variants}
       transition={{ duration: 0.5 }}
     >
-      {user.isConnected() && address && (
-        <RegisterButton
-          isVisible={!user.isRegistered() && user.isConnected()}
-        />
-      )}
       {user.isRegistered() && (
         <RegisterSummary isVisible={user.isRegistered()} />
       )}

@@ -3,7 +3,7 @@ import useSWRMutation from "swr/mutation";
 
 export const useReleaseAgreement = () => {
   const { trigger } = useSWRMutation(
-    `${import.meta.env.VITE_BACKEND_URL}/release-agreement`,
+    `${import.meta.env.VITE_BACKEND_HTTP_URL}/release-agreement`,
     axios.post
   );
   return {

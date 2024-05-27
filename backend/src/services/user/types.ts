@@ -7,8 +7,9 @@ type NonceType = number;
 
 export type Deposit = {
   isCurrent: boolean;
-  isValid: boolean;
+  isValid?: boolean;
   nonce: bigint;
+  id: string;
 };
 
 export type DepositData = {

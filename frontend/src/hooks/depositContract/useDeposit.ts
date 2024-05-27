@@ -1,35 +1,75 @@
-import { useReadContract, useWriteContract } from "wagmi";
+import {
+  useReadContract,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 
 import { abi } from "./abi";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { useUser } from "hooks/useUser";
 import { useAccount } from "wagmi";
-import { parseEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
+import { set } from "ramda";
+import { string } from "ts-pattern/dist/patterns";
 export function useCreateDeposit() {
-  const { data, isError, isSuccess, isPending, isIdle, writeContractAsync } =
-    useWriteContract();
+  const {
+    data,
+    isError,
+    isSuccess,
+    isPending,
+    isIdle,
+    writeContractAsync,
+    error,
+  } = useWriteContract();
   const chainId = useChainId();
   const [fee, setFee] = useState(0);
   const [amount, setAmount] = useState(0);
   const [validToTimestamp, setValidToTimestamp] = useState(0);
-
+  const nonce = useRef(Math.floor(Math.random() * 1000000));
   const { data: requestorData } = useRequestorWalletAddress();
+
+  const { data: contractSimulationData } = useSimulateContract({
+    address: config.depositContractAddress[chainId],
+    abi: abi,
+    functionName: "createDeposit",
+    args: [
+      BigInt(nonce.current),
+      requestorData?.wallet || "0x",
+      BigInt(1 * Math.pow(10, 18)),
+      BigInt(1 * Math.pow(10, 18)),
+      BigInt(validToTimestamp),
+    ],
+  });
 
   return {
     createDeposit: async () => {
+<<<<<<< HEAD
       const nonce = Math.floor(Math.random() * 1000000);
       if (!requestorData?.wallet) {
         throw new Error("Requestor wallet address is not set");
       }
       await writeContractAsync({
+=======
+      if (!requestorData?.wallet) {
+        throw new Error("Requestor data not found");
+      }
+      const writeResult = await writeContractAsync({
+>>>>>>> develop
         address: config.depositContractAddress[chainId],
         abi: abi,
         functionName: "createDeposit",
+
+        //         { internalType: "uint64", name: "nonce", type: "uint64" },
+        // { internalType: "address", name: "spender", type: "address" },
+        // { internalType: "uint128", name: "amount", type: "uint128" },
+        // { internalType: "uint128", name: "flatFeeAmount", type: "uint128" },
+        // { internalType: "uint64", name: "validToTimestamp", type: "uint64" },
         args: [
-          BigInt(nonce),
+          BigInt(nonce.current),
           requestorData?.wallet,
           BigInt(amount * Math.pow(10, 18)),
           BigInt(fee * Math.pow(10, 18)),
@@ -38,12 +78,14 @@ export function useCreateDeposit() {
       });
 
       return {
-        nonce,
+        nonce: nonce.current,
+        depositId: (contractSimulationData?.result as any)?.toString(),
       };
     },
     data,
     isError,
     isSuccess,
+    error,
     setFee,
     isPending,
     isIdle,
@@ -54,27 +96,49 @@ export function useCreateDeposit() {
 
 export function useUserCurrentDeposit() {
   const { user } = useUser();
-  const { address } = useAccount();
 
+<<<<<<< HEAD
   const { data, refetch, isFetching } = useReadContract({
     address: config.depositContractAddress[useChainId()],
     abi: abi,
     functionName: "getDepositByNonce",
     args: [user?.currentDeposit?.nonce || BigInt(0), address || "0x"],
   });
+=======
+  const { data, refetch, isFetching, isError, isSuccess, isPending } =
+    useReadContract({
+      address: config.depositContractAddress[useChainId()],
+      abi: abi,
+      functionName: "deposits",
+      //@ts-ignore
+      args: [BigInt(user?.currentDeposit?.id)],
+    });
+>>>>>>> develop
 
   useEffect(() => {
     if (!isFetching) {
+      console.log("refetching", data);
       const timeout = setTimeout(() => {
         refetch();
-      }, 1000);
+      }, 10000);
       return () => {
         clearTimeout(timeout);
       };
     }
-  }, [isFetching]);
+  }, [data]);
 
+<<<<<<< HEAD
   return { data };
+=======
+  return {
+    amount: formatEther(data ? data[1] : 0n),
+    flatFeeAmount: formatEther(data ? data[2] : 0n),
+    validToTimestamp: Number(data ? data[3] : 0n),
+    isError,
+    isSuccess,
+    isPending,
+  };
+>>>>>>> develop
 }
 
 export function useExtendDeposit() {

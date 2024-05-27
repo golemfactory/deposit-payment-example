@@ -1,7 +1,6 @@
 import { RouteOptions } from "fastify";
-import { verifyMessage } from "../../utils/verifyMessage.js";
 import config from "../../utils/ensureEnv.js";
-
+import { recoverMessageAddress } from "viem";
 export const login: RouteOptions = {
   method: "POST",
   url: "/login",
@@ -9,68 +8,49 @@ export const login: RouteOptions = {
     body: {
       type: "object",
       properties: {
-        walletAddress: {
-          type: "string",
-          pattern: "^0x[a-fA-F0-9]{40}$",
-        },
-        messageSignature: {
+        signature: {
           type: "string",
         },
         message: {
           type: "string",
         },
       },
-      required: ["walletAddress", "messageSignature", "message"],
+      required: ["signature", "message"],
     },
   },
   handler: async (req, res) => {
     //@ts-ignore
-    const { walletAddress, messageSignature, message } = req.body;
+    const { signature, message } = req.body;
     // @ts-ignore temporary
     const { userService } = req.routeOptions.config;
-    const isOk = await verifyMessage({
-      address: walletAddress,
-      signature: messageSignature,
-      message: message,
+    const walletAddress = await recoverMessageAddress({
+      message,
+      signature,
     });
 
-    console.log("is ok", isOk);
-    if (isOk) {
-      const user = await userService.findByWalletAddress(walletAddress);
-      if (!user) {
-        res.status(401).send({ message: "Invalid signature" });
-        return;
-      }
-      userService.regenerateNonce(user.id);
+    const user = await userService.findByWalletAddress(walletAddress);
 
-      console.log("user", user);
-
-      console.log(
-        "config",
-        config.JWT_SECRET,
-        config.JWT_TOKEN_EXPIRATION,
-        config.JWT_REFRESH_TOKEN_EXPIRATION
-      );
-
-      const tokens = {
-        accessToken: await res.jwtSign(
-          { _id: user._id },
-          {
-            expiresIn: config.JWT_TOKEN_EXPIRATION,
-          }
-        ),
-        refreshToken: await res.jwtSign(
-          { _id: user._id },
-          {
-            expiresIn: config.JWT_REFRESH_TOKEN_EXPIRATION,
-          }
-        ),
-      };
-      console.log("tokens", tokens);
-
-      res.send(tokens);
-    } else {
+    if (!user) {
       res.status(401).send({ message: "Invalid signature" });
+      return;
     }
+
+    userService.regenerateNonce(user.id);
+
+    const tokens = {
+      accessToken: await res.jwtSign(
+        { _id: user._id },
+        {
+          expiresIn: config.JWT_TOKEN_EXPIRATION,
+        }
+      ),
+      refreshToken: await res.jwtSign(
+        { _id: user._id },
+        {
+          expiresIn: config.JWT_REFRESH_TOKEN_EXPIRATION,
+        }
+      ),
+    };
+    res.send(tokens);
   },
 };

@@ -21,8 +21,7 @@ export const useRequestorWalletAddress = (): (
 } => {
   const { data, error, isLoading } = useSWR<{
     data: { wallet: `0x${string}` };
-  }>(`${import.meta.env.VITE_BACKEND_URL}/requestor`, axios.get);
-
+  }>(`${import.meta.env.VITE_BACKEND_HTTP_URL}/requestor`, axios.get);
   return {
     data: { wallet: data?.data.wallet },
     error,

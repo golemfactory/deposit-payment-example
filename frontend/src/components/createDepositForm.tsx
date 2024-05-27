@@ -12,11 +12,13 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
     data,
     createDeposit,
     setFee,
+    error: errorPrepareDeposit,
     setAmount,
     isPending,
     setValidToTimestamp,
   } = useCreateDeposit();
 
+  console.log("data", data);
   const {
     isSuccess: isSuccessTransaction,
     isError: isErrorTransaction,
@@ -25,28 +27,33 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
     hash: data,
   });
 
+  const [nonce, setNonce] = useState(0);
+  const [depositId, setDepositId] = useState("");
   const {
     saveDeposit,
     isSuccess: isSuccessSaveDeposit,
     isError: isErrorSaveDeposit,
   } = useSaveDeposit();
   const { address } = useAccount();
-  const [nonce, setNonce] = useState(0);
   if (!address) {
     throw new Error("Address not found");
   }
+
+  const [isProcessing, setIsProcessing] = useState(false);
+
   useEffect(() => {
+    console.log("isSuccessTransaction", isSuccessTransaction);
+    console.log("isErrorTransaction", isErrorTransaction);
     if (isSuccessTransaction) {
       setTimeout(() => {
         saveDeposit({
           nonce,
+          id: depositId,
           funder: address,
         });
       }, 1000);
     }
-  }, [isSuccessTransaction, nonce]);
-
-  const [isProcessing, setIsProcessing] = useState(false);
+  }, [isSuccessTransaction, isErrorTransaction, nonce]);
 
   useEffect(() => {
     if (isPending) {
@@ -123,9 +130,10 @@ export const CreateDepositForm = ({ isVisible }: { isVisible: boolean }) => {
               <Card.Actions className="justify-end">
                 <Button
                   onClick={async () => {
-                    const { nonce } = await createDeposit();
-                    console.log("nonce", nonce);
+                    const { nonce, depositId } = await createDeposit();
+                    console.log("nonce", nonce, "depositId", depositId);
                     setNonce(nonce);
+                    setDepositId(depositId);
                   }}
                   className="bg-primary !text-white border-none text-lg font-light "
                   style={{

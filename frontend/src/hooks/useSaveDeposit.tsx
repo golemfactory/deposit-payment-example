@@ -5,19 +5,24 @@ import { useState } from "react";
 async function saveDeposit({
   nonce,
   funder,
+  id,
 }: {
   funder: `0x${string}`;
   nonce: number;
+  id: string;
 }): Promise<{ result: boolean }> {
+  console.log("nonce", nonce);
+  console.log("funder", funder);
+  console.log("id", id);
   const response = await fetch(
-    `${import.meta.env.VITE_BACKEND_URL}/create-deposit`,
+    `${import.meta.env.VITE_BACKEND_HTTP_URL}/create-deposit`,
     {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ nonce, funder }),
+      body: JSON.stringify({ nonce, funder, id }),
     }
   );
   if (!response.ok)
@@ -30,9 +35,11 @@ export function useSaveDeposit(): {
   saveDeposit: ({
     nonce,
     funder,
+    id,
   }: {
     funder: `0x${string}`;
     nonce: number;
+    id: string;
   }) => void;
   result: boolean;
   isSuccess: boolean;
@@ -48,6 +55,7 @@ export function useSaveDeposit(): {
     {
       funder: `0x${string}`;
       nonce: number;
+      id: string;
     },
     unknown
   >({
@@ -72,6 +80,7 @@ export function useSaveDeposit(): {
       }
     },
     onError: (error) => {
+      console.error("Error saving deposit", error);
       setIsError(true);
       // setVerificationError(error);
     },
