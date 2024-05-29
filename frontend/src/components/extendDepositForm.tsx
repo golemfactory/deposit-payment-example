@@ -9,7 +9,9 @@ import { Button, Input, Loading } from "react-daisyui";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { useTopUpAllocation } from "hooks/useTopUpAllocation";
 import { GolemCoinIcon } from "./atoms/golem.coin.icon";
-export const ExtendDepositForm = () => {
+import { match, P } from "ts-pattern";
+
+export const DepositForm = ({ mode }: { mode: "create" | "extend" }) => {
   const {
     additionalAmount,
     data,
@@ -65,9 +67,21 @@ export const ExtendDepositForm = () => {
   return (
     <>
       <div className="flex flex-row justify-between w-full">
-        <div>Extend deposit</div>
+        {match(mode)
+          .with("create", () => (
+            <h1 className="text-2xl font-semibold">Create deposit</h1>
+          ))
+          .with("extend", () => (
+            <h1 className="text-2xl font-semibold">Extend deposit</h1>
+          ))
+          .exhaustive()}
       </div>
-      <div className="w-[40vw] mb-4">Deposit is extendable at any time.</div>
+      <div className="w-[40vw] mb-4">
+        {match(mode)
+          .with("create", () => <div> Deposit creation text here </div>)
+          .with("extend", () => <div> Deposit extension text here </div>)
+          .exhaustive()}
+      </div>
       <div className="grid grid-cols-3 gap-4">
         <label className="input input-bordered flex items-center gap-4 ">
           <input

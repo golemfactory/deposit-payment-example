@@ -1,12 +1,18 @@
+import { AllocationLink } from "components/alloctionLink";
 import { ApproveForm } from "components/approveForm";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
-import { GolemCoinIcon } from "components/atoms/golem.coin.icon";
-import { ExtendDepositForm } from "components/extendDepositForm";
+import { CreateDeposit } from "components/molecules/deposit/createDeposit";
+import { ExtendDeposit } from "components/molecules/deposit/extendDeposit";
 import { useLayout } from "components/providers/layoutProvider";
+import { useAllowanceTx } from "hooks/GLM/useAllowanceTx";
 import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
+import { useCreateAllocation } from "hooks/useCreateAllocation";
+import { useCurrentAllocation } from "hooks/useCurrentAllocation";
 import { useUser } from "hooks/useUser";
 import { useCallback } from "react";
-import { Card, Loading, Stats } from "react-daisyui";
+import { Card, Link, Loading, Stats } from "react-daisyui";
+import { formatBalance } from "utils/formatBalance";
+import { shortTransaction } from "utils/shortTransaction";
 import { formatEther } from "viem";
 
 export const Status = () => {
@@ -18,11 +24,23 @@ export const Status = () => {
   }, []);
 
   const openExtendDepositModal = useCallback(() => {
-    setModalContent(<ExtendDepositForm />);
+    setModalContent(<ExtendDeposit />);
     openModal();
   }, []);
+
+  const openCreateDepositModal = useCallback(() => {
+    setModalContent(<CreateDeposit />);
+    openModal();
+  }, []);
+
   const deposit = useUserCurrentDeposit();
 
+  const { isCreating: isCreatingAllocation, createAllocation } =
+    useCreateAllocation();
+
+  const { currentAllocation } = useCurrentAllocation();
+
+  const { txHash } = useAllowanceTx();
   return (
     <Card>
       <Card.Body>
@@ -40,26 +58,44 @@ export const Status = () => {
             <div className="stat">
               <div className="stat-title">Approve</div>
               <div className="stat-value">
-                {user.hasEnoughAllowance() ? "OK" : "-"}
+                {user.hasEnoughAllowance()
+                  ? "OK"
+                  : user.allowanceAmount && user.allowanceAmount > 0
+                    ? "Not enough"
+                    : "-"}
               </div>
             </div>
             <div className="stat">
               <div className="stat-title">Given</div>
-              <div className="stat-value flex">
-                <div className="leading-6">
-                  {user.allowanceAmount
-                    ? `${formatEther(user.allowanceAmount)} `
-                    : "-"}
-                </div>
-                <GolemCoinIcon className="ml-1" />
-              </div>
+              <GLMAmountStat
+                amount={formatBalance(user.allowanceAmount || 0n)}
+              />
+            </div>
+            <div className="stat ">
+              {txHash && (
+                <>
+                  <div className="stat-title">Tx</div>
+                  <div className="state-content">
+                    <Link
+                      href={`https://holesky.etherscan.io/tx/${txHash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {shortTransaction(txHash)}
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
             <div className="stat "></div>
-            <div className="stat "></div>
             <div className="stat ">
-              <div className="stat-actions m-0">
+              <div className="stat-actions mt-0 ">
                 <button className="btn" onClick={openExtendApproveModal}>
-                  Change
+                  {user.hasEnoughAllowance()
+                    ? "Extend"
+                    : user.allowanceAmount && user.allowanceAmount > 0
+                      ? "Extend"
+                      : "Approve"}
                 </button>
               </div>
             </div>
@@ -68,7 +104,7 @@ export const Status = () => {
             <div className="stat">
               <div className="stat-title">Deposit</div>
               <div className="stat-value">
-                {deposit.isFetching || deposit.isPending ? (
+                {deposit.isPending ? (
                   <Loading variant="infinity" />
                 ) : user.hasDeposit() ? (
                   "OK"
@@ -80,11 +116,11 @@ export const Status = () => {
 
             <div className="stat">
               <div className="stat-title">Amount locked</div>
-              <GLMAmountStat amount={Number(deposit.amount)} />
+              <GLMAmountStat amount={deposit.amount} />
             </div>
             <div className="stat">
               <div className="stat-title">Fee locked</div>
-              <GLMAmountStat amount={Number(deposit.flatFeeAmount)} />
+              <GLMAmountStat amount={deposit.flatFeeAmount} />
             </div>
             <div className="stat">
               {/* <div className="stat-title">Amount spent</div>
@@ -97,7 +133,9 @@ export const Status = () => {
                     Extend
                   </button>
                 ) : (
-                  ""
+                  <button className="btn" onClick={openCreateDepositModal}>
+                    Create
+                  </button>
                 )}
               </div>
             </div>
@@ -106,20 +144,26 @@ export const Status = () => {
             <div
               className="stat "
               style={{
-                opacity: 0.3,
+                opacity: user.hasAllocation() ? 1 : 0.3,
               }}
             >
               <div className="stat-title">Allocation </div>
-              <div className="stat-value"> - </div>
+              <div className="stat-value">
+                <AllocationLink
+                  allocationId={user?.currentAllocation?.id}
+                ></AllocationLink>
+              </div>
             </div>
             <div
               className="stat "
               style={{
-                opacity: 0.3,
+                opacity: user.hasAllocation() ? 1 : 0.3,
               }}
             >
               <div className="stat-title">Given</div>
-              <div className="stat-value">-</div>
+              <div className="stat-value">
+                {currentAllocation?.amount || "-"}
+              </div>
             </div>
             <div className="stat "></div>
             <div className="stat "></div>
@@ -130,7 +174,14 @@ export const Status = () => {
               }}
             >
               <div className="stat-actions m-0">
-                <button className="btn">Create </button>
+                <button
+                  className="btn"
+                  onClick={() => {
+                    createAllocation();
+                  }}
+                >
+                  Create{" "}
+                </button>
               </div>
             </div>
           </div>

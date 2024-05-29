@@ -32,42 +32,44 @@ export function useCreateDeposit() {
   const nonce = useRef(Math.floor(Math.random() * 1000000));
   const { data: requestorData } = useRequestorWalletAddress();
 
-  const { data: contractSimulationData } = useSimulateContract({
-    address: config.depositContractAddress[chainId],
-    abi: abi,
-    functionName: "createDeposit",
-    args: [
-      BigInt(nonce.current),
-      requestorData?.wallet || "0x",
-      BigInt(1 * Math.pow(10, 18)),
-      BigInt(1 * Math.pow(10, 18)),
-      BigInt(validToTimestamp),
-    ],
-  });
+  const { data: contractSimulationData, error: simulationError } =
+    useSimulateContract({
+      address: config.depositContractAddress[chainId],
+      abi: abi,
+      functionName: "createDeposit",
+      args: [
+        BigInt(nonce.current),
+        requestorData?.wallet || "0x",
+        BigInt(1 * Math.pow(10, 18)),
+        BigInt(1 * Math.pow(10, 18)),
+        BigInt(validToTimestamp),
+      ],
+    });
 
+  useEffect(() => {
+    console.log("contractSimulationData", contractSimulationData);
+  }, [contractSimulationData]);
   return {
     createDeposit: async () => {
       if (!requestorData?.wallet) {
         throw new Error("Requestor data not found");
       }
-      const writeResult = await writeContractAsync({
-        address: config.depositContractAddress[chainId],
-        abi: abi,
-        functionName: "createDeposit",
-
-        //         { internalType: "uint64", name: "nonce", type: "uint64" },
-        // { internalType: "address", name: "spender", type: "address" },
-        // { internalType: "uint128", name: "amount", type: "uint128" },
-        // { internalType: "uint128", name: "flatFeeAmount", type: "uint128" },
-        // { internalType: "uint64", name: "validToTimestamp", type: "uint64" },
-        args: [
-          BigInt(nonce.current),
-          requestorData?.wallet,
-          BigInt(amount * Math.pow(10, 18)),
-          BigInt(fee * Math.pow(10, 18)),
-          BigInt(validToTimestamp),
-        ],
-      });
+      try {
+        await writeContractAsync({
+          address: config.depositContractAddress[chainId],
+          abi: abi,
+          functionName: "createDeposit",
+          args: [
+            BigInt(nonce.current),
+            requestorData?.wallet,
+            BigInt(amount * Math.pow(10, 18)),
+            BigInt(fee * Math.pow(10, 18)),
+            BigInt(validToTimestamp),
+          ],
+        });
+      } catch (e) {
+        console.log("error", e);
+      }
 
       return {
         nonce: nonce.current,
@@ -82,6 +84,8 @@ export function useCreateDeposit() {
     isPending,
     isIdle,
     setValidToTimestamp,
+    depositId: (contractSimulationData?.result as any)?.toString(),
+    nonce: nonce.current,
     setAmount,
   };
 }
@@ -89,17 +93,16 @@ export function useCreateDeposit() {
 export function useUserCurrentDeposit() {
   const { user } = useUser();
 
-  const { data, refetch, isFetching, isError, isSuccess, isPending } =
-    useReadContract({
-      address: config.depositContractAddress[useChainId()],
-      abi: abi,
-      functionName: "deposits",
-      //@ts-ignore
-      args: [BigInt(user?.currentDeposit?.id || 0) || 0n],
-      query: {
-        refetchInterval: 10000,
-      },
-    });
+  const { data, isFetching, isError, isSuccess, isPending } = useReadContract({
+    address: config.depositContractAddress[useChainId()],
+    abi: abi,
+    functionName: "deposits",
+    //@ts-ignore
+    args: [BigInt(user?.currentDeposit?.id || 0) || 0n],
+    query: {
+      refetchInterval: 10000,
+    },
+  });
 
   return {
     amount: formatEther(data ? data[1] : 0n),

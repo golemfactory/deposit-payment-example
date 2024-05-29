@@ -35,7 +35,6 @@ export function useAllowance(): {
 
   return { isFetched, data, isLoading: isFetching || isLoading };
 }
-4;
 
 export function useApprove() {
   const {

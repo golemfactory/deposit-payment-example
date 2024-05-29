@@ -5,11 +5,10 @@ export const useCreateAllocation = () => {
   const { trigger, isMutating } = useSWRMutation(
     `${import.meta.env.VITE_BACKEND_HTTP_URL}/me`,
     function () {
-      return axios.post(
-        `${import.meta.env.VITE_BACKEND_HTTP_URL}/create-allocation`
-      );
+      return axios.post(`${import.meta.env.VITE_BACKEND_HTTP_URL}/allocation`);
     }
   );
+
   return {
     createAllocation: trigger,
     isCreating: isMutating,

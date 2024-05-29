@@ -3,7 +3,7 @@ import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 import { createSIWEConfig } from "@web3modal/siwe";
 import { SiweMessage } from "siwe";
 
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PropsWithChildren } from "react";
 import { config } from "config";
@@ -23,6 +23,9 @@ const metadata = {
 const wagmiConfig = defaultWagmiConfig({
   chains: config.supportedChains,
   projectId: config.projectId,
+  transports: {
+    [holesky.id]: http(),
+  },
   metadata,
 });
 

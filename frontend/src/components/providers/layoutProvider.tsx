@@ -24,14 +24,6 @@ export const useLayout = () => {
 export const LayoutProvider = ({ children }: PropsWithChildren) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(<></>);
-  useEffect(() => {
-    if (isModalOpen) {
-      console.log("show modal");
-    }
-  }, [isModalOpen]);
-  useEffect(() => {
-    console.log("modal content changed");
-  }, [modalContent]);
   return (
     <LayoutContext.Provider
       value={{
