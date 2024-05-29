@@ -20,6 +20,7 @@ export const ExtendDeposit = () => {
     setNonce,
     isPending,
     newValidToTimeStamp,
+    errorContext,
   } = useExtendDeposit();
 
   const {
@@ -33,8 +34,10 @@ export const ExtendDeposit = () => {
   const { user } = useUser();
 
   const currentDeposit = useUserCurrentDeposit();
+
   const { trigger: topUp, isMutating: isAmendingAllocation } =
     useTopUpAllocation();
+
   useEffect(() => {
     if (user.currentDeposit) {
       setNonce(user.currentDeposit?.nonce);
@@ -65,6 +68,7 @@ export const ExtendDeposit = () => {
       subtitle="Extend your deposit to increase your allocation"
       validToTimestamp={newValidToTimeStamp}
       setValidToTimestamp={setNewValidToTimestamp}
+      errorContext={errorContext}
     ></UpsertDepositPresentational>
   );
 };

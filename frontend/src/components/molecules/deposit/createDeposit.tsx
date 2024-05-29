@@ -19,6 +19,7 @@ export const CreateDeposit = () => {
     setValidToTimestamp,
     depositId,
     nonce,
+    errorContext,
   } = useCreateDeposit();
 
   const {
@@ -67,6 +68,7 @@ export const CreateDeposit = () => {
       subtitle="Create a new deposit to start using app"
       validToTimestamp={dayjs().add(1, "day").unix()}
       setValidToTimestamp={setValidToTimestamp}
+      errorContext={errorContext}
     ></UpsertDepositPresentational>
   );
 };

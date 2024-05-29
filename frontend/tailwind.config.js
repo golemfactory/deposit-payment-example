@@ -78,6 +78,7 @@ module.exports = {
           ".modal-box": {
             backgroundColor: "white",
             borderRadius: "9px",
+            overflow: "hidden",
           },
 
           "primary": "#0C14D4",

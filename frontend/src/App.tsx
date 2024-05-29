@@ -14,7 +14,7 @@ function App() {
       <SWRConfig>
         <FileUploaderProvider>
           <BlockchainProvider>
-            <SnackbarProvider autoHideDuration={50000}>
+            <SnackbarProvider autoHideDuration={3000}>
               <UserProvider>
                 <Home />
               </UserProvider>

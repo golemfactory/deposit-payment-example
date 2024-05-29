@@ -2,7 +2,7 @@ import { GLMAmountInput } from "components/molecules/glmAmountInput/glmAmountInp
 import dayjs from "dayjs";
 import { ChangeEvent } from "react";
 import { Button, Input, Loading } from "react-daisyui";
-
+import { RPC_ERROR_CONTEXT } from "hooks/useHandleRpcError";
 export const UpsertDepositPresentational = ({
   title,
   subtitle,
@@ -15,6 +15,7 @@ export const UpsertDepositPresentational = ({
   callContract,
   buttonText,
   isPending,
+  errorContext,
 }: {
   title: string;
   subtitle: string;
@@ -27,14 +28,31 @@ export const UpsertDepositPresentational = ({
   callContract: () => void;
   buttonText: string;
   isPending: boolean;
+  errorContext?: RPC_ERROR_CONTEXT[];
 }) => {
   return (
     <>
       <div className="flex flex-row justify-between w-full">{title}</div>
       <div className="w-[40vw] mb-4">{subtitle}</div>
       <div className="grid grid-cols-3 gap-4">
-        <GLMAmountInput amount={0} setAmount={setAmount} placeholder="amount" />
-        <GLMAmountInput amount={0} setAmount={setFee} placeholder="fee" />
+        <GLMAmountInput
+          amount={0}
+          setAmount={setAmount}
+          placeholder="amount"
+          className={
+            errorContext?.includes(RPC_ERROR_CONTEXT.amount)
+              ? "input-error"
+              : ""
+          }
+        />
+        <GLMAmountInput
+          amount={0}
+          setAmount={setFee}
+          placeholder="fee"
+          className={
+            errorContext?.includes(RPC_ERROR_CONTEXT.fee) ? "input-error" : ""
+          }
+        />
         <Input
           type="date"
           placeholder="Valid to timestamp"
@@ -46,6 +64,11 @@ export const UpsertDepositPresentational = ({
           style={{
             color: "gray",
           }}
+          className={
+            errorContext?.includes(RPC_ERROR_CONTEXT.valid_to)
+              ? "input-error"
+              : ""
+          }
         />
         <div></div>
         <div></div>

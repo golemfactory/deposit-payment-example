@@ -1,20 +1,14 @@
-import {
-  useReadContract,
-  useSimulateContract,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
+import { useReadContract, useSimulateContract, useWriteContract } from "wagmi";
 
 import { abi } from "./abi";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { useUser } from "hooks/useUser";
-import { useAccount } from "wagmi";
 import { formatEther, parseEther } from "viem";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
-import { set } from "ramda";
-import { string } from "ts-pattern/dist/patterns";
+import { useHandleRpcError } from "hooks/useHandleRpcError";
+import dayjs from "dayjs";
 export function useCreateDeposit() {
   const {
     data,
@@ -31,7 +25,7 @@ export function useCreateDeposit() {
   const [validToTimestamp, setValidToTimestamp] = useState(0);
   const nonce = useRef(Math.floor(Math.random() * 1000000));
   const { data: requestorData } = useRequestorWalletAddress();
-
+  const { showNotification, errorContext } = useHandleRpcError();
   const { data: contractSimulationData, error: simulationError } =
     useSimulateContract({
       address: config.depositContractAddress[chainId],
@@ -46,9 +40,6 @@ export function useCreateDeposit() {
       ],
     });
 
-  useEffect(() => {
-    console.log("contractSimulationData", contractSimulationData);
-  }, [contractSimulationData]);
   return {
     createDeposit: async () => {
       if (!requestorData?.wallet) {
@@ -68,7 +59,7 @@ export function useCreateDeposit() {
           ],
         });
       } catch (e) {
-        console.log("error", e);
+        showNotification(e);
       }
 
       return {
@@ -87,6 +78,7 @@ export function useCreateDeposit() {
     depositId: (contractSimulationData?.result as any)?.toString(),
     nonce: nonce.current,
     setAmount,
+    errorContext,
   };
 }
 
@@ -116,28 +108,34 @@ export function useUserCurrentDeposit() {
 }
 
 export function useExtendDeposit() {
+  const { showNotification, errorContext } = useHandleRpcError();
+
   const { data, isError, isSuccess, writeContractAsync, isPending } =
     useWriteContract();
   const chainId = useChainId();
   const [validToTimestamp, setNewValidToTimestamp] = useState(
-    new Date().getTime() / 1000
+    dayjs().add(1, "day").unix()
   );
   const [additionalAmount, setAdditionalAmount] = useState(0);
   const [additionalFee, setAdditionalFee] = useState(0);
   const [nonce, setNonce] = useState(0n);
   return {
     extendDeposit: async () => {
-      await writeContractAsync({
-        address: config.depositContractAddress[chainId],
-        abi: abi,
-        functionName: "extendDeposit",
-        args: [
-          BigInt(nonce),
-          parseEther(additionalAmount.toString()),
-          parseEther(additionalFee.toString()),
-          BigInt(validToTimestamp),
-        ],
-      });
+      try {
+        await writeContractAsync({
+          address: config.depositContractAddress[chainId],
+          abi: abi,
+          functionName: "extendDeposit",
+          args: [
+            BigInt(nonce),
+            parseEther(additionalAmount.toString()),
+            parseEther(additionalFee.toString()),
+            BigInt(validToTimestamp),
+          ],
+        });
+      } catch (e) {
+        showNotification(e);
+      }
     },
     data,
     isError,
@@ -151,5 +149,6 @@ export function useExtendDeposit() {
     additionalAmount,
     additionalFee,
     validToTimestamp,
+    errorContext,
   };
 }
