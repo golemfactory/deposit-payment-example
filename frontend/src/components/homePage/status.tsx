@@ -8,12 +8,12 @@ import { useAllowanceTx } from "hooks/GLM/useAllowanceTx";
 import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
 import { useCreateAllocation } from "hooks/useCreateAllocation";
 import { useCurrentAllocation } from "hooks/useCurrentAllocation";
+import { useReleaseAllocation } from "hooks/useReleaseAllocation";
 import { useUser } from "hooks/useUser";
 import { useCallback } from "react";
-import { Card, Link, Loading, Stats } from "react-daisyui";
+import { Card, Link, Loading } from "react-daisyui";
 import { formatBalance } from "utils/formatBalance";
 import { shortTransaction } from "utils/shortTransaction";
-import { formatEther } from "viem";
 
 export const Status = () => {
   const { user } = useUser();
@@ -39,7 +39,7 @@ export const Status = () => {
     useCreateAllocation();
 
   const { currentAllocation } = useCurrentAllocation();
-
+  const { releaseAllocation } = useReleaseAllocation();
   const { txHash } = useAllowanceTx();
   return (
     <Card>
@@ -99,6 +99,13 @@ export const Status = () => {
                 </button>
               </div>
             </div>
+            <div
+              className="stat p-0 w-0"
+              style={{
+                opacity: user.hasAllocation() ? 1 : 0.3,
+                width: "0px",
+              }}
+            ></div>{" "}
           </div>
           <div className="stats shadow mt-2">
             <div className="stat">
@@ -139,6 +146,13 @@ export const Status = () => {
                 )}
               </div>
             </div>
+            <div
+              className="stat p-0 w-0"
+              style={{
+                opacity: user.hasAllocation() ? 1 : 0.3,
+                width: "0px",
+              }}
+            ></div>
           </div>
           <div className="stats shadow mt-2 ">
             <div
@@ -160,13 +174,33 @@ export const Status = () => {
                 opacity: user.hasAllocation() ? 1 : 0.3,
               }}
             >
-              <div className="stat-title">Given</div>
+              <div className="stat-title">Total</div>
               <div className="stat-value">
-                {currentAllocation?.amount || "-"}
+                {currentAllocation?.totalAmount || "-"}
               </div>
             </div>
-            <div className="stat "></div>
-            <div className="stat "></div>
+            <div
+              className="stat "
+              style={{
+                opacity: user.hasAllocation() ? 1 : 0.3,
+              }}
+            >
+              <div className="stat-title">Spent</div>
+              <div className="stat-value">
+                {currentAllocation?.spentAmount || "-"}
+              </div>
+            </div>
+            <div
+              className="stat "
+              style={{
+                opacity: user.hasAllocation() ? 1 : 0.3,
+              }}
+            >
+              <div className="stat-title">Remaining</div>
+              <div className="stat-value">
+                {currentAllocation?.remainingAmount || "-"}
+              </div>
+            </div>
             <div
               className="stat "
               style={{
@@ -174,16 +208,34 @@ export const Status = () => {
               }}
             >
               <div className="stat-actions m-0">
-                <button
-                  className="btn"
-                  onClick={() => {
-                    createAllocation();
-                  }}
-                >
-                  Create{" "}
-                </button>
+                {isCreatingAllocation ? (
+                  <Loading />
+                ) : user.hasAllocation() ? (
+                  <div className="btn-group">
+                    <button className="btn">Extend </button>
+                    <button className="btn" onClick={() => releaseAllocation()}>
+                      Close{" "}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="btn"
+                    onClick={() => {
+                      createAllocation();
+                    }}
+                  >
+                    Create{" "}
+                  </button>
+                )}
               </div>
             </div>
+            <div
+              className="stat p-0 w-0"
+              style={{
+                opacity: user.hasAllocation() ? 1 : 0.3,
+                width: "0px",
+              }}
+            ></div>
           </div>
           <div className="stats shadow mt-2">
             <div className="stat " style={{ opacity: 0.3 }}>

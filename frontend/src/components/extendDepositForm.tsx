@@ -59,10 +59,7 @@ export const DepositForm = ({ mode }: { mode: "create" | "extend" }) => {
   //   }
   // }, [isSuccessTransaction]);
 
-  const { address } = useAccount();
-  if (!address) {
-    throw new Error("Address not found");
-  }
+
 
   return (
     <>

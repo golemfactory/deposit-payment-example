@@ -3,7 +3,7 @@ import { container } from "../../di.js";
 import fastifyPlugin from "fastify-plugin";
 
 export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
-  fastify.post("/create-allocation", {
+  fastify.post("/allocation", {
     onRequest: [fastify.authenticate],
     handler: async (request, reply) => {
       const requestUser = request.user;
@@ -31,6 +31,21 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
         reply
           .code(201)
           .send(container.cradle.userService.getUserDTO(requestUser._id));
+      }
+    },
+  });
+  fastify.get("/allocation", {
+    onRequest: [fastify.authenticate],
+    handler: async (request, reply) => {
+      const requestUser = request.user;
+      const Yagna = container.cradle.Yagna;
+      const allocation = await Yagna.getUserAllocation(requestUser._id);
+      if (!allocation) {
+        reply.code(500).send({
+          message: "No allocation found",
+        });
+      } else {
+        reply.code(200).send(allocation);
       }
     },
   });
@@ -118,6 +133,7 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       if (!user?.currentAllocationId) {
         reply.code(500).send({
           message: "No allocation found",
+          type: "NO_ALLOCATION_TO_TOP_UP",
         });
       } else {
         await Yagna.topUpAllocation(

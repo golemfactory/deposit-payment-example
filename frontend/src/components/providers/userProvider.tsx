@@ -226,9 +226,9 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     }
   }, [isUserLoading, userData, user.allowanceAmount, depositData]);
 
-  const { isFetched, data: allowanceAmount } = useAllowance();
+  const { isFetched: isAllowanceFetched, amount: allowanceAmount } =
+    useAllowance();
 
-  //track allocation
   useEffect(() => {
     if (user.currentDeposit) {
       if (userData?.currentAllocation.id) {
@@ -253,10 +253,11 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   ]);
 
   useEffect(() => {
+    console.log("effect1");
     if (isConnected) {
       dispatch({ kind: UserAction.CONNECT });
       if (isRegistered) {
-        if (isFetched && allowanceAmount !== undefined) {
+        if (isAllowanceFetched && allowanceAmount !== undefined) {
           if (allowanceAmount > config.minimalAllowance) {
             dispatch({
               kind: UserAction.ENOUGH_ALLOWANCE,
@@ -273,7 +274,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     } else {
       dispatch({ kind: UserAction.DISCONNECT });
     }
-  }, [isFetched, allowanceAmount, isRegistered]);
+  }, [isAllowanceFetched, allowanceAmount, isRegistered]);
 
   return (
     <UserContext.Provider value={{ user: withUserInterface(user, login) }}>

@@ -85,17 +85,16 @@ export function useCreateDeposit() {
 export function useUserCurrentDeposit() {
   const { user } = useUser();
 
-  const { data, isFetching, isError, isSuccess, isPending } = useReadContract({
+  const { data, isError, isSuccess, isPending } = useReadContract({
     address: config.depositContractAddress[useChainId()],
     abi: abi,
     functionName: "deposits",
     //@ts-ignore
     args: [BigInt(user?.currentDeposit?.id || 0) || 0n],
     query: {
-      refetchInterval: 10000,
+      refetchInterval: 1000,
     },
   });
-
   return {
     amount: formatEther(data ? data[1] : 0n),
     flatFeeAmount: formatEther(data ? data[2] : 0n),
@@ -103,7 +102,6 @@ export function useUserCurrentDeposit() {
     isError,
     isSuccess,
     isPending,
-    isFetching,
   };
 }
 

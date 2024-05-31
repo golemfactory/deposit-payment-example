@@ -32,25 +32,32 @@ export const userService = fastifyPlugin(
 
       const userDTO = await container.cradle.userService.getUserDTO(user._id);
       socket.emit("user", userDTO);
-      userModel
-        .watch(
-          [
-            {
-              $match: {
-                _id: user._id,
-              },
-            },
-          ],
-          {
-            fullDocument: "updateLookup",
-          }
-        )
-        .on("change", async () => {
-          const userDTO = await container.cradle.userService.getUserDTO(
-            user._id
-          );
-          socket.emit("user", userDTO);
-        });
+
+      setInterval(async () => {
+        const userDTO = await container.cradle.userService.getUserDTO(user._id);
+        socket.emit("user", userDTO);
+      }, 500);
+
+      // userModel
+      //   .watch(
+      //     [
+      //       {
+      //         $match: {
+      //           _id: user._id,
+      //         },
+      //       },
+      //     ],
+      //     {
+      //       fullDocument: "updateLookup",
+      //     }
+      //   )
+      //   .on("change", async () => {
+      //     console.log("change");
+      //     const userDTO = await container.cradle.userService.getUserDTO(
+      //       user._id
+      //     );
+      //     socket.emit("user", userDTO);
+      //   });
     });
     // fastify.get(
     //   "/me",

@@ -6,9 +6,6 @@ import { holesky } from "viem/chains";
 import { abi } from "./abi";
 import { config } from "config";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
-import { watchContractEvent } from "viem/actions";
-import { use } from "i18next";
-import { add } from "ramda";
 
 type WithBlockNumber<T> = T & { blockNumber: bigint };
 
@@ -35,7 +32,6 @@ export const useAllowanceTx = () => {
         spender: requestor?.wallet,
       },
       onLogs: (logs) => {
-        console.log("Approval", logs);
         const newApprove = logs.sort(
           (a, b) => Number(a.blockNumber) - Number(b.blockNumber)
         )[logs.length - 1];
@@ -49,7 +45,6 @@ export const useAllowanceTx = () => {
   useEffect(() => {
     const fetchLogs = async () => {
       const block = await client.getBlock();
-      console.log("aaaa", block.number, address);
       // if (!address) {
       //   return [];
       // }
@@ -77,7 +72,6 @@ export const useAllowanceTx = () => {
     fetchLogs().then((logs) => {
       const sortedLogs = logs.sort(compareBlockNumbers);
       if (sortedLogs.length > 0) {
-        console.log("sortedLogs", sortedLogs);
         setTxHash(sortedLogs[logs.length - 1].transactionHash);
       }
     });
@@ -92,7 +86,6 @@ export const useAllowanceTx = () => {
     //   spender: requestor?.wallet,
     // },
     onLogs: (logs) => {
-      console.log("Transfer", logs);
       const newApprove = logs.sort(
         (a, b) => Number(a.blockNumber) - Number(b.blockNumber)
       )[logs.length - 1];

@@ -15,13 +15,16 @@ import { useEffect, useState } from "react";
 
 export function useAllowance(): {
   isFetched: boolean;
-  data?: bigint;
-  isLoading: boolean;
+  amount?: bigint;
 } {
   const chainId = useChainId();
   const { address } = useAccount();
 
-  const { isFetched, isFetching, isLoading, data, refetch } = useReadContract({
+  if (!address) {
+    return { isFetched: false };
+  }
+
+  const { isFetched, data: allowanceAmount } = useReadContract({
     address: config.GLMContractAddress[chainId],
     abi: abi,
     functionName: "allowance",
@@ -31,9 +34,10 @@ export function useAllowance(): {
     },
   });
 
-  assertOptionalBigInt(data);
-
-  return { isFetched, data, isLoading: isFetching || isLoading };
+  return {
+    isFetched,
+    amount: allowanceAmount,
+  };
 }
 
 export function useApprove() {
@@ -69,7 +73,7 @@ export function useApprove() {
           functionName: "approve",
           args: [
             config.depositContractAddress[chainId],
-            val || balance.data?.value,
+            val || balance.data?.value || 0n,
           ],
         });
         setTxHash(hash);

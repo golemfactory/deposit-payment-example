@@ -90,20 +90,23 @@ export class Yagna {
     }
     console.log("userDeposit", userDeposit);
     try {
-      console.log("trying");
-      //@ts-ignore
+      // @ts-ignore
 
+      console.log("userDeposit", userDeposit.id.toString(16));
+      // @ts-ignore
       const allocation = await this.paymentService.createAllocation({
         totalAmount: formatEther(userDeposit.amount),
         makeDeposit: false,
         deposit: {
           contract: container.cradle.contractAddress,
-          id: userDeposit.id.toString(16),
+          id: BigInt(userDeposit.id).toString(16),
           validate: {
-            flatFeeAmount: parseEther("2").toString(),
+            flatFeeAmount: userDeposit.feeAmount.toString(),
           },
+          // @ts-ignore
+          spender: userDeposit.spender,
         },
-        timeout: "2024-05-25T05:19:31.034Z",
+        timeout: new Date(Number(userDeposit.validTo) * 1000).toISOString(),
       });
 
       console.log("allocation", allocation);
@@ -128,7 +131,6 @@ export class Yagna {
     if (!allocationId) {
       return null;
     }
-
     const allocation = await this.paymentService.getAllocation(allocationId);
     debugLog("payments", "got user allocation", allocation);
     if (!allocation) {

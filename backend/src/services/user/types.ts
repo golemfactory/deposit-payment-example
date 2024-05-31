@@ -18,7 +18,6 @@ export type DepositData = {
   spender: string;
   validTo: bigint;
   id: bigint;
-  nonce: bigint;
 };
 
 export interface IUser {
@@ -27,6 +26,7 @@ export interface IUser {
   walletAddress: EthereumAddressType;
   deposits: Deposit[];
   currentAllocationId: string;
+  currentAllocationAmount: number;
   currentActivityId: string;
 }
 
@@ -44,6 +44,10 @@ export interface IUserService {
     userId: UserIdType,
     allocationId: string
   ): Promise<void>;
+  setCurrentAllocationAmount(
+    userId: UserIdType,
+    amount: number
+  ): Promise<boolean>;
   getUserById(userId: UserIdType): Promise<IUser | null>;
   setCurrentActivityId(userId: UserIdType, activityId: string): Promise<void>;
   getUserDTO(userId: UserIdType): Promise<any>;

@@ -16,6 +16,9 @@ const schema = new mongoose.Schema<IUser>(
     currentAllocationId: {
       type: String,
     },
+    currentAllocationAmount: {
+      type: Number,
+    },
     currentActivityId: {
       type: String,
     },

@@ -1,3 +1,9 @@
 {
-  "cSpell.words": ["Fastify", "Siwe", "socketio", "viem"]
+  "cSpell.words": [
+    "Fastify",
+    "Siwe",
+    "socketio",
+    "Upsert",
+    "viem"
+  ]
 }

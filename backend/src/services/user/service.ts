@@ -1,8 +1,7 @@
-import { IUserService, IUser, Deposit, DepositData } from "./types.js";
+import { IUserService, Deposit, DepositData } from "./types.js";
 import { userModel } from "./model.js";
-import { v4 as uuidv4 } from "uuid";
-import mongoose from "mongoose";
 import { container } from "../../di.js";
+
 const randomNonce = () => {
   return Math.floor(Math.random() * 10000000000);
 };
@@ -32,18 +31,17 @@ export const userService: IUserService = {
   //@ts-ignore
   getCurrentDeposit: async (userId: string): DepositData | null => {
     const user = await userModel.findOne({ _id: userId });
+    console.log("user", user);
     if (!user) {
       throw new Error(`User not found with id ${userId}`);
     }
     const deposit = user?.deposits.find((d) => d.isCurrent);
+    console.log("deposit", deposit);
     if (!deposit) {
       return null;
     }
-    const nonce = deposit?.nonce;
-    return container.cradle.paymentService.getDeposit(
-      nonce,
-      user?.walletAddress
-    );
+    //@ts-ignore
+    return container.cradle.paymentService.getDeposit(deposit.id);
   },
   regenerateNonce: async (userId: string) => {
     const nonce = randomNonce();
@@ -62,12 +60,12 @@ export const userService: IUserService = {
   },
 
   setCurrentAllocationId: async (userId: string, allocationId: string) => {
-    console.log("setting allocation id", userId, allocationId);
     await userModel.updateOne(
       { _id: userId },
       { currentAllocationId: allocationId }
     );
   },
+
   async getUserDTO(userId: string) {
     const user = await this.getUserById(userId);
     if (!user) {

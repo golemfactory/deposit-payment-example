@@ -251,4 +251,4 @@ export const abi = [
     name: "Approval",
     type: "event",
   },
-];
+] as const;

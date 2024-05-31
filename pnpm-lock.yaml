@@ -139,12 +139,18 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.25.0
         version: 5.28.14(react@18.2.0)
+      '@types/debug':
+        specifier: ^4.1.12
+        version: 4.1.12
       '@types/ramda':
         specifier: ^0.29.11
         version: 0.29.12
       '@uidotdev/usehooks':
         specifier: ^2.4.1
         version: 2.4.1(react-dom@18.2.0)(react@18.2.0)
+      '@wagmi/core':
+        specifier: ^2.5.7
+        version: 2.6.15(@types/react@18.2.74)(react@18.2.0)(typescript@5.4.3)(viem@2.7.22)
       '@web3modal/siwe':
         specifier: ^4.1.11
         version: 4.1.11(@types/react@18.2.74)(react@18.2.0)
@@ -157,6 +163,9 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
+      debug:
+        specifier: ^4.3.4
+        version: 4.3.4(supports-color@8.1.1)
       ethereumjs-util:
         specifier: ^7.1.5
         version: 7.1.5
@@ -14279,6 +14288,7 @@ packages:
 
   /rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
