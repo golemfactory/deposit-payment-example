@@ -1,11 +1,21 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { Subject } from "rxjs";
+import { Payload, Event } from "types/events";
 import { useCall } from "wagmi";
 
 const getId = (e: any) => e.id;
-export const useSyncExternalEvents = (key: string) => {
+export const useSyncExternalEvents = ({
+  key,
+  eventKind,
+}: {
+  key: string;
+  eventKind: Event;
+}) => {
   const events$ = useMemo(() => {
-    return new Subject();
+    return new Subject<{
+      kind: typeof eventKind;
+      payload: Payload[typeof eventKind];
+    }>();
   }, []);
 
   const store = useMemo(() => {
@@ -15,14 +25,12 @@ export const useSyncExternalEvents = (key: string) => {
       },
       subscribe: () => {
         const callback = (event: StorageEvent) => {
-          console.log("storage event", event);
           const lastEvent = JSON.parse(event.newValue || "[]").find(
             (e: any) =>
               !JSON.parse(event.oldValue || "[]")
                 .map(getId)
                 .includes(e.id)
-          );
-          console.log("last event", lastEvent);
+          ) as { kind: typeof eventKind; payload: Payload[typeof eventKind] };
           if (lastEvent) {
             events$.next(lastEvent);
           }
@@ -35,11 +43,18 @@ export const useSyncExternalEvents = (key: string) => {
     };
   }, []);
 
-  const emit = useCallback((event: any) => {
+  const emit = useCallback((payload: Payload[typeof eventKind]) => {
     const currentEvents = JSON.parse(localStorage.getItem(key) || "[]");
     const newEvents = [
       ...currentEvents,
-      { ...event, id: currentEvents.length + 1 },
+      {
+        ...{
+          kind: eventKind,
+          payload,
+        },
+        id: currentEvents.length + 1,
+        timestamp: Date.now(),
+      },
     ];
     localStorage.setItem(key, JSON.stringify(newEvents));
     console.log("emitting", newEvents);

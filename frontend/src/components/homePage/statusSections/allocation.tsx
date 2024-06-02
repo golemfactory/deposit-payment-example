@@ -5,6 +5,7 @@ import { useCurrentAllocation } from "hooks/useCurrentAllocation";
 import { useReleaseAllocation } from "hooks/useReleaseAllocation";
 import { useUser } from "hooks/useUser";
 import { Loading } from "react-daisyui";
+import { Event } from "types/events";
 import { formatBalance } from "utils/formatBalance";
 
 export const Allocation = () => {
@@ -76,9 +77,11 @@ export const Allocation = () => {
             className="btn"
             onClick={() => {
               emit({
-                type: "Dupa",
+                kind: Event.ALLOCATION_CREATED,
                 payload: {
                   amount: 100,
+                  allocationId: "123",
+                  validityTimestamp: Date.now() + 1000 * 60 * 60 * 24 * 30,
                 },
               });
             }}

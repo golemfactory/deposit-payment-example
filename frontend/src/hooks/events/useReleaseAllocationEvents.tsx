@@ -1,8 +1,10 @@
 import { useSyncExternalEvents } from "./useSyncExternalEvent";
+
 import { Event } from "types/events";
-export const useCreateAllocationEvents = () => {
+
+export const useReleaseAllocationEvents = () => {
   return useSyncExternalEvents({
-    eventKind: Event.ALLOCATION_CREATED,
-    key: "allocationCreatedEvents",
+    eventKind: Event.ALLOCATION_RELEASED,
+    key: "allocationReleasedEvents",
   });
 };
