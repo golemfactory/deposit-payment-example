@@ -1,10 +1,10 @@
 import { AllocationLink } from "components/alloctionLink";
 import { useCreateAllocationEvents } from "hooks/events/useCreateAllocationEvents";
+import { useReleaseAllocationEvents } from "hooks/events/useReleaseAllocationEvents";
 import { useCreateAllocation } from "hooks/useCreateAllocation";
 import { useCurrentAllocation } from "hooks/useCurrentAllocation";
 import { useReleaseAllocation } from "hooks/useReleaseAllocation";
 import { useUser } from "hooks/useUser";
-import { Loading } from "react-daisyui";
 import { Event } from "types/events";
 import { formatBalance } from "utils/formatBalance";
 
@@ -14,8 +14,8 @@ export const Allocation = () => {
   const { currentAllocation } = useCurrentAllocation();
   const { releaseAllocation } = useReleaseAllocation();
   const { user } = useUser();
-  const { events$, emit } = useCreateAllocationEvents();
-
+  const { emit: emitCreateAllocation } = useCreateAllocationEvents();
+  const { emit: emitReleaseAllocation } = useReleaseAllocationEvents();
   return (
     <div className="stats shadow mt-2 ">
       <div
@@ -76,18 +76,26 @@ export const Allocation = () => {
           <button
             className="btn"
             onClick={() => {
-              emit({
-                kind: Event.ALLOCATION_CREATED,
-                payload: {
-                  amount: 100,
-                  allocationId: "123",
-                  validityTimestamp: Date.now() + 1000 * 60 * 60 * 24 * 30,
-                },
+              emitReleaseAllocation({
+                allocationId: "123",
               });
             }}
           >
             {" "}
-            Dupa{" "}
+            Create{" "}
+          </button>
+          <button
+            className="btn"
+            onClick={() => {
+              emitCreateAllocation({
+                amount: 100,
+                allocationId: "123",
+                validityTimestamp: Date.now() + 1000 * 60 * 60 * 24 * 30,
+              });
+            }}
+          >
+            {" "}
+            Create{" "}
           </button>
           {/* {isCreatingAllocation ? (
             <Loading variant="infinity" />

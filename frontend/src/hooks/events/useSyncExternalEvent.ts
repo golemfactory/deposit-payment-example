@@ -1,49 +1,48 @@
-import { useCallback, useMemo, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+} from "react";
 import { Subject } from "rxjs";
-import { Payload, Event } from "types/events";
-import { useCall } from "wagmi";
+import { Payload, Event, ExtractPayload } from "types/events";
 
 const getId = (e: any) => e.id;
-export const useSyncExternalEvents = ({
+
+export const useSyncExternalEvents = <K extends Event>({
   key,
   eventKind,
 }: {
   key: string;
-  eventKind: Event;
+  eventKind: K;
 }) => {
   const events$ = useMemo(() => {
+    console.log("werwe");
     return new Subject<{
-      kind: typeof eventKind;
+      kind: K;
       payload: Payload[typeof eventKind];
+      id: number;
+      timestamp: number;
     }>();
   }, []);
 
-  const store = useMemo(() => {
-    return {
-      getSnapshot: () => {
-        return localStorage.getItem(key);
-      },
-      subscribe: () => {
-        const callback = (event: StorageEvent) => {
-          const lastEvent = JSON.parse(event.newValue || "[]").find(
-            (e: any) =>
-              !JSON.parse(event.oldValue || "[]")
-                .map(getId)
-                .includes(e.id)
-          ) as { kind: typeof eventKind; payload: Payload[typeof eventKind] };
-          if (lastEvent) {
-            events$.next(lastEvent);
-          }
-        };
-        window.addEventListener("storage", callback);
-        return () => {
-          window.removeEventListener("storage", callback);
-        };
-      },
-    };
-  }, []);
+  const previousEvents = useRef<any[]>([]);
 
-  const emit = useCallback((payload: Payload[typeof eventKind]) => {
+  const store = useRef({
+    getSnapshot: () => {
+      const events = localStorage.getItem(key);
+      return events;
+    },
+    subscribe: (listener: () => void) => {
+      window.addEventListener("storage", listener);
+      return () => {
+        window.removeEventListener("storage", listener);
+      };
+    },
+  });
+
+  const emit = useCallback((payload: ExtractPayload<K>) => {
     const currentEvents = JSON.parse(localStorage.getItem(key) || "[]");
     const newEvents = [
       ...currentEvents,
@@ -57,7 +56,6 @@ export const useSyncExternalEvents = ({
       },
     ];
     localStorage.setItem(key, JSON.stringify(newEvents));
-    console.log("emitting", newEvents);
     window.dispatchEvent(
       new StorageEvent("storage", {
         key,
@@ -67,9 +65,27 @@ export const useSyncExternalEvents = ({
     );
   }, []);
 
+  const currentEvents = useSyncExternalStore(
+    store.current.subscribe,
+    store.current.getSnapshot
+  );
+
+  useEffect(() => {
+    console.log("allo");
+    if (currentEvents) {
+      console.log("currentEvents", currentEvents);
+      const events = JSON.parse(currentEvents);
+      events.forEach((e: any) => {
+        if (e.kind === eventKind) {
+          console.log("proper kins");
+          console.log("calling next");
+          events$.next(e);
+        }
+      });
+    }
+  }, [currentEvents]);
   return {
     events$,
     emit,
-    currentEvents: useSyncExternalStore(store.subscribe, store.getSnapshot),
   };
 };

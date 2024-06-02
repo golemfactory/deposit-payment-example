@@ -48,7 +48,7 @@ export type Payload = {
     agreementId: string;
   };
   [Event.ALLOCATION_RELEASED]: {
-    agreementId: string;
+    allocationId: string;
   };
   [Event.PAYMENT_FOR_GAS]: {
     agreementId: string;
@@ -59,3 +59,7 @@ export type Payload = {
 };
 
 export type EventType = EventWithPayload<Payload>;
+
+export type ExtractPayload<K extends Event> = K extends keyof Payload
+  ? Payload[K]
+  : never;

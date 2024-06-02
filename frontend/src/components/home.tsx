@@ -1,6 +1,6 @@
 import { Layout } from "./layout/layout";
 import { TopBar } from "./homePage/topBar";
-import { Events } from "./homePage/events";
+import { Events } from "./homePage/events/events";
 import { Status } from "./homePage/status";
 import { Action } from "./homePage/action";
 import { LayoutProvider } from "./providers/layoutProvider";
