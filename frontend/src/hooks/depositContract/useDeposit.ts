@@ -22,7 +22,9 @@ export function useCreateDeposit() {
   const chainId = useChainId();
   const [fee, setFee] = useState(0);
   const [amount, setAmount] = useState(0);
-  const [validToTimestamp, setValidToTimestamp] = useState(0);
+  const [validToTimestamp, setValidToTimestamp] = useState(
+    dayjs().add(1, "day").unix()
+  );
   const nonce = useRef(Math.floor(Math.random() * 1000000));
   const { data: requestorData } = useRequestorWalletAddress();
   const { showNotification, errorContext } = useHandleRpcError();
@@ -75,6 +77,7 @@ export function useCreateDeposit() {
     isPending,
     isIdle,
     setValidToTimestamp,
+    validToTimestamp,
     depositId: (contractSimulationData?.result as any)?.toString(),
     nonce: nonce.current,
     setAmount,
@@ -96,9 +99,9 @@ export function useUserCurrentDeposit() {
     },
   });
   return {
-    amount: formatEther(data ? data[1] : 0n),
-    flatFeeAmount: formatEther(data ? data[2] : 0n),
-    validToTimestamp: Number(data ? data[3] : 0n),
+    amount: data ? data[1] : 0n,
+    flatFeeAmount: data ? data[2] : 0n,
+    validToTimestamp: data ? data[3] : 0n,
     isError,
     isSuccess,
     isPending,

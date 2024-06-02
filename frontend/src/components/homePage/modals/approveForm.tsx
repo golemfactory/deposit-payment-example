@@ -3,12 +3,12 @@ import { useApprove } from "hooks/GLM/useGLMApprove";
 import { useUser } from "hooks/useUser";
 import { Button, Loading } from "react-daisyui";
 import { formatEther, parseEther } from "viem";
-import { LoadingSpinner } from "./loadingSpinner";
+import { LoadingSpinner } from "../../loadingSpinner";
 import { useBalance } from "hooks/useBalance";
 import { useState } from "react";
 import { formatBalance } from "utils/formatBalance";
 import { number } from "ts-pattern/dist/patterns";
-import { GolemCoinIcon } from "./atoms/golem.coin.icon";
+import { GolemCoinIcon } from "../../atoms/golem.coin.icon";
 
 export const ApproveForm = () => {
   const { user } = useUser();

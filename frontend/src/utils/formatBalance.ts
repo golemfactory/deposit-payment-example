@@ -1,4 +1,4 @@
 import { formatEther } from "viem";
-export const formatBalance = (rawBalance: bigint) => {
-  return parseFloat(formatEther(rawBalance)).toFixed(2);
+export const formatBalance = (rawBalance: bigint | number) => {
+  return parseFloat(formatEther(BigInt(rawBalance))).toFixed(2);
 };

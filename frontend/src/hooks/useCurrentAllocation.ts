@@ -2,7 +2,11 @@ import axios from "axios";
 import useSWR from "swr";
 
 export const useCurrentAllocation = () => {
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<{
+    totalAmount: number;
+    spentAmount: number;
+    remainingAmount: number;
+  }>(
     `${import.meta.env.VITE_BACKEND_HTTP_URL}/allocation`,
     async (url) => {
       const response = await axios.get(url);

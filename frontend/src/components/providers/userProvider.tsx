@@ -13,7 +13,7 @@ import {
 } from "react";
 
 import { match } from "ts-pattern";
-import { ReducerArgs } from "types/reducerArgs";
+import { EventWithPayload } from "types/reducerArgs";
 import { UserState, UserAction, UserStateOrderValue } from "types/user";
 import { useAccount, useReadContract } from "wagmi";
 import { useChainId } from "hooks/useChainId";
@@ -131,7 +131,10 @@ type Payload = {
   };
 };
 
-const userActionReducer = (user: UserProps, action: ReducerArgs<Payload>) => {
+const userActionReducer = (
+  user: UserProps,
+  action: EventWithPayload<Payload>
+) => {
   const { kind, payload = {} } = action;
   const state = match(kind)
     .with(UserAction.CONNECT, () => UserState.CONNECTED)

@@ -1,8 +1,9 @@
 import { GLMAmountInput } from "components/molecules/glmAmountInput/glmAmountInput";
 import dayjs from "dayjs";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { Button, Input, Loading } from "react-daisyui";
 import { RPC_ERROR_CONTEXT } from "hooks/useHandleRpcError";
+import { use } from "i18next";
 export const UpsertDepositPresentational = ({
   title,
   subtitle,
@@ -30,6 +31,10 @@ export const UpsertDepositPresentational = ({
   isPending: boolean;
   errorContext?: RPC_ERROR_CONTEXT[];
 }) => {
+  useEffect(() => {
+    console.log("validToTimestamp", validToTimestamp);
+    console.log("s", dayjs(validToTimestamp * 1000).format("YYYY-MM-DD"));
+  }, [validToTimestamp]);
   return (
     <>
       <div className="flex flex-row justify-between w-full">{title}</div>

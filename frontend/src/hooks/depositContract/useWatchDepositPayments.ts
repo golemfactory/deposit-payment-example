@@ -4,7 +4,7 @@ import { useWatchContractEvent } from "wagmi";
 import { abi } from "./abi";
 import { useCallback } from "react";
 export const useWatchDepositPayments = () => {
-  const onLogs = useCallback((logs) => {
+  const onLogs = useCallback((logs: any) => {
     console.log("Deposit", logs);
   }, []);
 

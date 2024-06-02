@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useUser } from "hooks/useUser";
 import { AllowanceSummary } from "./allowanceSummary";
-import { ApproveForm } from "./approveForm";
+import { ApproveForm } from "./homePage/modals/approveForm";
 import { RegisterSummary } from "./registerSummary";
 import { RegisterButton } from "./RegisterButton";
 import { useAccount } from "wagmi";

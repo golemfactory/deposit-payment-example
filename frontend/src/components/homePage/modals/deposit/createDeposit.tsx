@@ -16,6 +16,7 @@ export const CreateDeposit = () => {
     error: errorPrepareDeposit,
     setAmount,
     isPending,
+    validToTimestamp,
     setValidToTimestamp,
     depositId,
     nonce,
@@ -66,7 +67,7 @@ export const CreateDeposit = () => {
       title="Create Deposit"
       buttonText="Create"
       subtitle="Create a new deposit to start using app"
-      validToTimestamp={dayjs().add(1, "day").unix()}
+      validToTimestamp={validToTimestamp}
       setValidToTimestamp={setValidToTimestamp}
       errorContext={errorContext}
     ></UpsertDepositPresentational>
