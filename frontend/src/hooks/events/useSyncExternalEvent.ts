@@ -1,12 +1,7 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useSyncExternalStore,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Payload, Event, ExtractPayload } from "types/events";
+import useLocalStorageState from "use-local-storage-state";
 
 const getId = (e: any) => e.id;
 
@@ -17,30 +12,25 @@ export const useSyncExternalEvents = <K extends Event>({
   key: string;
   eventKind: K;
 }) => {
-  const events$ = useMemo(() => {
-    console.log("werwe");
-    return new Subject<{
+  const [currentEvents, setCurrentEvents] = useLocalStorageState<any[]>(key, {
+    defaultValue: [],
+  });
+  const events$ = useRef<null | Subject<any>>(null);
+  const previousEvents = useRef<any[]>([]);
+
+  const [isFirstRun, setIsFirstRun] = useState(true);
+  if (!events$.current) {
+    events$.current = new Subject<{
       kind: K;
       payload: Payload[typeof eventKind];
       id: number;
       timestamp: number;
     }>();
-  }, []);
+  }
 
-  const previousEvents = useRef<any[]>([]);
-
-  const store = useRef({
-    getSnapshot: () => {
-      const events = localStorage.getItem(key);
-      return events;
-    },
-    subscribe: (listener: () => void) => {
-      window.addEventListener("storage", listener);
-      return () => {
-        window.removeEventListener("storage", listener);
-      };
-    },
-  });
+  if (!previousEvents.current) {
+    previousEvents.current = [];
+  }
 
   const emit = useCallback((payload: ExtractPayload<K>) => {
     const currentEvents = JSON.parse(localStorage.getItem(key) || "[]");
@@ -55,37 +45,33 @@ export const useSyncExternalEvents = <K extends Event>({
         timestamp: Date.now(),
       },
     ];
-    localStorage.setItem(key, JSON.stringify(newEvents));
-    window.dispatchEvent(
-      new StorageEvent("storage", {
-        key,
-        newValue: JSON.stringify(newEvents),
-        oldValue: JSON.stringify(currentEvents),
-      })
-    );
+    setCurrentEvents(newEvents);
   }, []);
 
-  const currentEvents = useSyncExternalStore(
-    store.current.subscribe,
-    store.current.getSnapshot
-  );
-
   useEffect(() => {
-    console.log("allo");
     if (currentEvents) {
-      console.log("currentEvents", currentEvents);
-      const events = JSON.parse(currentEvents);
-      events.forEach((e: any) => {
+      currentEvents.forEach((e: any) => {
         if (e.kind === eventKind) {
-          console.log("proper kins");
-          console.log("calling next");
-          events$.next(e);
+          if (!previousEvents.current.find((p) => getId(p) === getId(e))) {
+            events$.current?.next(e);
+          }
         }
       });
+      setIsFirstRun(false);
+      if (!isFirstRun) {
+        previousEvents.current = currentEvents;
+      }
     }
   }, [currentEvents]);
+
+  useEffect(() => {
+    if (!isFirstRun) {
+      previousEvents.current = currentEvents;
+    }
+  }, [isFirstRun]);
+
   return {
-    events$,
+    events$: events$.current,
     emit,
   };
 };

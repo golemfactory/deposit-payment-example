@@ -15,9 +15,8 @@ export const Events = () => {
   const { events$: allocationEvents$ } = useAllocationEvents();
 
   useEffect(() => {
-    console.log("subscribing");
     const sub = allocationEvents$.subscribe((event) => {
-      console.log("new event", event);
+      console;
       setEvents((prevEvents) => {
         return uniqBy(
           (e) => {
@@ -28,9 +27,13 @@ export const Events = () => {
       });
     });
     return () => {
+      //TODO: fix this
+      setTimeout(() => {
+        sub.unsubscribe();
+      }, 0);
       console.log("unsubscribing");
     };
-  }, [allocationEvents$]);
+  }, []);
 
   return (
     <>
