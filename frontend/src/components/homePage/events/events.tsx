@@ -3,7 +3,8 @@ import { EventType } from "types/events";
 import { useAllocationEvents } from "hooks/events/useAllocationEvents";
 import { EventCard } from "./event";
 import { uniqBy } from "ramda";
-import { use } from "i18next";
+import { useDepositEvents } from "hooks/events/useDepositEvents";
+import { merge } from "rxjs";
 
 export const Events = () => {
   const [events, setEvents] = useState<
@@ -13,10 +14,10 @@ export const Events = () => {
     })[]
   >([]);
   const { events$: allocationEvents$ } = useAllocationEvents();
+  const { events$: depositEvents$ } = useDepositEvents();
 
   useEffect(() => {
-    const sub = allocationEvents$.subscribe((event) => {
-      console;
+    const sub = merge(allocationEvents$, depositEvents$).subscribe((event) => {
       setEvents((prevEvents) => {
         return uniqBy(
           (e) => {

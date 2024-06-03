@@ -10,12 +10,13 @@ const log = debug("CreateDeposit");
 
 export const CreateDeposit = () => {
   const {
-    data,
     createDeposit,
     setFee,
-    error: errorPrepareDeposit,
     setAmount,
     isPending,
+    isSuccess,
+    isError,
+    isLoading,
     validToTimestamp,
     setValidToTimestamp,
     depositId,
@@ -23,25 +24,15 @@ export const CreateDeposit = () => {
     errorContext,
   } = useCreateDeposit();
 
-  const {
-    isSuccess: isSuccessTransaction,
-    isError: isErrorTransaction,
-    isLoading: isLoadingTransaction,
-    isPending: isPendingTransaction,
-  } = useWaitForTransactionReceipt({
-    hash: data,
-  });
-
   const { saveDeposit } = useSaveDeposit();
   const { address } = useAccount();
+
   if (!address) {
     throw new Error("Address not found");
   }
 
-  const [isProcessing, setIsProcessing] = useState(false);
-
   useEffect(() => {
-    if (isSuccessTransaction) {
+    if (isSuccess) {
       setTimeout(() => {
         log("saving deposit", depositId);
         log("nonce", nonce);
@@ -54,14 +45,14 @@ export const CreateDeposit = () => {
         });
       }, 1000);
     }
-  }, [isSuccessTransaction, isErrorTransaction, nonce, depositId]);
+  }, [isSuccess, isError, nonce, depositId]);
 
   return (
     <UpsertDepositPresentational
       amount={0}
       setAmount={setAmount}
       callContract={createDeposit}
-      isPending={isPending || isLoadingTransaction}
+      isPending={isLoading}
       fee={0}
       setFee={setFee}
       title="Create Deposit"

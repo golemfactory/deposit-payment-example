@@ -1,7 +1,12 @@
-import { useReadContract, useSimulateContract, useWriteContract } from "wagmi";
+import {
+  useReadContract,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 
 import { abi } from "./abi";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { useUser } from "hooks/useUser";
@@ -9,16 +14,11 @@ import { formatEther, parseEther } from "viem";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
 import { useHandleRpcError } from "hooks/useHandleRpcError";
 import dayjs from "dayjs";
+import { useEvents } from "hooks/events/useEvents";
+import { Event } from "types/events";
 export function useCreateDeposit() {
-  const {
-    data,
-    isError,
-    isSuccess,
-    isPending,
-    isIdle,
-    writeContractAsync,
-    error,
-  } = useWriteContract();
+  const { data, isIdle, writeContractAsync, error } = useWriteContract();
+
   const chainId = useChainId();
   const [fee, setFee] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -28,6 +28,29 @@ export function useCreateDeposit() {
   const nonce = useRef(Math.floor(Math.random() * 1000000));
   const { data: requestorData } = useRequestorWalletAddress();
   const { showNotification, errorContext } = useHandleRpcError();
+
+  const { isSuccess, isError, isLoading, isPending } =
+    useWaitForTransactionReceipt({
+      hash: data,
+    });
+
+  const { emit } = useEvents({
+    eventKind: Event.DEPOSIT_CREATED,
+    key: "depositCreatedEvents",
+  });
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      console.log("emit", data);
+      emit({
+        txHash: data,
+        amount: amount,
+        fee: fee,
+        validityTimestamp: validToTimestamp,
+      });
+    }
+  }, [isSuccess, data]);
+
   const { data: contractSimulationData, error: simulationError } =
     useSimulateContract({
       address: config.depositContractAddress[chainId],
@@ -70,11 +93,13 @@ export function useCreateDeposit() {
       };
     },
     data,
-    isError,
-    isSuccess,
+
     error,
     setFee,
     isPending,
+    isSuccess,
+    isError,
+    isLoading,
     isIdle,
     setValidToTimestamp,
     validToTimestamp,

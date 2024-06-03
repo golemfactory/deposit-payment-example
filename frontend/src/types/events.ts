@@ -16,7 +16,7 @@ export enum Event {
 
 export type Payload = {
   [Event.DEPOSIT_CREATED]: {
-    transactionHash: string;
+    txHash: `0x${string}`;
     amount: number;
     fee: number;
     validityTimestamp: number;

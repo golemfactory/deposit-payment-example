@@ -1,8 +1,8 @@
 import { Event } from "types/events";
 import { useEvents } from "./useEvents";
-export const useCreateAllocationEvents = () => {
+export const useDepositReleasedEvents = () => {
   return useEvents({
-    eventKind: Event.ALLOCATION_CREATED,
+    eventKind: Event.DEPOSIT_CREATED,
     key: "allocationCreatedEvents",
   });
 };
