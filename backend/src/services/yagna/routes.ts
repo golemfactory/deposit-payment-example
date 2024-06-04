@@ -74,6 +74,45 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       }
     },
   });
+  fastify.post("/create-agreement", {
+    onRequest: [fastify.authenticate],
+    handler: async (request, reply) => {
+      console.log("making agreement");
+      const requestUser = request.user;
+      const Yagna = container.cradle.Yagna;
+      const user = await container.cradle.userService.getUserById(
+        requestUser._id
+      );
+      try {
+        const agreement = await Yagna.makeAgreement(requestUser._id);
+
+        console.log("agreement", agreement);
+      } catch (e) {
+        console.log("error", e);
+      }
+
+      // const requestUser = request.user;
+      // const Yagna = container.cradle.Yagna;
+      // const user = await container.cradle.userService.getUserById(
+      //   requestUser._id
+      // );
+      // const worker = await Yagna.getUserWorker(requestUser._id);
+      // await worker.context?.activity.start();
+      // if (!user?.currentAllocationId) {
+      //   reply.code(500).send({
+      //     message: "No allocation found",
+      //   });
+      // } else {
+      //   container.cradle.userService.setCurrentActivityId(
+      //     requestUser._id,
+      //     worker.context?.activity.id
+      //   );
+      //   reply
+      //     .code(201)
+      //     .send(container.cradle.userService.getUserDTO(requestUser._id));
+      // }
+    },
+  });
 
   fastify.post("/release-agreement", {
     onRequest: [fastify.authenticate],

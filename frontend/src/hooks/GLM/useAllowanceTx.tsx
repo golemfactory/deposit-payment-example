@@ -77,24 +77,24 @@ export const useAllowanceTx = () => {
     });
   }, [address, requestor?.wallet]);
 
-  useWatchContractEvent({
-    address: config.GLMContractAddress[holesky.id],
-    abi: abi,
-    eventName: "Transfer",
-    // args: {
-    //   owner: address,
-    //   spender: requestor?.wallet,
-    // },
-    onLogs: (logs) => {
-      const newApprove = logs.sort(
-        (a, b) => Number(a.blockNumber) - Number(b.blockNumber)
-      )[logs.length - 1];
+  // useWatchContractEvent({
+  //   address: config.GLMContractAddress[holesky.id],
+  //   abi: abi,
+  //   eventName: "Transfer",
+  //   // args: {
+  //   //   owner: address,
+  //   //   spender: requestor?.wallet,
+  //   // },
+  //   onLogs: (logs) => {
+  //     const newApprove = logs.sort(
+  //       (a, b) => Number(a.blockNumber) - Number(b.blockNumber)
+  //     )[logs.length - 1];
 
-      if (newApprove.transactionHash) {
-        setTxHash(newApprove.transactionHash);
-      }
-    },
-  });
+  //     if (newApprove.transactionHash) {
+  //       setTxHash(newApprove.transactionHash);
+  //     }
+  //   },
+  // });
 
   // useWatchContractEvent({
   //   address: config.GLMContractAddress[holesky.id],

@@ -16,6 +16,7 @@ import { useHandleRpcError } from "hooks/useHandleRpcError";
 import dayjs from "dayjs";
 import { useEvents } from "hooks/events/useEvents";
 import { Event } from "types/events";
+
 export function useCreateDeposit() {
   const { data, isIdle, writeContractAsync, error } = useWriteContract();
 
@@ -123,6 +124,13 @@ export function useUserCurrentDeposit() {
       refetchInterval: 1000,
     },
   });
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      console.log("deposit data", data);
+    }
+  }, [isSuccess, data]);
+
   return {
     amount: data ? data[1] : 0n,
     flatFeeAmount: data ? data[2] : 0n,

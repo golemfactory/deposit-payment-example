@@ -25,7 +25,12 @@ export const Deposit = () => {
 
   const deposit = useUserCurrentDeposit();
   return (
-    <div className="stats shadow mt-2">
+    <div
+      className="stats shadow mt-2"
+      style={{
+        opacity: user.hasEnoughAllowance() ? 1 : 0.3,
+      }}
+    >
       <div className="stat">
         <div className="stat-title">Deposit</div>
         <div className="stat-value">

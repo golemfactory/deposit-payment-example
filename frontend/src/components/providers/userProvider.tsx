@@ -229,55 +229,54 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     }
   }, [isUserLoading, userData, user.allowanceAmount, depositData]);
 
-  const { isFetched: isAllowanceFetched, amount: allowanceAmount } =
-    useAllowance();
+  // const { isFetched: isAllowanceFetched, amount: allowanceAmount } =
+  //   useAllowance();
 
-  useEffect(() => {
-    if (user.currentDeposit) {
-      if (userData?.currentAllocation.id) {
-        dispatch({
-          kind: UserAction.HAS_ALLOCATION,
-          payload: {
-            currentAllocation: userData.currentAllocation,
-            currentActivity: userData.currentActivity,
-          },
-        });
-      } else {
-        dispatch({
-          kind: UserAction.HAS_NO_ALLOCATION,
-          payload: { currentAllocation: null },
-        });
-      }
-    }
-  }, [
-    userData?.currentActivity,
-    userData?.currentAllocation,
-    user.currentDeposit,
-  ]);
+  // useEffect(() => {
+  //   if (user.currentDeposit) {
+  //     if (userData?.currentAllocation.id) {
+  //       dispatch({
+  //         kind: UserAction.HAS_ALLOCATION,
+  //         payload: {
+  //           currentAllocation: userData.currentAllocation,
+  //           currentActivity: userData.currentActivity,
+  //         },
+  //       });
+  //     } else {
+  //       dispatch({
+  //         kind: UserAction.HAS_NO_ALLOCATION,
+  //         payload: { currentAllocation: null },
+  //       });
+  //     }
+  //   }
+  // }, [
+  //   userData?.currentActivity,
+  //   userData?.currentAllocation,
+  //   user.currentDeposit,
+  // ]);
 
-  useEffect(() => {
-    console.log("effect1");
-    if (isConnected) {
-      dispatch({ kind: UserAction.CONNECT });
-      if (isRegistered) {
-        if (isAllowanceFetched && allowanceAmount !== undefined) {
-          if (allowanceAmount > config.minimalAllowance) {
-            dispatch({
-              kind: UserAction.ENOUGH_ALLOWANCE,
-              payload: { allowanceAmount },
-            });
-          } else {
-            dispatch({
-              kind: UserAction.NOT_ENOUGH_ALLOWANCE,
-              payload: { allowanceAmount },
-            });
-          }
-        }
-      }
-    } else {
-      dispatch({ kind: UserAction.DISCONNECT });
-    }
-  }, [isAllowanceFetched, allowanceAmount, isRegistered]);
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     dispatch({ kind: UserAction.CONNECT });
+  //     if (isRegistered) {
+  //       if (isAllowanceFetched && allowanceAmount !== undefined) {
+  //         if (allowanceAmount > config.minimalAllowance) {
+  //           dispatch({
+  //             kind: UserAction.ENOUGH_ALLOWANCE,
+  //             payload: { allowanceAmount },
+  //           });
+  //         } else {
+  //           dispatch({
+  //             kind: UserAction.NOT_ENOUGH_ALLOWANCE,
+  //             payload: { allowanceAmount },
+  //           });
+  //         }
+  //       }
+  //     }
+  //   } else {
+  //     dispatch({ kind: UserAction.DISCONNECT });
+  //   }
+  // }, [isAllowanceFetched, allowanceAmount, isRegistered]);
 
   return (
     <UserContext.Provider value={{ user: withUserInterface(user, login) }}>

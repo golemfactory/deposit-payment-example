@@ -20,15 +20,12 @@ export function useAllowance(): {
   const chainId = useChainId();
   const { address } = useAccount();
 
-  if (!address) {
-    return { isFetched: false };
-  }
-
   const { isFetched, data: allowanceAmount } = useReadContract({
     address: config.GLMContractAddress[chainId],
     abi: abi,
     functionName: "allowance",
-    args: [address, config.depositContractAddress[chainId]],
+
+    args: [address || `0x`, config.depositContractAddress[chainId]],
     query: {
       refetchInterval: 1000,
     },
