@@ -12,10 +12,22 @@ export enum Event {
   ALLOCATION_RELEASED = "ALLOCATION_RELEASED",
   PAYMENT_FOR_GAS = "PAYMENT_FOR_GAS",
   DEPOSIT_RELEASED = "DEPOSIT_RELEASED",
+  DEPOSIT_EXTENDED = "DEPOSIT_EXTENDED",
 }
 
 export type Payload = {
   [Event.DEPOSIT_CREATED]: {
+    txHash: `0x${string}`;
+    amount: number;
+    fee: number;
+    validityTimestamp: number;
+  };
+
+  [Event.DEPOSIT_RELEASED]: {
+    agreementId: string;
+  };
+
+  [Event.DEPOSIT_EXTENDED]: {
     txHash: `0x${string}`;
     amount: number;
     fee: number;
@@ -51,9 +63,6 @@ export type Payload = {
     allocationId: string;
   };
   [Event.PAYMENT_FOR_GAS]: {
-    agreementId: string;
-  };
-  [Event.DEPOSIT_RELEASED]: {
     agreementId: string;
   };
 };

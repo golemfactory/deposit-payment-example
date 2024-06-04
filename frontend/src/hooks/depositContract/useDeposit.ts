@@ -10,12 +10,15 @@ import { useEffect, useRef, useState } from "react";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { useUser } from "hooks/useUser";
-import { formatEther, parseEther } from "viem";
+import { formatEther, parseEther, toHex } from "viem";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
 import { useHandleRpcError } from "hooks/useHandleRpcError";
 import dayjs from "dayjs";
 import { useEvents } from "hooks/events/useEvents";
 import { Event } from "types/events";
+import { useDepositCreatedEvents } from "hooks/events/useDepositCreatedEvents";
+import { useDepositExtendedEvents } from "hooks/events/useDepositExtendedEvents";
+import { use } from "i18next";
 
 export function useCreateDeposit() {
   const {
@@ -45,14 +48,10 @@ export function useCreateDeposit() {
     hash: data,
   });
 
-  const { emit } = useEvents({
-    eventKind: Event.DEPOSIT_CREATED,
-    key: "depositCreatedEvents",
-  });
+  const { emit } = useDepositCreatedEvents();
 
   useEffect(() => {
     if (isSuccess && data) {
-      console.log("emit", data);
       emit({
         txHash: data,
         amount: amount,
@@ -152,10 +151,31 @@ export function useUserCurrentDeposit() {
 }
 
 export function useExtendDeposit() {
+  const { emit } = useDepositExtendedEvents();
   const { showNotification, errorContext } = useHandleRpcError();
 
   const { data, isError, isSuccess, writeContractAsync, isPending } =
     useWriteContract();
+
+  const {
+    isSuccess: isSuccessTransaction,
+    isError: isErrorTransaction,
+    isLoading: isLoadingTransaction,
+  } = useWaitForTransactionReceipt({
+    hash: data,
+  });
+
+  useEffect(() => {
+    if (isSuccessTransaction && data) {
+      emit({
+        txHash: data,
+        amount: additionalAmount,
+        fee: additionalFee,
+        validityTimestamp: validToTimestamp,
+      });
+    }
+  }, [isSuccessTransaction]);
+
   const chainId = useChainId();
   const [validToTimestamp, setNewValidToTimestamp] = useState(
     dayjs().add(1, "day").unix()
@@ -183,7 +203,7 @@ export function useExtendDeposit() {
     },
     data,
     isError,
-    isSuccess,
+    isSuccess: isSuccessTransaction,
     isPending,
     newValidToTimeStamp: validToTimestamp,
     setNewValidToTimestamp,

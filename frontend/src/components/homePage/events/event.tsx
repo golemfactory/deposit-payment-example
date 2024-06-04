@@ -77,7 +77,45 @@ const DepositCreatedEvent = (event: {
           </div>
           <div className="flex gap-2">
             <div className="stat-title"> Valid to: </div>
-            {dayjs(event.payload.validityTimestamp).format("YYYY-MM-DD HH:mm")}
+            {dayjs(event.payload.validityTimestamp * 1000).format("YYYY-MM-DD")}
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const DepositExtendedEvent = (event: {
+  kind: Event.DEPOSIT_EXTENDED;
+  payload: Payload[Event.DEPOSIT_EXTENDED];
+}) => {
+  return (
+    <Card bordered={true}>
+      <Card.Body>
+        <Card.Title>Deposit Extended</Card.Title>
+        <div>
+          <div className="flex gap-2">
+            <div className="stat-title"> TX Hash: </div>
+
+            <EtherScanLink hash={event.payload.txHash}></EtherScanLink>
+          </div>
+          <div className="flex gap-2">
+            <div className="stat-title"> Extra Amount: </div>
+            <GLMAmountStat
+              amount={formatBalance(
+                parseEther(event.payload.amount.toString())
+              )}
+            ></GLMAmountStat>{" "}
+          </div>
+          <div className="flex gap-2">
+            <div className="stat-title"> Extra Fee: </div>
+            <GLMAmountStat
+              amount={formatBalance(parseEther(event.payload.fee.toString()))}
+            ></GLMAmountStat>{" "}
+          </div>
+          <div className="flex gap-2">
+            <div className="stat-title"> New Valid to: </div>
+            {dayjs(event.payload.validityTimestamp * 1000).format("YYYY-MM-DD")}
           </div>
         </div>
       </Card.Body>
@@ -96,6 +134,8 @@ export const EventCard = (event: EventType) => {
             return <AllocationReleasedEvent {...event} />;
           case Event.DEPOSIT_CREATED:
             return <DepositCreatedEvent {...event} />;
+          case Event.DEPOSIT_EXTENDED:
+            return <DepositExtendedEvent {...event} />;
         }
       })()}
     </motion.div>

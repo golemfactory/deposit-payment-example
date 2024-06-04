@@ -8,8 +8,11 @@ import { useUser } from "hooks/useUser";
 import { useEffect } from "react";
 import { useWaitForTransactionReceipt } from "wagmi";
 import { UpsertDepositPresentational } from "./upsertDepositPresentational";
+import { useLayout } from "components/providers/layoutProvider";
 
 export const ExtendDeposit = () => {
+  const { hideModal } = useLayout();
+
   const {
     additionalAmount,
     data,
@@ -44,16 +47,9 @@ export const ExtendDeposit = () => {
     }
     if (isSuccessTransaction && additionalAmount > 0) {
       topUp(additionalAmount);
+      hideModal();
     }
   }, [isSuccessTransaction]);
-
-  useEffect(() => {
-    console.log("newValidToTimeStamp", newValidToTimeStamp);
-    console.log(
-      "dd",
-      dayjs(Number(newValidToTimeStamp) * 1000).format("YYYY-MM-DD")
-    );
-  }, [newValidToTimeStamp]);
 
   return (
     <UpsertDepositPresentational

@@ -1,14 +1,16 @@
-import dayjs from "dayjs";
 import { useCreateDeposit } from "hooks/depositContract/useDeposit";
 import { useSaveDeposit } from "hooks/useSaveDeposit";
 
-import { useEffect, useState } from "react";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useEffect } from "react";
+import { useAccount } from "wagmi";
 import { UpsertDepositPresentational } from "./upsertDepositPresentational";
 import debug from "debug";
+import { useLayout } from "components/providers/layoutProvider";
 const log = debug("CreateDeposit");
 
 export const CreateDeposit = () => {
+  const { hideModal } = useLayout();
+
   const {
     createDeposit,
     setFee,
@@ -43,6 +45,8 @@ export const CreateDeposit = () => {
           id: depositId,
           funder: address,
         });
+
+        hideModal();
       }, 1000);
     }
   }, [isSuccess, isError, nonce, depositId]);
