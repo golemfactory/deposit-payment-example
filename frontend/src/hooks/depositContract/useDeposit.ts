@@ -18,7 +18,13 @@ import { useEvents } from "hooks/events/useEvents";
 import { Event } from "types/events";
 
 export function useCreateDeposit() {
-  const { data, isIdle, writeContractAsync, error } = useWriteContract();
+  const {
+    data,
+    isIdle,
+    writeContractAsync,
+    error,
+    isPending: isWaitingForUserAcceptance,
+  } = useWriteContract();
 
   const chainId = useChainId();
   const [fee, setFee] = useState(0);
@@ -30,10 +36,14 @@ export function useCreateDeposit() {
   const { data: requestorData } = useRequestorWalletAddress();
   const { showNotification, errorContext } = useHandleRpcError();
 
-  const { isSuccess, isError, isLoading, isPending } =
-    useWaitForTransactionReceipt({
-      hash: data,
-    });
+  const {
+    isSuccess,
+    isError,
+    isLoading: isWaitingForReceipt,
+    isPending,
+  } = useWaitForTransactionReceipt({
+    hash: data,
+  });
 
   const { emit } = useEvents({
     eventKind: Event.DEPOSIT_CREATED,
@@ -100,7 +110,7 @@ export function useCreateDeposit() {
     isPending,
     isSuccess,
     isError,
-    isLoading,
+    isLoading: isWaitingForReceipt || isWaitingForUserAcceptance,
     isIdle,
     setValidToTimestamp,
     validToTimestamp,
