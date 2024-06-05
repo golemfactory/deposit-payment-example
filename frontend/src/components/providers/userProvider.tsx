@@ -198,11 +198,11 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   }, [isLoggingIn]);
 
   useEffect(() => {
-    if (tokens?.accessToken) {
+    if (address && tokens?.accessToken) {
       dispatch({ kind: UserAction.REGISTER });
       setIsRegistered(true);
     }
-  }, [tokens]);
+  }, [tokens, address]);
 
   useEffect(() => {
     const currentDeposit = (userData?.deposits || []).find(

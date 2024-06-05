@@ -36,7 +36,7 @@ export const Approve = () => {
       </div>
       <div className="stat">
         <div className="stat-title">Given</div>
-        <GLMAmountStat amount={formatBalance(user.allowanceAmount || 0n)} />
+        <GLMAmountStat amount={formatBalance(user.allowanceAmount)} />
       </div>
       <div className="stat ">
         {txHash && (

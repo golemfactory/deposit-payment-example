@@ -1,15 +1,11 @@
 import { AllocationLink } from "components/alloctionLink";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
-import { useCreateAllocationEvents } from "hooks/events/useCreateAllocationEvents";
-import { useReleaseAllocationEvents } from "hooks/events/useReleaseAllocationEvents";
 import { useCreateAllocation } from "hooks/useCreateAllocation";
 import { useCurrentAllocation } from "hooks/useCurrentAllocation";
 import { useReleaseAllocation } from "hooks/useReleaseAllocation";
 import { useUser } from "hooks/useUser";
 import { Loading } from "react-daisyui";
-import { Event } from "types/events";
 import { formatBalance } from "utils/formatBalance";
-import { parseEther } from "viem";
 
 export const Allocation = () => {
   const { isCreating: isCreatingAllocation, createAllocation } =
@@ -17,8 +13,6 @@ export const Allocation = () => {
   const { currentAllocation } = useCurrentAllocation();
   const { releaseAllocation } = useReleaseAllocation();
   const { user } = useUser();
-
-  console.log("currentAllocation", currentAllocation);
 
   return (
     <div className="stats shadow mt-2 ">

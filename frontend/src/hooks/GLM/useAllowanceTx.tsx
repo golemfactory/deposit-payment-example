@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAccount, useWatchContractEvent } from "wagmi";
 
-import { createPublicClient, http } from "viem";
+import { createPublicClient, getAddress, http } from "viem";
 import { holesky } from "viem/chains";
 import { abi } from "./abi";
 import { config } from "config";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
+import { ZERO_ADDRESS } from "types/zero";
 
 type WithBlockNumber<T> = T & { blockNumber: bigint };
 
@@ -23,37 +24,15 @@ export const useAllowanceTx = () => {
   );
 
   useEffect(() => {
-    client.watchContractEvent({
-      address: config.GLMContractAddress[holesky.id],
-      abi: abi,
-      eventName: "Approval",
-      args: {
-        owner: address,
-        spender: requestor?.wallet,
-      },
-      onLogs: (logs) => {
-        const newApprove = logs.sort(
-          (a, b) => Number(a.blockNumber) - Number(b.blockNumber)
-        )[logs.length - 1];
-
-        if (newApprove.transactionHash) {
-          setTxHash(newApprove.transactionHash);
-        }
-      },
-    });
-  }, [address, requestor?.wallet]);
-  useEffect(() => {
     const fetchLogs = async () => {
       const block = await client.getBlock();
-      // if (!address) {
-      //   return [];
-      // }
       const logs = await client.getContractEvents({
         address: config.GLMContractAddress[holesky.id],
         abi: abi,
         eventName: "Approval",
         args: {
-          owner: address,
+          //with undefined address it will return all logs
+          owner: address || ZERO_ADDRESS,
           spender: requestor?.wallet,
         },
         fromBlock: block.number - 1000n,

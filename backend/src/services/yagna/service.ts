@@ -36,10 +36,8 @@ export class Yagna {
     getExecutor: async (userId: string) => {
       const existingExecutor = this.userContext.data.get(userId)?.executor;
       if (existingExecutor) {
-        console.log("existingExecutor", existingExecutor);
         return existingExecutor;
       }
-      console.log("creating executor");
       return await this.createExecutor(userId);
     },
     setWorker: async (userId: string, worker: Worker) => {
@@ -84,10 +82,8 @@ export class Yagna {
 
   async makeAgreement(userId: string) {
     const executor = await this.userContext.getExecutor(userId);
-    console.log("executor", executor.agreementPoolService.isServiceRunning);
-    // //@ts-ignore
-    // console.log("executor", executor.agreementPoolService.isServiceRunning);
-    // return await executor.getAgreement();
+
+    const agreement = executor.getAgreement();
   }
 
   async createUserAllocation(userId: string) {

@@ -19,6 +19,7 @@ import { Event } from "types/events";
 import { useDepositCreatedEvents } from "hooks/events/useDepositCreatedEvents";
 import { useDepositExtendedEvents } from "hooks/events/useDepositExtendedEvents";
 import { use } from "i18next";
+import { ZERO_ADDRESS } from "types/zero";
 
 export function useCreateDeposit() {
   const {
@@ -140,10 +141,19 @@ export function useUserCurrentDeposit() {
     }
   }, [isSuccess, data]);
 
+  console.log("deposit data", data);
   return {
-    amount: data ? data[1] : 0n,
-    flatFeeAmount: data ? data[2] : 0n,
-    validToTimestamp: data ? data[3] : 0n,
+    ...(data?.[0] === ZERO_ADDRESS
+      ? {
+          amount: undefined,
+          flatFeeAmount: undefined,
+          validToTimestamp: undefined,
+        }
+      : {
+          amount: data?.[1],
+          flatFeeAmount: data?.[2],
+          validToTimestamp: data?.[3],
+        }),
     isError,
     isSuccess,
     isPending,

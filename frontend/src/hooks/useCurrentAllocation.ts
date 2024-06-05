@@ -18,13 +18,23 @@ export const useCurrentAllocation = () => {
     }
   );
 
-  return {
-    currentAllocation: {
-      totalAmount: parseEther(data?.totalAmount || "0"),
-      spentAmount: parseEther(data?.spentAmount || "0"),
-      remainingAmount: parseEther(data?.remainingAmount || "0"),
-    },
-    isLoading: !error && !data,
-    isError: error,
-  };
+  return data
+    ? {
+        currentAllocation: {
+          totalAmount: parseEther(data?.totalAmount || "0"),
+          spentAmount: parseEther(data?.spentAmount || "0"),
+          remainingAmount: parseEther(data?.remainingAmount || "0"),
+        },
+        isLoading: !error && !data,
+        isError: error,
+      }
+    : {
+        currentAllocation: {
+          totalAmount: undefined,
+          spentAmount: undefined,
+          remainingAmount: undefined,
+        },
+        isLoading: !error && !data,
+        isError: error,
+      };
 };
