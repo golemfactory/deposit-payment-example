@@ -2,56 +2,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Payload, Event, ExtractPayload } from "types/events";
 import useLocalStorageState from "use-local-storage-state";
-
+import { v4 as uuidv4 } from "uuid";
 const getId = (e: any) => e.id;
-
-// const subject = new Subject();
-
-// const initialState: Task[] = [];
-
-// let state = initialState;
-
-// export const eventStore = {
-//   init: (state) => {
-//     subject.next(state);
-//   },
-//   subscribe: (setState: any) => {
-//     subject.subscribe(setState);
-//   },
-//   addTask: (content: string) => {
-//     const task = {
-//       content,
-//       id: uid(),
-//       isDone: false,
-//     };
-//     state = [...state, task];
-//     subject.next(state);
-//   },
-//   removeTask: (id: string) => {
-//     const tasks = state.filter((task) => task.id !== id);
-//     state = tasks;
-//     subject.next(state);
-//   },
-//   completeTask: (id: string) => {
-//     const tasks = state.map((task) => {
-//       if (task.id === id) {
-//         task.isDone = !task.isDone;
-//       }
-//       return task;
-//     });
-//     state = tasks;
-//     subject.next(state);
-//   },
-//   initialState,
-// };
 
 export const useEvents = <K extends Event>({
   key,
   eventKind,
 }: {
   key: string;
-  eventKind: K;
+  eventKind: K | ((s: string) => K);
 }) => {
+  if (typeof eventKind !== "function") {
+    const kindOfEvent = eventKind;
+    eventKind = (s: string) => kindOfEvent;
+  }
   const [currentEvents, setCurrentEvents] = useLocalStorageState<any[]>(key, {
     defaultValue: [],
   });
@@ -62,7 +26,7 @@ export const useEvents = <K extends Event>({
   if (!events$.current) {
     events$.current = new Subject<{
       kind: K;
-      payload: Payload[typeof eventKind];
+      payload: Payload[typeof eventKind extends (s: string) => infer R ? R : K];
       id: number;
       timestamp: number;
     }>();
@@ -72,29 +36,31 @@ export const useEvents = <K extends Event>({
     previousEvents.current = [];
   }
 
-  const emit = useCallback((payload: ExtractPayload<K>) => {
-    const currentEvents = JSON.parse(localStorage.getItem(key) || "[]");
-    const newEvents = [
-      ...currentEvents,
-      {
-        ...{
-          kind: eventKind,
-          payload,
+  const emit = useCallback(
+    (payload: ExtractPayload<K>, eventType: string = "") => {
+      const currentEvents = JSON.parse(localStorage.getItem(key) || "[]");
+      const newEvents = [
+        ...currentEvents,
+        {
+          ...{
+            kind: eventKind(eventType),
+            payload,
+          },
+          //@ts-ignore
+          id: payload?.id || uuidv4(),
+          timestamp: Date.now(),
         },
-        id: currentEvents.length + 1,
-        timestamp: Date.now(),
-      },
-    ];
-    setCurrentEvents(newEvents);
-  }, []);
+      ];
+      setCurrentEvents(newEvents);
+    },
+    []
+  );
 
   useEffect(() => {
     if (currentEvents) {
       currentEvents.forEach((e: any) => {
-        if (e.kind === eventKind) {
-          if (!previousEvents.current.find((p) => getId(p) === getId(e))) {
-            events$.current?.next(e);
-          }
+        if (!previousEvents.current.find((p) => getId(p) === getId(e))) {
+          events$.current?.next(e);
         }
       });
       setIsFirstRun(false);

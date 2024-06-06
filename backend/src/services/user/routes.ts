@@ -1,9 +1,7 @@
-import fastify, { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 import { container } from "../../di.js";
 import fastifyPlugin from "fastify-plugin";
-import { userModel } from "./model.js";
 import { jwtDecode } from "jwt-decode";
-import { set } from "mongoose";
 export const userService = fastifyPlugin(
   (fastify: FastifyInstance, opts, done) => {
     fastify.io.of("/me").use((socket, next) => {
@@ -15,8 +13,6 @@ export const userService = fastifyPlugin(
     });
 
     fastify.io.of("/me").on("connection", async (socket) => {
-      console.log("socket", socket.handshake.auth.token);
-
       const user = jwtDecode<{
         _id: string;
       }>(socket.handshake.auth.token);
@@ -37,6 +33,8 @@ export const userService = fastifyPlugin(
         const userDTO = await container.cradle.userService.getUserDTO(user._id);
         socket.emit("user", userDTO);
       }, 500);
+
+      //TODO: watch for changes but this will need replica set
 
       // userModel
       //   .watch(

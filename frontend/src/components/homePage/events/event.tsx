@@ -8,6 +8,7 @@ import { GLMAmountStat } from "components/atoms/GLMAmount";
 import { formatBalance } from "utils/formatBalance";
 import { parseEther } from "viem";
 import dayjs from "dayjs";
+import { ShortLink } from "components/shortLink";
 const variants = {
   visible: { opacity: 1, transition: { duration: 1 } },
   hidden: { opacity: 0, transition: { duration: 1 } },
@@ -85,6 +86,49 @@ const DepositCreatedEvent = (event: {
   );
 };
 
+const AgreementCreatedEvent = (event: {
+  kind: Event.AGREEMENT_SIGNED;
+  payload: Payload[Event.AGREEMENT_SIGNED];
+}) => {
+  return (
+    <Card bordered={true}>
+      <Card.Body>
+        <Card.Title>Agreement Created</Card.Title>
+        <div>
+          <div>
+            Agreement ID: <ShortLink id={event.payload.agreementId}></ShortLink>
+          </div>
+          <div>
+            ProviderId :{" "}
+            <EtherScanLink
+              hash={event.payload.offer.providerId}
+              route="address"
+            ></EtherScanLink>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const AgreementTerminatedEvent = (event: {
+  kind: Event.AGREEMENT_TERMINATED;
+  payload: Payload[Event.AGREEMENT_TERMINATED];
+}) => {
+  return (
+    <Card bordered={true}>
+      <Card.Body>
+        <Card.Title>Agreement Terminated</Card.Title>
+        <div>
+          <div>
+            Agreement ID: <ShortLink id={event.payload.agreementId}></ShortLink>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
 const DepositExtendedEvent = (event: {
   kind: Event.DEPOSIT_EXTENDED;
   payload: Payload[Event.DEPOSIT_EXTENDED];
@@ -136,6 +180,10 @@ export const EventCard = (event: EventType) => {
             return <DepositCreatedEvent {...event} />;
           case Event.DEPOSIT_EXTENDED:
             return <DepositExtendedEvent {...event} />;
+          case Event.AGREEMENT_SIGNED:
+            return <AgreementCreatedEvent {...event} />;
+          case Event.AGREEMENT_TERMINATED:
+            return <AgreementTerminatedEvent {...event} />;
         }
       })()}
     </motion.div>

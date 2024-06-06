@@ -27,7 +27,7 @@ export interface IUser {
   deposits: Deposit[];
   currentAllocationId: string;
   currentAllocationAmount: number;
-  currentActivityId: string;
+  currentAgreementId: string;
 }
 
 export interface IUserService {
@@ -49,6 +49,6 @@ export interface IUserService {
     amount: number
   ): Promise<boolean>;
   getUserById(userId: UserIdType): Promise<IUser | null>;
-  setCurrentActivityId(userId: UserIdType, activityId: string): Promise<void>;
+  setCurrentAgreementId(userId: UserIdType, agreementId: string): Promise<void>;
   getUserDTO(userId: UserIdType): Promise<any>;
 }

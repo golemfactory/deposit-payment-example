@@ -38,10 +38,7 @@ export type Payload = {
     amount: number;
     validityTimestamp: number;
   };
-  [Event.AGREEMENT_SIGNED]: {
-    providerId: string;
-    agreementId: string;
-  };
+
   [Event.FILE_SCAN_OK]: {
     fileId: string;
   };
@@ -53,9 +50,17 @@ export type Payload = {
     invoiceId: string;
     transactionId?: string;
   };
+
+  [Event.AGREEMENT_SIGNED]: {
+    agreementId: string;
+    offer: {
+      providerId: `0x${string}`;
+    };
+  };
   [Event.AGREEMENT_TERMINATED]: {
     agreementId: string;
   };
+
   [Event.PROVIDER_PAID]: {
     agreementId: string;
   };

@@ -1,21 +1,19 @@
 import { useState } from "react";
 import { Link } from "react-daisyui";
 import { useSnackbar } from "notistack";
-export const AllocationLink = ({
-  allocationId = "",
-}: {
-  allocationId?: string;
-}) => {
+
+export const ShortLink = ({ id = "" }: { id?: string }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [isCopied, setIsCopied] = useState(false);
 
   const handleClick = () => {
-    navigator.clipboard.writeText(allocationId);
+    navigator.clipboard.writeText(id);
     setIsCopied(true);
-    enqueueSnackbar("Allocation Id to clipboard", { variant: "success" });
+    enqueueSnackbar("Id to clipboard", { variant: "success" });
   };
 
-  const shortenedId = `${allocationId.slice(0, 3)}...${allocationId.slice(-3)}`;
+  const shortenedId =
+    id.length > 9 ? `${id.slice(0, 3)}...${id.slice(-3)}` : `${id}`;
 
   return (
     <div>

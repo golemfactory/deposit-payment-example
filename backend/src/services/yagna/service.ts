@@ -7,14 +7,20 @@ import { ErrorCode } from "../../errors/codes.js";
 import dayjs from "dayjs";
 import bigDecimal from "js-big-decimal";
 
+import { v4 as uuidv4 } from "uuid";
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 import { Worker } from "./worker.js";
 import { WorkContext } from "@golem-sdk/golem-js";
 import { TaskExecutor } from "@golem-sdk/task-executor";
 import { formatEther, parseEther } from "viem";
+import { UUID } from "mongodb";
 export class Yagna {
   public debitNoteEvents: Subject<any>;
+  public invoiceEvents: Subject<any>;
+  public agreementEvents: Subject<any>;
+
   private paymentService: YaTsClient.PaymentApi.RequestorService;
   private activityService: YaTsClient.MarketApi.RequestorService;
   private identityService: YaTsClient.IdentityApi.DefaultService;
@@ -22,6 +28,7 @@ export class Yagna {
   private YagnaConfig: { appKey: string; apiUrl: string };
   private lastDebitNoteEventTimestamp: string = new Date().toISOString();
   private lastInvoiceEventTimestamp: string = new Date().toISOString();
+  private lastAgreementEventTimestamp: string = new Date().toISOString();
   private userContext = {
     data: new Map<
       string,
@@ -55,7 +62,11 @@ export class Yagna {
 
   constructor(YagnaConfig: { appKey: string; apiUrl: string }) {
     this.YagnaConfig = YagnaConfig;
+
     this.debitNoteEvents = new Subject();
+    this.invoiceEvents = new Subject();
+    this.agreementEvents = new Subject();
+
     const paymentClient = new YaTsClient.PaymentApi.Client({
       BASE: `${YagnaConfig.apiUrl}/payment-api/v1`,
       HEADERS: {
@@ -81,24 +92,55 @@ export class Yagna {
   }
 
   async makeAgreement(userId: string) {
+    //creating executor by task executor makes agreement
     const executor = await this.userContext.getExecutor(userId);
+    //in order to make sure agreement wont be automatically closed after 90s
+    //which is HARDCODED in yagna we make worker which under the hood makes activity
+    // which prevents agreement from closing
+    const worker = await this.getUserWorker(userId);
+    console.log("Activity created", worker.context?.activity.id);
+    const agreement = await executor.getAgreement();
+    container.cradle.userService.setCurrentAgreementId(userId, agreement.id);
+    agreement.events.on("terminated", (e: any) => {
+      console.log("agreement terminated", e);
+      this.agreementEvents.next({
+        agreement,
+        event: "terminated",
+      });
+    });
+  }
 
-    const agreement = executor.getAgreement();
+  async getUserAgreement(userId: string) {
+    debugLog("market", "getting user agreement", userId);
+    const user = await container.cradle.userService.getUserById(userId);
+    if (!user) {
+      throw new Error({ code: ErrorCode.USER_NOT_FOUND });
+    }
+    const agreementId = user.currentAgreementId;
+    if (!agreementId) {
+      return null;
+    }
+    const agreement = await this.activityService.getAgreement(agreementId);
+    debugLog("market", "got user agreement", agreement);
+    if (!agreement) {
+      throw new Error({
+        code: ErrorCode.AGREEMENT_NOT_FOUND,
+        payload: {
+          agreementId,
+        },
+      });
+    }
+    return { ...agreement, id: agreementId };
   }
 
   async createUserAllocation(userId: string) {
-    debugLog("payments", "creating user allocation", userId);
     const userService = container.cradle.userService;
     const userDeposit = await userService.getCurrentDeposit(userId);
 
     if (!userDeposit) {
       throw new Error({ code: ErrorCode.NO_DEPOSIT });
     }
-    console.log("userDeposit", userDeposit);
     try {
-      // @ts-ignore
-
-      console.log("userDeposit", userDeposit.id.toString(16));
       // @ts-ignore
       const allocation = await this.paymentService.createAllocation({
         totalAmount: formatEther(userDeposit.amount),
@@ -115,8 +157,6 @@ export class Yagna {
         timeout: new Date(Number(userDeposit.validTo) * 1000).toISOString(),
       });
 
-      console.log("allocation", allocation);
-
       container.cradle.userService.setCurrentAllocationId(
         userId,
         allocation.allocationId
@@ -128,7 +168,6 @@ export class Yagna {
     // @ts-ignore
   }
   async getUserAllocation(userId: string) {
-    debugLog("payments", "getting user allocation", userId);
     const user = await container.cradle.userService.getUserById(userId);
     if (!user) {
       throw new Error({ code: ErrorCode.USER_NOT_FOUND });
@@ -138,7 +177,6 @@ export class Yagna {
       return null;
     }
     const allocation = await this.paymentService.getAllocation(allocationId);
-    debugLog("payments", "got user allocation", allocation);
     if (!allocation) {
       throw new Error({
         code: ErrorCode.ALLOCATION_NOT_FOUND,
@@ -224,6 +262,7 @@ export class Yagna {
       userId,
       executor.allocation.id
     );
+    executor.allocation;
     return executor;
   }
 
@@ -272,15 +311,7 @@ export class Yagna {
             newWorker.context = ctx;
 
             newWorker.setState("free");
-            debugLog(
-              "payments",
-              "worker connected, agreement done",
-              ctx.activity.agreement.id
-            );
-            container.cradle.userService.setCurrentActivityId(
-              userId,
-              ctx.activity.agreement.id
-            );
+
             resolve(newWorker);
           })
           .catch((e: any) => {
@@ -291,51 +322,96 @@ export class Yagna {
     });
   }
 
+  //TODO : extract common logic
+
   async observeDebitNoteEvents() {
     debugLog("payments", "observing events");
     while (this.isRunning) {
-      debugLog(
-        "payments",
-        "fetching debit note events",
-        this.lastDebitNoteEventTimestamp
-      );
       const debitNoteEvents = await this.paymentService.getDebitNoteEvents(
         5,
         this.lastDebitNoteEventTimestamp,
-        10,
-        //@ts-ignore
-        null
+        10
       );
 
-      const invoiceEvents = await this.paymentService.getInvoiceEvents(
-        5,
-        this.lastDebitNoteEventTimestamp,
-        10,
-        //@ts-ignore
-        null
-      );
+      debitNoteEvents.forEach((event) => {
+        if (
+          dayjs(event.eventDate).isAfter(
+            dayjs(this.lastDebitNoteEventTimestamp)
+          )
+        ) {
+          this.lastDebitNoteEventTimestamp = event.eventDate;
+        }
+      });
 
-      debitNoteEvents.forEach((event: any) => {
+      debitNoteEvents.forEach(async (event: any) => {
         const debitNoteId = event.debitNoteId;
-        const debitNote = this.paymentService.getDebitNote(debitNoteId);
-        this.debitNoteEvents.next(debitNote);
-        this.lastDebitNoteEventTimestamp = event.eventDate;
+        const debitNote = await this.paymentService.getDebitNote(debitNoteId);
+        this.debitNoteEvents.next({
+          debitNote,
+          event,
+          id: uuidv4(),
+        });
       });
     }
+  }
 
+  async observeInvoiceEvents() {
+    debugLog("payments", "observing events");
     while (this.isRunning) {
       const invoiceEvents = await this.paymentService.getInvoiceEvents(
         5,
         this.lastInvoiceEventTimestamp,
-        10,
-        //@ts-ignore
-        null
+        10
       );
 
-      invoiceEvents.forEach((event: any) => {
-        this.debitNoteEvents.next(event);
-        this.lastInvoiceEventTimestamp = event.eventDate;
+      invoiceEvents.forEach((event) => {
+        if (
+          dayjs(event.eventDate).isAfter(dayjs(this.lastInvoiceEventTimestamp))
+        ) {
+          this.lastInvoiceEventTimestamp = event.eventDate;
+        }
+      });
+
+      invoiceEvents.forEach(async (event: any) => {
+        console.log("invoice event", event);
+        const invoiceId = event.invoiceId;
+        const invoice = await this.paymentService.getInvoice(invoiceId);
+        this.invoiceEvents.next({ invoice, event, id: uuidv4() });
       });
     }
+  }
+  async observeAgreementEvents() {
+    while (this.isRunning) {
+      const events = await this.activityService.collectAgreementEvents(
+        5,
+        this.lastAgreementEventTimestamp,
+        10
+      );
+
+      events.forEach((event) => {
+        if (
+          dayjs(event.eventDate).isAfter(
+            dayjs(this.lastAgreementEventTimestamp)
+          )
+        ) {
+          this.lastAgreementEventTimestamp = event.eventDate;
+        }
+      });
+
+      events.forEach(async (event: any) => {
+        const agreementId = event.agreementId;
+        const agreement = await this.activityService.getAgreement(agreementId);
+        this.agreementEvents.next({
+          id: uuidv4(),
+          agreement,
+          event,
+        });
+      });
+    }
+  }
+  async observeEvents() {
+    this.observeDebitNoteEvents();
+    this.observeInvoiceEvents();
+    this.observeAgreementEvents();
   }
 }

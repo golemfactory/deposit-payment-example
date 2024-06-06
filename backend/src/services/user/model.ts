@@ -19,7 +19,7 @@ const schema = new mongoose.Schema<IUser>(
     currentAllocationAmount: {
       type: Number,
     },
-    currentActivityId: {
+    currentAgreementId: {
       type: String,
     },
     deposits: [

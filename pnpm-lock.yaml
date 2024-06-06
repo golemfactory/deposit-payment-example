@@ -145,6 +145,9 @@ importers:
       '@types/ramda':
         specifier: ^0.29.11
         version: 0.29.12
+      '@types/uuid':
+        specifier: ^9.0.8
+        version: 9.0.8
       '@uidotdev/usehooks':
         specifier: ^2.4.1
         version: 2.4.1(react-dom@18.2.0)(react@18.2.0)
@@ -214,6 +217,9 @@ importers:
       usehooks-ts:
         specifier: ^3.1.0
         version: 3.1.0(react@18.2.0)
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
       viem:
         specifier: ~2.7.19
         version: 2.7.22(typescript@5.4.3)

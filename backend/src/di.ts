@@ -85,4 +85,4 @@ container.cradle.db.then(() => {
 
 container.cradle.fileService.init();
 
-container.cradle.Yagna.observeDebitNoteEvents();
+container.cradle.Yagna.observeEvents();

@@ -5,6 +5,7 @@ export enum ErrorCode {
   NO_WORKER = "NO_WORKER",
   USER_NOT_FOUND = "USER_NOT_FOUND",
   ALLOCATION_NOT_FOUND = "ALLOCATION_NOT_FOUND",
+  AGREEMENT_NOT_FOUND = "AGREEMENT_NOT_FOUND",
   ALLOCATION_TOP_UP_FAILED = "ALLOCATION_TOP_UP_FAILED",
 }
 
@@ -14,6 +15,7 @@ export const errorMessages = {
   [ErrorCode.NO_ALLOCATION]: () => "No allocation found",
   [ErrorCode.NO_WORKER]: () => "No worker",
   [ErrorCode.USER_NOT_FOUND]: () => "User not found",
+  [ErrorCode.AGREEMENT_NOT_FOUND]: () => "Agreement not found",
   [ErrorCode.ALLOCATION_NOT_FOUND]: ({
     allocationId,
   }: {
@@ -34,6 +36,12 @@ export type ErrorParams = {
   [ErrorCode.USER_NOT_FOUND]: never;
   [ErrorCode.ALLOCATION_NOT_FOUND]: {
     allocationId: string;
+  };
+  [ErrorCode.ALLOCATION_TOP_UP_FAILED]: {
+    allocationId: string;
+  };
+  [ErrorCode.AGREEMENT_NOT_FOUND]: {
+    agreementId: string;
   };
 };
 

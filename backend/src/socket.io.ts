@@ -34,6 +34,7 @@ declare module "fastify" {
       {},
       {
         user: (data: IUser) => void;
+        event: (data: any) => void;
       }
     >;
   }

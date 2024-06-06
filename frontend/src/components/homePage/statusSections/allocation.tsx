@@ -1,4 +1,4 @@
-import { AllocationLink } from "components/alloctionLink";
+import { ShortLink } from "components/shortLink";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
 import { useCreateAllocation } from "hooks/useCreateAllocation";
 import { useCurrentAllocation } from "hooks/useCurrentAllocation";
@@ -24,9 +24,7 @@ export const Allocation = () => {
       >
         <div className="stat-title">Allocation </div>
         <div className="stat-value">
-          <AllocationLink
-            allocationId={user?.currentAllocation?.id}
-          ></AllocationLink>
+          <ShortLink id={user?.currentAllocation?.id}></ShortLink>
         </div>
       </div>
       <div

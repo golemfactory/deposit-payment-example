@@ -1,6 +1,8 @@
 import fastify, { FastifyInstance, FastifyRequest } from "fastify";
 import { container } from "../../di.js";
 import fastifyPlugin from "fastify-plugin";
+import { jwtDecode } from "jwt-decode";
+import { merge } from "rxjs";
 
 export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
   fastify.post("/allocation", {
@@ -74,6 +76,21 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       }
     },
   });
+  fastify.get("/agreement", {
+    onRequest: [fastify.authenticate],
+    handler: async (request, reply) => {
+      const requestUser = request.user;
+      const Yagna = container.cradle.Yagna;
+      const agreement = await Yagna.getUserAgreement(requestUser._id).catch(
+        (e) => {
+          reply.code(500).send({
+            message: e.message,
+          });
+        }
+      );
+      reply.code(200).send(agreement);
+    },
+  });
   fastify.post("/create-agreement", {
     onRequest: [fastify.authenticate],
     handler: async (request, reply) => {
@@ -124,12 +141,12 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       );
       const worker = await Yagna.getUserWorker(requestUser._id);
       await worker.context?.activity.stop();
-      if (!user?.currentActivityId) {
+      if (!user?.currentAgreementId) {
         reply.code(500).send({
           message: "No agreement found",
         });
       } else {
-        container.cradle.userService.setCurrentActivityId(requestUser._id, "");
+        container.cradle.userService.setCurrentAgreementId(requestUser._id, "");
         reply
           .code(201)
           .send(container.cradle.userService.getUserDTO(requestUser._id));
@@ -186,5 +203,36 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
     },
   });
 
-  done();
+  (["debitNoteEvents", "invoiceEvents", "agreementEvents"] as const).forEach(
+    (eventType) => {
+      fastify.io.of(`/${eventType}`).use((socket, next) => {
+        const token = socket.handshake.auth.token;
+        if (!token) {
+          next(new Error("Authentication error"));
+        }
+        next();
+      });
+      fastify.io.of(`/${eventType}`).on("connection", async (socket) => {
+        console.log("--------------");
+        console.log("connected to", eventType);
+        console.log("--------------");
+        const user = jwtDecode<{
+          _id: string;
+        }>(socket.handshake.auth.token);
+        if (!user._id) {
+          throw new Error(`Wrong token`);
+        }
+        if (!user) {
+          throw new Error(
+            `User not found with id ${socket.handshake.auth.token}`
+          );
+        }
+        const eventStream = await container.cradle.Yagna[`${eventType}`];
+        eventStream.subscribe((event) => {
+          socket.emit("event", event);
+        });
+        done();
+      });
+    }
+  );
 });

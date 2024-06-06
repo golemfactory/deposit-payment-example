@@ -78,8 +78,8 @@ export const userService: IUserService = {
       currentAllocation: {
         id: user.currentAllocationId,
       },
-      currentActivity: {
-        id: user.currentActivityId,
+      currentAgreement: {
+        id: user.currentAgreementId,
       },
       deposits: user.deposits.map((d) => {
         return {
@@ -91,11 +91,15 @@ export const userService: IUserService = {
       }),
     };
   },
-  setCurrentActivityId: async (userId: string, activityId: string) => {
+  setCurrentAgreementId: async (userId: string, agreementId: string) => {
     await userModel.updateOne(
       { _id: userId },
-      { currentActivityId: activityId }
+      { currentAgreementId: agreementId }
     );
+  },
+
+  terminateCurrentAgreement: async (userId: string) => {
+    await userModel.updateOne({ _id: userId }, { currentAgreementId: null });
   },
 
   invalidateCurrentDeposit: async (userId: string) => {

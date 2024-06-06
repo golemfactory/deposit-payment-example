@@ -28,7 +28,7 @@ type UserProps = {
   currentAllocation?: {
     id: string;
   };
-  currentActivity?: {
+  currentAgreement?: {
     id: string;
   };
 };
@@ -43,6 +43,7 @@ interface UserInterface {
   hasDepositDataLoaded(): boolean;
   hasDeposit(): boolean;
   hasAllocation(): boolean;
+  hasAgreement(): boolean;
   login(data: {
     walletAddress: string;
     messageSignature: string;
@@ -89,7 +90,10 @@ const withUserInterface = function (
       return !!user.currentDeposit;
     },
     hasAllocation() {
-      return !!user.currentAllocation;
+      return !!user.currentAllocation?.id;
+    },
+    hasAgreement() {
+      return !!user.currentAgreement?.id;
     },
   };
 };

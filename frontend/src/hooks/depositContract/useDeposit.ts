@@ -141,7 +141,6 @@ export function useUserCurrentDeposit() {
     }
   }, [isSuccess, data]);
 
-  console.log("deposit data", data);
   return {
     ...(data?.[0] === ZERO_ADDRESS
       ? {
