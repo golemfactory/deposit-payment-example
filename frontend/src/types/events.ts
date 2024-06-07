@@ -13,6 +13,7 @@ export enum Event {
   PAYMENT_FOR_GAS = "PAYMENT_FOR_GAS",
   DEPOSIT_RELEASED = "DEPOSIT_RELEASED",
   DEPOSIT_EXTENDED = "DEPOSIT_EXTENDED",
+  NEW_DEBIT_NOTE = "NEW_DEBIT_NOTE",
 }
 
 export type Payload = {
@@ -70,6 +71,7 @@ export type Payload = {
   [Event.PAYMENT_FOR_GAS]: {
     agreementId: string;
   };
+  [Event.NEW_DEBIT_NOTE]: {};
 };
 
 export type EventType = EventWithPayload<Payload>;

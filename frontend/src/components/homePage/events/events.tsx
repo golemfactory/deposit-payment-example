@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { EventType } from "types/events";
 import { useAllocationEvents } from "hooks/events/useAllocationEvents";
 import { EventCard } from "./event";
-import { uniqBy } from "ramda";
+import { uniqBy, sortBy, prop } from "ramda";
 import { useDepositEvents } from "hooks/events/useDepositEvents";
 import { useYagnaEvents } from "hooks/events/useYagnaEvents";
 import { merge } from "rxjs";
@@ -24,16 +24,25 @@ export const Events = () => {
       allocationEvents$,
       depositEvents$,
       yagnaEvents$
-    ).subscribe((event) => {
-      setEvents((prevEvents) => {
-        return uniqBy(
-          (e) => {
-            return `${e.kind}-${e.id}`;
-          },
-          [...prevEvents, event]
-        );
-      });
-    });
+    ).subscribe(
+      (
+        event: EventType & {
+          id: number;
+          timestamp: number;
+        }
+      ) => {
+        setEvents((prevEvents) => {
+          return sortBy(prop("timestamp"))(
+            uniqBy(
+              (e) => {
+                return `${e.kind}-${e.id}`;
+              },
+              [...prevEvents, event]
+            )
+          );
+        });
+      }
+    );
     return () => {
       //TODO: fix this
       setTimeout(() => {

@@ -47,6 +47,10 @@ function createMessage({ nonce, address, chainId }: any) {
 const siweConfig = createSIWEConfig({
   createMessage,
   getNonce: async (address) => {
+    if (!address) {
+      throw new Error("Address is required");
+    }
+    localStorage.setItem("address", address);
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_HTTP_URL}/register`,
       {
@@ -66,11 +70,12 @@ const siweConfig = createSIWEConfig({
     console.log("nonce", responseData.nonce.toString());
     return responseData.nonce.toString();
   },
-  getSession: async () => {
+  // @ts-ignore
+  async getSession() {
     return {
-      address: "0xcC2f7D53e0c32B31d670efA7F5Ad01e581bB0A18",
-      chainId: 1700,
-    };
+      address: localStorage.getItem("address"),
+      chainId: holesky.id,
+    };  
   },
   verifyMessage: async ({ message, signature }) => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_HTTP_URL}/login`, {
@@ -92,6 +97,12 @@ const siweConfig = createSIWEConfig({
 
     return true;
   },
+  signOut: async () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("address");
+    return false;
+  }
 });
 
 createWeb3Modal({

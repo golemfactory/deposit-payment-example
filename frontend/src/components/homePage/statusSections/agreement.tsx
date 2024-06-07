@@ -1,11 +1,24 @@
-import { useLayout } from "components/providers/layoutProvider";
 import { useUser } from "hooks/useUser";
-import { useCallback } from "react";
+import {  useEffect, useState } from "react";
 import { useCreateAgreement } from "hooks/useCreateAgreement";
+import { useCurrentAgreement } from "hooks/useCurrentAgreement";
+import { useReleaseAgreement } from "hooks/useReleaseAgreement";
+import { ShortLink } from "components/shortLink";
+import { useDebitNoteEvents } from "hooks/events/useYagnaEvents";
+import { formatBalance } from "utils/formatBalance";
+import { parseEther } from "viem";
+import { GLMAmountStat } from "components/atoms/GLMAmount";
 export const Agreement = () => {
   const { user } = useUser();
-  const { setModalContent, openModal } = useLayout();
   const { createAgreement } = useCreateAgreement();
+  const { releaseAgreement } = useReleaseAgreement();
+  const { events$} = useDebitNoteEvents();
+  const [ totalAmount, setTotalAmount ] = useState('-');
+  useEffect(() => {
+    events$.subscribe((event : any) => {
+      setTotalAmount(event.payload.totalAmountDue);
+    });
+  }, []);
   return (
     <div
       className="stats shadow mt-2"
@@ -15,9 +28,17 @@ export const Agreement = () => {
     >
       <div className="stat">
         <div className="stat-title">Agreement</div>
+      <div className="stat-value">
+          <ShortLink id={user?.currentAgreement?.id}></ShortLink>
+        </div>
       </div>
 
-      <div className="stat"></div>
+      <div className="stat">
+        <div className="stat-title">Total</div>
+        <div className="stat-value">
+          <GLMAmountStat amount={formatBalance(parseEther(totalAmount))} />
+        </div>
+      </div>
       <div className="stat"></div>
       <div className="stat">
         {/* <div className="stat-title">Amount spent</div>
@@ -25,14 +46,27 @@ export const Agreement = () => {
       </div>
       <div className="stat ">
         <div className="stat-actions">
-          <button
-            className="btn"
-            onClick={() => {
-              createAgreement();
-            }}
-          >
-            Create
-          </button>
+          {user.currentAgreement?.id &&
+          user.currentAgreement?.state === "Approved" ? (
+            <button
+              className="btn"
+              onClick={() => {
+                //@ts-ignore
+                releaseAgreement(user.currentAgreement?.id);
+              }}
+            >
+              Terminate
+            </button>
+          ) : (
+            <button
+              className="btn"
+              onClick={() => {
+                createAgreement();
+              }}
+            >
+              Create
+            </button>
+          )}
         </div>
       </div>
       <div

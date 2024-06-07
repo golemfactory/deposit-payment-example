@@ -21,6 +21,7 @@ export enum UserState {
   HAS_ALLOCATION = "HAS_ALLOCATION",
   // User has no allocation
   HAS_NO_ALLOCATION = "HAS_NO_ALLOCATION",
+  HAS_AGREEMENT = "HAS_AGREEMENT",
 }
 
 export enum UserAction {
@@ -36,6 +37,7 @@ export enum UserAction {
   HAS_NO_DEPOSIT = "HAS_NO_DEPOSIT",
   HAS_ALLOCATION = "HAS_ALLOCATION",
   HAS_NO_ALLOCATION = "HAS_NO_ALLOCATION",
+  HAS_AGREEMENT = "HAS_AGREEMENT",
 }
 
 export const UserStateOrderValue = {
@@ -50,6 +52,7 @@ export const UserStateOrderValue = {
   [UserState.HAS_NO_DEPOSIT]: 6,
   [UserState.HAS_ALLOCATION]: 7,
   [UserState.HAS_NO_ALLOCATION]: 7,
+  [UserState.HAS_AGREEMENT]: 8,
 };
 
 export type Deposit = {

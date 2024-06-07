@@ -17,6 +17,8 @@ import { EventWithPayload } from "types/reducerArgs";
 import { UserState, UserAction, UserStateOrderValue } from "types/user";
 import { useAccount, useReadContract } from "wagmi";
 import { useChainId } from "hooks/useChainId";
+import { useCurrentAgreement } from "hooks/useCurrentAgreement";
+import { use } from "i18next";
 type UserProps = {
   state: UserState;
   allowanceAmount?: bigint;
@@ -30,6 +32,7 @@ type UserProps = {
   };
   currentAgreement?: {
     id: string;
+    state: string;
   };
 };
 
@@ -52,16 +55,10 @@ interface UserInterface {
 }
 
 const withUserInterface = function (
-  user: UserProps,
-  login: (data: {
-    walletAddress: `0x${string}`;
-    messageSignature: `0x${string}`;
-    message: string;
-  }) => void
-): UserProps & UserInterface {
+  user: UserProps
+): UserProps & Omit<UserInterface, "login"> {
   return {
     ...user,
-    login,
     isAtLeastAt(state: UserState) {
       return UserStateOrderValue[user.state] >= UserStateOrderValue[state];
     },
@@ -93,6 +90,7 @@ const withUserInterface = function (
       return !!user.currentAllocation?.id;
     },
     hasAgreement() {
+      console.log("user.currentAgreement", user.currentAgreement);
       return !!user.currentAgreement?.id;
     },
   };
@@ -101,7 +99,10 @@ const withUserInterface = function (
 export const UserContext = createContext<{
   user: UserProps & UserInterface;
 }>({
-  user: withUserInterface({ state: UserState.DISCONNECTED }, (data) => {}),
+  user: {
+    ...withUserInterface({ state: UserState.DISCONNECTED }),
+    login: (data) => {},
+  },
 });
 
 type Payload = {
@@ -126,12 +127,14 @@ type Payload = {
   };
   [UserAction.HAS_ALLOCATION]: {
     currentAllocation: unknown;
-    currentActivity: {
-      id: string;
-    };
   };
+  
   [UserAction.HAS_NO_ALLOCATION]: {
     currentAllocation: null;
+  };
+
+  [UserAction.HAS_AGREEMENT]: {
+    currentAgreement: unknown;
   };
 };
 
@@ -140,7 +143,7 @@ const userActionReducer = (
   action: EventWithPayload<Payload>
 ) => {
   const { kind, payload = {} } = action;
-  const state = match(kind)
+  const state : UserState = match(kind)
     .with(UserAction.CONNECT, () => UserState.CONNECTED)
     .with(UserAction.DISCONNECT, () => UserState.DISCONNECTED)
     .with(UserAction.LOGIN, () => UserState.LOGGING_IN)
@@ -174,6 +177,11 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { data: userData, isLoading: isUserLoading } = useUserData();
   //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
+  const currentAgreement = useCurrentAgreement();
+
+  useEffect(() => {
+    console.log("currentAgreement", currentAgreement);
+  }, [currentAgreement]);
 
   const [user, dispatch] = useReducer(
     userActionReducer,
@@ -243,7 +251,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
           kind: UserAction.HAS_ALLOCATION,
           payload: {
             currentAllocation: userData.currentAllocation,
-            currentActivity: userData.currentActivity,
           },
         });
       } else {
@@ -283,7 +290,9 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   }, [isAllowanceFetched, allowanceAmount, isRegistered]);
 
   return (
-    <UserContext.Provider value={{ user: withUserInterface(user, login) }}>
+    <UserContext.Provider
+      value={{ user: { ...withUserInterface(user), login, currentAgreement } }}
+    >
       {children}
     </UserContext.Provider>
   );

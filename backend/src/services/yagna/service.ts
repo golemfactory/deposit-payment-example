@@ -111,7 +111,6 @@ export class Yagna {
   }
 
   async getUserAgreement(userId: string) {
-    debugLog("market", "getting user agreement", userId);
     const user = await container.cradle.userService.getUserById(userId);
     if (!user) {
       throw new Error({ code: ErrorCode.USER_NOT_FOUND });
@@ -121,7 +120,6 @@ export class Yagna {
       return null;
     }
     const agreement = await this.activityService.getAgreement(agreementId);
-    debugLog("market", "got user agreement", agreement);
     if (!agreement) {
       throw new Error({
         code: ErrorCode.AGREEMENT_NOT_FOUND,
@@ -254,7 +252,7 @@ export class Yagna {
       //@ts-ignore
       budget: formatEther(userDeposit.amount),
       enableLogging: true,
-      subnetTag: "pociej_own",
+      subnetTag: container.cradle.YagnaConfig.subnetTag,
     });
 
     this.userContext.setExecutor(userId, executor);
@@ -344,6 +342,7 @@ export class Yagna {
       });
 
       debitNoteEvents.forEach(async (event: any) => {
+        console.log("debit note event", event);
         const debitNoteId = event.debitNoteId;
         const debitNote = await this.paymentService.getDebitNote(debitNoteId);
         this.debitNoteEvents.next({

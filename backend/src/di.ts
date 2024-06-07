@@ -15,6 +15,7 @@ export const container = awilix.createContainer<{
   YagnaConfig: {
     appKey: string;
     apiUrl: string;
+    subnetTag: string;
   };
   connectionString: string;
   contractAddress: string;
@@ -46,6 +47,7 @@ container.register({
   YagnaConfig: awilix.asValue({
     appKey: process.env.YAGNA_APPKEY || "",
     apiUrl: process.env.YAGNA_API_URL || "",
+    subnetTag: process.env.YAGNA_SUBNET || "",
   }),
 });
 

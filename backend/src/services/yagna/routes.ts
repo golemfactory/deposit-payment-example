@@ -231,8 +231,9 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
         eventStream.subscribe((event) => {
           socket.emit("event", event);
         });
-        done();
       });
     }
   );
+  done();
+
 });

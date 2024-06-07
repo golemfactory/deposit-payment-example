@@ -1,12 +1,25 @@
+import { useCurrentAgreement } from "hooks/useCurrentAgreement";
 import { Card } from "react-daisyui";
 
 export const Action = () => {
-  return (
-    <Card className="h-48 mt-10">
-      <Card.Body>
-        <Card.Title>Action</Card.Title>
-        This is the description of the action
-      </Card.Body>
-    </Card>
-  );
-};
+  const currentAgreement = useCurrentAgreement(); 
+  return <>
+    {
+     currentAgreement?.state === 'Approved' ? (
+        <Card>
+          <Card.Body>
+            <Card.Title className="justify center"></Card.Title>
+            <div className="flex flex-col justify-between">
+              <div className="stat">
+                <div className="stat-title">Agreement</div>
+                <div className="stat-value">Signed</div>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+      ) : (
+        ''
+      )
+    }
+  </>
+}

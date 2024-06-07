@@ -1,9 +1,7 @@
-import useSWRSubscription from "swr/subscription";
 import { io } from "socket.io-client";
 import { useEffect, useRef, useState } from "react";
 import { useLocalStorage } from "hooks/useLocalStorage";
-import { Subject, merge } from "rxjs";
-import { string } from "ts-pattern/dist/patterns";
+import { merge } from "rxjs";
 import { Event } from "types/events";
 import { match } from "ts-pattern";
 import { useEvents } from "./useEvents";
@@ -14,14 +12,35 @@ enum yagnaEventTopic {
   agreement = "agreement",
 }
 
+enum yagnaEventType {
+  AgreementTerminatedEvent = "AgreementTerminatedEvent",
+  AgreementApprovedEvent = "AgreementApprovedEvent",
+  InvoiceCreatedEvent = "InvoiceCreatedEvent",
+  DebitNoteReceivedEvent = "DebitNoteReceivedEvent",
+}
+
+const yagnaEventTypeByTopic = {
+  debitNote: [yagnaEventType.DebitNoteReceivedEvent],
+  invoice: [yagnaEventType.InvoiceCreatedEvent],
+  agreement: [
+    yagnaEventType.AgreementApprovedEvent,
+    yagnaEventType.AgreementTerminatedEvent,
+  ],
+};
+
 //As ya-ts-client doet not provide the event type, we need to create a mapper
 
+const isInTopic = (topic: yagnaEventTopic) => (eventType: yagnaEventType) => {
+  return yagnaEventTypeByTopic[topic].includes(eventType);
+};
+
 export const getEventKind = (yagnaEventType: string): Event => {
-  console.log("yagnaEventType", yagnaEventType);
+  console.log("got new yagna event", yagnaEventType);
   return match(yagnaEventType)
     .with("AgreementTerminatedEvent", () => Event.AGREEMENT_TERMINATED)
     .with("AgreementApprovedEvent", () => Event.AGREEMENT_SIGNED)
     .with("InvoiceCreatedEvent", () => Event.NEW_INVOICE)
+    .with("DebitNoteReceivedEvent", () => Event.NEW_DEBIT_NOTE)
     .otherwise(() => {
       throw new Error(`Unknown event type: ${yagnaEventType}`);
     });
@@ -38,7 +57,7 @@ export const useYagnaEvent = (event: yagnaEventTopic) => {
   const socketRef = useRef(socketFactory(event));
 
   const { events$, emit } = useEvents({
-    key: `yagna${event.toUpperCase()}Events`,
+    key: `yagna${event[0].toUpperCase()}${event.substring(1)}Events`,
     eventKind: getEventKind,
   });
 
@@ -48,6 +67,7 @@ export const useYagnaEvent = (event: yagnaEventTopic) => {
       socketRef.current.connect();
 
       socketRef.current.on("event", (data: any) => {
+        if (!isInTopic(event)(data.event.eventType)) return;
         emit({ id: data.id, ...data[event] }, data.event.eventType);
       });
     }
@@ -56,6 +76,11 @@ export const useYagnaEvent = (event: yagnaEventTopic) => {
   return {
     events$,
   };
+};
+
+export const useDebitNoteEvents = () => {
+  const { events$ } = useYagnaEvent(yagnaEventTopic.debitNote);
+  return { events$ };
 };
 
 export const useYagnaEvents = () => {
@@ -67,6 +92,12 @@ export const useYagnaEvents = () => {
     yagnaEventTopic.agreement
   );
 
+  useEffect(() => {
+    agreementEvents$.subscribe((event) => {
+      console.log("event", event);
+    })
+
+  }, []);
   return {
     events$: merge(debitNoteEvents$, invoiceEvents$, agreementEvents$),
   };

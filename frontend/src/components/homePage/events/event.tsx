@@ -167,6 +167,30 @@ const DepositExtendedEvent = (event: {
   );
 };
 
+const NewDebitNoteEvent = (event: {
+  kind: Event.NEW_DEBIT_NOTE;
+  payload: Payload[Event.NEW_DEBIT_NOTE];
+}) => {
+  return (
+    <Card bordered={true}>
+      <Card.Body>
+        <Card.Title>Debit Note Received</Card.Title>
+        {/* <div>
+          <div>
+            Agreement ID: <ShortLink id={event.payload.agreementId}></ShortLink>
+          </div>
+          <div>
+            ProviderId :{" "}
+            <EtherScanLink
+              hash={event.payload.offer.providerId}
+              route="address"
+            ></EtherScanLink>
+          </div>
+        </div> */}
+      </Card.Body>
+    </Card>
+  );
+};
 export const EventCard = (event: EventType) => {
   return (
     <motion.div variants={variants} initial="hidden" animate="visible">
@@ -184,6 +208,8 @@ export const EventCard = (event: EventType) => {
             return <AgreementCreatedEvent {...event} />;
           case Event.AGREEMENT_TERMINATED:
             return <AgreementTerminatedEvent {...event} />;
+          case Event.NEW_DEBIT_NOTE:
+            return <NewDebitNoteEvent {...event} />;
         }
       })()}
     </motion.div>
