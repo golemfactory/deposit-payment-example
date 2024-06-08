@@ -1,20 +1,27 @@
 import axios from "axios";
+import { useUser } from "hooks/useUser";
+import { useState } from "react";
 import useSWR from "swr";
 import { parseEther } from "viem";
 
+import * as YaTsClient from "ya-ts-client";
+
+export type AllocationDTO = YaTsClient.PaymentApi.AllocationDTO;
+
 export const useCurrentAllocation = () => {
-  const { data, error } = useSWR<{
-    totalAmount: string;
-    spentAmount: string;
-    remainingAmount: string;
-  }>(
+  const { user } = useUser();
+
+  const { data, error } = useSWR<AllocationDTO>(
     `${import.meta.env.VITE_BACKEND_HTTP_URL}/allocation`,
     async (url) => {
       const response = await axios.get(url);
       return response.data;
     },
     {
-      refreshInterval: 10000,
+      isPaused: () => {
+        return user.currentAllocation?.id === undefined;
+      },
+      refreshInterval: 1000,
     }
   );
 

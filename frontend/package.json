@@ -43,7 +43,8 @@
     "usehooks-ts": "^3.1.0",
     "uuid": "^9.0.1",
     "viem": "~2.7.19",
-    "wagmi": "^2.5.7"
+    "wagmi": "^2.5.7",
+    "ya-ts-client": "^1.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.56",

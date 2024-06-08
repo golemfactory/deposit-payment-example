@@ -1,10 +1,9 @@
-import React, {
+import {
   PropsWithChildren,
   createContext,
   useContext,
   useState,
   ReactNode,
-  useEffect,
 } from "react";
 
 const LayoutContext = createContext({
@@ -33,7 +32,6 @@ export const LayoutProvider = ({ children }: PropsWithChildren) => {
           setIsModalOpen(true);
         },
         hideModal: () => {
-          console.log("hide modal");
           setIsModalOpen(false);
         },
         modalContent: modalContent,

@@ -57,6 +57,7 @@ export function useApprove() {
     isLoading,
     isError: isTxError,
     data: txData,
+    isSuccess,
   } = useWaitForTransactionReceipt({
     hash: txHash,
   });
@@ -87,5 +88,6 @@ export function useApprove() {
     },
     isProcessing: isPending || isLoading,
     approveData: txData,
+    isSuccess,
   };
 }

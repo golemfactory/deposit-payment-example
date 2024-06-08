@@ -1,7 +1,7 @@
 import { useUser } from "hooks/useUser";
 import { useEffect, useState } from "react";
-import { useCreateAgreement } from "hooks/useCreateAgreement";
-import { useReleaseAgreement } from "hooks/useReleaseAgreement";
+import { useCreateAgreement } from "hooks/yagna/useCreateAgreement";
+import { useReleaseAgreement } from "hooks/yagna/useReleaseAgreement";
 import { ShortLink } from "components/shortLink";
 import { useDebitNoteEvents } from "hooks/events/useYagnaEvents";
 import { formatBalance } from "utils/formatBalance";

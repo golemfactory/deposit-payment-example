@@ -10,15 +10,12 @@ import { useEffect, useRef, useState } from "react";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
 import { useUser } from "hooks/useUser";
-import { formatEther, parseEther, toHex } from "viem";
+import { parseEther } from "viem";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
 import { useHandleRpcError } from "hooks/useHandleRpcError";
 import dayjs from "dayjs";
-import { useEvents } from "hooks/events/useEvents";
-import { Event } from "types/events";
 import { useDepositCreatedEvents } from "hooks/events/useDepositCreatedEvents";
 import { useDepositExtendedEvents } from "hooks/events/useDepositExtendedEvents";
-import { use } from "i18next";
 import { ZERO_ADDRESS } from "types/zero";
 
 export function useCreateDeposit() {
@@ -134,12 +131,6 @@ export function useUserCurrentDeposit() {
       refetchInterval: 1000,
     },
   });
-
-  useEffect(() => {
-    if (isSuccess && data) {
-      console.log("deposit data", data);
-    }
-  }, [isSuccess, data]);
 
   return {
     ...(data?.[0] === ZERO_ADDRESS

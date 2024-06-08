@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useCreateAllocation } from "hooks/useCreateAllocation";
+import { useCreateAllocation } from "hooks/yagna/useCreateAllocation";
 import { Card, Loading } from "react-daisyui";
 import { Button } from "./atoms/button";
 export const GolemManagerForm = ({ isVisible }: { isVisible: boolean }) => {

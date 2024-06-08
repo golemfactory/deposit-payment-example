@@ -7,7 +7,7 @@
     "test": "jest",
     "prepare": "husky",
     "dev": "zx startup.mjs",
-    "loginWithCrypto": "pnpm --filter loginWithCrypto", 
+    "loginWithCrypto": "pnpm --filter loginWithCrypto",
     "build:golem-js": "pnpm --filter golem-js build",
     "build:task-executor": "pnpm --filter @golem-sdk/task-executor build",
     "build:ya-ts-client": "pnpm --filter ya-ts-client build",
@@ -28,7 +28,8 @@
     "husky": "^9.0.11"
   },
   "dependencies": {
-    "@types/jest": "^29.5.12"
+    "@types/jest": "^29.5.12",
+    "ya-ts-client": "^1.1.1"
   },
   "workspaces": [
     "loginWithCrypto",

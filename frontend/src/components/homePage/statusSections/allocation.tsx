@@ -1,8 +1,8 @@
 import { ShortLink } from "components/shortLink";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
-import { useCreateAllocation } from "hooks/useCreateAllocation";
-import { useCurrentAllocation } from "hooks/useCurrentAllocation";
-import { useReleaseAllocation } from "hooks/useReleaseAllocation";
+import { useCreateAllocation } from "hooks/yagna/useCreateAllocation";
+import { useCurrentAllocation } from "hooks/yagna/useCurrentAllocation";
+import { useReleaseAllocation } from "hooks/yagna/useReleaseAllocation";
 import { useUser } from "hooks/useUser";
 import { Loading } from "react-daisyui";
 import { formatBalance } from "utils/formatBalance";
@@ -14,7 +14,6 @@ export const Allocation = () => {
   const { releaseAllocation } = useReleaseAllocation();
   const { user } = useUser();
 
-  console.log("currentAllocation", currentAllocation);
   return (
     <div className="stats shadow mt-2 ">
       <div

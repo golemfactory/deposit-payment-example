@@ -16,8 +16,8 @@ import { EventWithPayload } from "types/reducerArgs";
 import { UserState, UserAction, UserStateOrderValue } from "types/user";
 import { useAccount, useReadContract } from "wagmi";
 import { useChainId } from "hooks/useChainId";
-import { useCurrentAgreement } from "hooks/useCurrentAgreement";
-import { useLocalStorage } from 'hooks/useLocalStorage'
+import { useCurrentAgreement } from "hooks/yagna/useCurrentAgreement";
+import { useLocalStorage } from "hooks/useLocalStorage";
 
 import debug from "debug";
 
@@ -134,7 +134,7 @@ type Payload = {
   [UserAction.HAS_ALLOCATION]: {
     currentAllocation: unknown;
   };
-  
+
   [UserAction.HAS_NO_ALLOCATION]: {
     currentAllocation: null;
   };
@@ -149,7 +149,7 @@ const userActionReducer = (
   action: EventWithPayload<Payload>
 ) => {
   const { kind, payload = {} } = action;
-  const state : UserState = match(kind)
+  const state: UserState = match(kind)
     .with(UserAction.CONNECT, () => UserState.CONNECTED)
     .with(UserAction.DISCONNECT, () => UserState.DISCONNECTED)
     .with(UserAction.LOGIN, () => UserState.LOGGING_IN)
@@ -206,8 +206,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     },
   });
 
-
-  useEffect(() => { 
+  useEffect(() => {
     if (address && accessToken) {
       dispatch({ kind: UserAction.REGISTER });
     }

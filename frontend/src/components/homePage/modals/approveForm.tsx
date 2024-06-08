@@ -2,19 +2,26 @@ import { config } from "config";
 import { useApprove } from "hooks/GLM/useGLMApprove";
 import { useUser } from "hooks/useUser";
 import { Button, Loading } from "react-daisyui";
-import { formatEther, parseEther } from "viem";
-import { LoadingSpinner } from "../../loadingSpinner";
+import { parseEther } from "viem";
 import { useBalance } from "hooks/useBalance";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatBalance } from "utils/formatBalance";
-import { number } from "ts-pattern/dist/patterns";
 import { GolemCoinIcon } from "../../atoms/golem.coin.icon";
+import { useLayout } from "components/providers/layoutProvider";
 
 export const ApproveForm = () => {
   const { user } = useUser();
-  const { approve, isProcessing } = useApprove();
+  const { approve, isProcessing, isSuccess } = useApprove();
   const { GLM } = useBalance();
   const [amount, setAmount] = useState(Number(formatBalance(GLM)));
+  const { hideModal } = useLayout();
+
+  useEffect(() => {
+    if (isSuccess) {
+      hideModal();
+    }
+  }, [isSuccess]);
+
   return (
     <div>
       In order to properly use the service you need to allow service <br /> to

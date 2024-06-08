@@ -7,9 +7,7 @@ import { use } from "i18next";
 export const UpsertDepositPresentational = ({
   title,
   subtitle,
-  amount,
   setAmount,
-  fee,
   setFee,
   validToTimestamp,
   setValidToTimestamp,
@@ -31,10 +29,6 @@ export const UpsertDepositPresentational = ({
   isPending: boolean;
   errorContext?: RPC_ERROR_CONTEXT[];
 }) => {
-  useEffect(() => {
-    console.log("validToTimestamp", validToTimestamp);
-    console.log("s", dayjs(validToTimestamp * 1000).format("YYYY-MM-DD"));
-  }, [validToTimestamp]);
   return (
     <>
       <div className="flex flex-row justify-between w-full">{title}</div>

@@ -11,6 +11,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
+      ya-ts-client:
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       '@commitlint/cli':
         specifier: ^18.6.1
@@ -232,6 +235,9 @@ importers:
       wagmi:
         specifier: ^2.5.7
         version: 2.9.9(@tanstack/react-query@5.40.1)(@types/react@18.3.3)(react-dom@18.3.1)(react-i18next@13.5.0)(react-native@0.74.2)(react@18.3.1)(typescript@5.4.5)(viem@2.7.22)
+      ya-ts-client:
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       '@types/react':
         specifier: ^18.2.56
@@ -17195,6 +17201,11 @@ packages:
   /y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
     engines: {node: '>=10'}
+
+  /ya-ts-client@1.1.1:
+    resolution: {integrity: sha512-luRbCSoDsWFUS9D41RbeNhFBH7Rm7exmhW2R8NgtIphhCFzDfpNUD5d1R7OybWdvW50eind3ZigqaXK54zhIbQ==}
+    engines: {node: '>=18.0.0'}
+    dev: false
 
   /yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
