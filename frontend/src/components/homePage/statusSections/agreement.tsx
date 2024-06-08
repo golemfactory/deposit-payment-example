@@ -1,7 +1,6 @@
 import { useUser } from "hooks/useUser";
 import {  useEffect, useState } from "react";
 import { useCreateAgreement } from "hooks/useCreateAgreement";
-import { useCurrentAgreement } from "hooks/useCurrentAgreement";
 import { useReleaseAgreement } from "hooks/useReleaseAgreement";
 import { ShortLink } from "components/shortLink";
 import { useDebitNoteEvents } from "hooks/events/useYagnaEvents";

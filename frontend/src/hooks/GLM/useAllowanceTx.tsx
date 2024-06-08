@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useAccount, useWatchContractEvent } from "wagmi";
+import { useAccount } from "wagmi";
 
-import { createPublicClient, getAddress, http } from "viem";
+import { createPublicClient, http } from "viem";
 import { holesky } from "viem/chains";
 import { abi } from "./abi";
 import { config } from "config";
@@ -16,7 +16,10 @@ export const useAllowanceTx = () => {
   const { data: requestor } = useRequestorWalletAddress();
   const client = useMemo(
     () =>
+    //  this is internal problem of the viem. 
+    // TODO : investigate type incompatible issue
       createPublicClient({
+        // @ts-ignore
         chain: holesky,
         transport: http(),
       }),
@@ -37,7 +40,6 @@ export const useAllowanceTx = () => {
         },
         fromBlock: block.number - 1000n,
       });
-      console.log("logs", logs);
       return logs;
     };
 
@@ -56,43 +58,6 @@ export const useAllowanceTx = () => {
     });
   }, [address, requestor?.wallet]);
 
-  // useWatchContractEvent({
-  //   address: config.GLMContractAddress[holesky.id],
-  //   abi: abi,
-  //   eventName: "Transfer",
-  //   // args: {
-  //   //   owner: address,
-  //   //   spender: requestor?.wallet,
-  //   // },
-  //   onLogs: (logs) => {
-  //     const newApprove = logs.sort(
-  //       (a, b) => Number(a.blockNumber) - Number(b.blockNumber)
-  //     )[logs.length - 1];
 
-  //     if (newApprove.transactionHash) {
-  //       setTxHash(newApprove.transactionHash);
-  //     }
-  //   },
-  // });
-
-  // useWatchContractEvent({
-  //   address: config.GLMContractAddress[holesky.id],
-  //   abi: abi,
-  //   eventName: "Approval",
-  //   // args: {
-  //   //   owner: address,
-  //   //   spender: requestor?.wallet,
-  //   // },
-  //   onLogs: (logs) => {
-  //     console.log("New approval", logs);
-  //     const newApprove = logs.sort(
-  //       (a, b) => Number(a.blockNumber) - Number(b.blockNumber)
-  //     )[logs.length - 1];
-
-  //     if (newApprove.transactionHash) {
-  //       setTxHash(newApprove.transactionHash);
-  //     }
-  //   },
-  // });
   return { txHash };
 };

@@ -1,6 +1,5 @@
 import { config } from "config";
 import { useAllowance } from "hooks/GLM/useGLMApprove";
-import { useLogin } from "hooks/useLogin";
 import { useUserData } from "hooks/userUserData";
 import { abi as depositContractAbi } from "hooks/depositContract/abi";
 
@@ -18,7 +17,14 @@ import { UserState, UserAction, UserStateOrderValue } from "types/user";
 import { useAccount, useReadContract } from "wagmi";
 import { useChainId } from "hooks/useChainId";
 import { useCurrentAgreement } from "hooks/useCurrentAgreement";
-import { use } from "i18next";
+import { useLocalStorage } from 'hooks/useLocalStorage'
+
+import debug from "debug";
+
+const log = debug("userProvider");
+
+log("UserProvider");
+
 type UserProps = {
   state: UserState;
   allowanceAmount?: bigint;
@@ -171,7 +177,6 @@ const userActionReducer = (
 
 export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const { isConnected, address } = useAccount();
-  const { login, tokens, isLoggingIn } = useLogin();
   const chainId = useChainId();
   const [currentDepositNonce, setCurrentDepositNonce] = useState(0n);
   const { data: userData, isLoading: isUserLoading } = useUserData();
@@ -179,10 +184,8 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const [isRegistered, setIsRegistered] = useState(false);
   const currentAgreement = useCurrentAgreement();
 
-  useEffect(() => {
-    console.log("currentAgreement", currentAgreement);
-  }, [currentAgreement]);
-
+  // const accessToken = useLocalStorage("accessToken");
+  const [accessToken] = useLocalStorage("accessToken");
   const [user, dispatch] = useReducer(
     userActionReducer,
     isConnected
@@ -203,18 +206,12 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     },
   });
 
-  useEffect(() => {
-    if (isLoggingIn) {
-      dispatch({ kind: UserAction.LOGIN });
-    }
-  }, [isLoggingIn]);
 
-  useEffect(() => {
-    if (address && tokens?.accessToken) {
+  useEffect(() => { 
+    if (address && accessToken) {
       dispatch({ kind: UserAction.REGISTER });
-      setIsRegistered(true);
     }
-  }, [tokens, address]);
+  }, [accessToken, address]);
 
   useEffect(() => {
     const currentDeposit = (userData?.deposits || []).find(
@@ -291,7 +288,8 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
 
   return (
     <UserContext.Provider
-      value={{ user: { ...withUserInterface(user), login, currentAgreement } }}
+      //@ts-ignore
+      value={{ user: { ...withUserInterface(user), currentAgreement } }}
     >
       {children}
     </UserContext.Provider>
