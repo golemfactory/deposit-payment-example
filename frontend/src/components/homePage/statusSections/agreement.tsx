@@ -1,5 +1,5 @@
 import { useUser } from "hooks/useUser";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCreateAgreement } from "hooks/useCreateAgreement";
 import { useReleaseAgreement } from "hooks/useReleaseAgreement";
 import { ShortLink } from "components/shortLink";
@@ -11,10 +11,10 @@ export const Agreement = () => {
   const { user } = useUser();
   const { createAgreement } = useCreateAgreement();
   const { releaseAgreement } = useReleaseAgreement();
-  const { events$} = useDebitNoteEvents();
-  const [ totalAmount, setTotalAmount ] = useState('-');
+  const { events$ } = useDebitNoteEvents();
+  const [totalAmount, setTotalAmount] = useState("-");
   useEffect(() => {
-    events$.subscribe((event : any) => {
+    events$.subscribe((event: any) => {
       setTotalAmount(event.payload.totalAmountDue);
     });
   }, []);
@@ -22,20 +22,30 @@ export const Agreement = () => {
     <div
       className="stats shadow mt-2"
       style={{
-        opacity: user.hasEnoughAllowance() ? 1 : 0.3,
+        opacity: user.hasAllocation() ? 1 : 0.3,
       }}
     >
       <div className="stat">
         <div className="stat-title">Agreement</div>
-      <div className="stat-value">
-          <ShortLink id={user?.currentAgreement?.id}></ShortLink>
+        <div className="stat-value">
+          {user.currentAgreement?.id ? (
+            <ShortLink id={user?.currentAgreement?.id}></ShortLink>
+          ) : (
+            "-"
+          )}
         </div>
       </div>
 
       <div className="stat">
         <div className="stat-title">Total</div>
         <div className="stat-value">
-          <GLMAmountStat amount={formatBalance(parseEther(totalAmount))} />
+          {user.currentAgreement?.id ? (
+            <GLMAmountStat
+              amount={formatBalance(parseEther(totalAmount))}
+            ></GLMAmountStat>
+          ) : (
+            "-"
+          )}
         </div>
       </div>
       <div className="stat"></div>
@@ -59,6 +69,7 @@ export const Agreement = () => {
           ) : (
             <button
               className="btn"
+              {...(user.hasAllocation() ? {} : { disabled: true })}
               onClick={() => {
                 createAgreement();
               }}

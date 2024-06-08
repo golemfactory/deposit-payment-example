@@ -14,6 +14,7 @@ export const Allocation = () => {
   const { releaseAllocation } = useReleaseAllocation();
   const { user } = useUser();
 
+  console.log("currentAllocation", currentAllocation);
   return (
     <div className="stats shadow mt-2 ">
       <div
@@ -93,6 +94,7 @@ export const Allocation = () => {
           ) : (
             <button
               className="btn"
+              {...(user.hasDeposit() ? {} : { disabled: true })}
               onClick={() => {
                 createAllocation();
               }}
