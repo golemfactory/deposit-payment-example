@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useUploadFile } from "./providers/fileUploader";
-import { Button } from "react-daisyui";
-import { ScanResults } from "components/ScanResults";
+import { Button, Card } from "react-daisyui";
 
 export const FileUploader = () => {
   const [files, setFiles] = useState<FileList | null>(null);
@@ -15,6 +14,7 @@ export const FileUploader = () => {
 
   useEffect(() => {
     if (files) {
+      console.log("upkoad", files);
       [...files].forEach(upload);
     }
   }, [files]);
@@ -31,7 +31,11 @@ export const FileUploader = () => {
   };
 
   return (
-    <div className="w-[30vw] flex flex-col justify-center absolute top-[30vh]">
+    <Card
+      className="border-dashed h-48"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <input
         type="file"
         onChange={handleFileChange}
@@ -39,29 +43,19 @@ export const FileUploader = () => {
         hidden
         ref={fileInputRef}
       />
-      <div
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        className=" p-20  border-dashed border-2 border-golemblue-transparent rounded-lg"
-        style={{
-          backgroundColor: "#0000005b",
-        }}
-      >
-        Drag & Drop files here or{" "}
-        <Button
-          onClick={() => {
-            fileInputRef.current?.click();
-          }}
-          className="ml-4 bg-golemblue-transparent border-none text-white"
-          style={{
-            backgroundColor: "#181ea9a6",
-          }}
-        >
-          Click to Upload
-        </Button>
-      </div>
-      <div className="mt-10"></div>
-      <ScanResults />
-    </div>
+      <Card.Body>
+        <Card.Title> Drag & Drop files here or </Card.Title>
+        <div className="grid grid-cols-6">
+          <Button
+            className="col-start-3 col-span-2"
+            onClick={() => {
+              fileInputRef.current?.click();
+            }}
+          >
+            Click to Upload
+          </Button>
+        </div>
+      </Card.Body>
+    </Card>
   );
 };

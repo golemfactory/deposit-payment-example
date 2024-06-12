@@ -22,7 +22,6 @@ export const paymentService = (
           functionName: "deposits",
           args: [id],
         });
-        console.log("deposit", deposit);
         resolve({
           amount: deposit[1],
           feeAmount: deposit[2],

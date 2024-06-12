@@ -8,12 +8,12 @@ export enum Event {
   FILE_SCAN_ERROR = "FILE_SCAN_ERROR",
   NEW_INVOICE = "NEW_INVOICE",
   AGREEMENT_TERMINATED = "AGREEMENT_TERMINATED",
-  PROVIDER_PAID = "PROVIDER_PAID",
   ALLOCATION_RELEASED = "ALLOCATION_RELEASED",
-  PAYMENT_FOR_GAS = "PAYMENT_FOR_GAS",
   DEPOSIT_RELEASED = "DEPOSIT_RELEASED",
   DEPOSIT_EXTENDED = "DEPOSIT_EXTENDED",
   NEW_DEBIT_NOTE = "NEW_DEBIT_NOTE",
+  DEPOSIT_PROVIDER_PAYMENT = "DEPOSIT_PAYMENT",
+  DEPOSIT_FEE_PAYMENT = "DEPOSIT_FEE_PAYMENT",
 }
 
 export type Payload = {
@@ -34,6 +34,7 @@ export type Payload = {
     fee: number;
     validityTimestamp: number;
   };
+
   [Event.ALLOCATION_CREATED]: {
     allocationId: string;
     amount: number;
@@ -43,9 +44,11 @@ export type Payload = {
   [Event.FILE_SCAN_OK]: {
     fileId: string;
   };
+
   [Event.FILE_SCAN_ERROR]: {
     fileId: string;
   };
+
   [Event.NEW_INVOICE]: {
     agreementId: string;
     invoiceId: string;
@@ -58,19 +61,27 @@ export type Payload = {
       providerId: `0x${string}`;
     };
   };
+
   [Event.AGREEMENT_TERMINATED]: {
     agreementId: string;
   };
 
-  [Event.PROVIDER_PAID]: {
-    agreementId: string;
-  };
   [Event.ALLOCATION_RELEASED]: {
     allocationId: string;
   };
-  [Event.PAYMENT_FOR_GAS]: {
-    agreementId: string;
+
+  [Event.DEPOSIT_FEE_PAYMENT]: {
+    depositId: string;
+    amount: number;
+    txHash: `0x${string}`;
   };
+
+  [Event.DEPOSIT_PROVIDER_PAYMENT]: {
+    depositId: string;
+    amount: number;
+    txHash: `0x${string}`;
+  };
+
   [Event.NEW_DEBIT_NOTE]: {};
 };
 

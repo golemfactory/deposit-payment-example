@@ -6,6 +6,8 @@ import { uniqBy, sortBy, prop } from "ramda";
 import { useDepositEvents } from "hooks/events/useDepositEvents";
 import { useYagnaEvents } from "hooks/events/useYagnaEvents";
 import { merge } from "rxjs";
+import { useDepositPaymentEvents } from "hooks/events/usePaymentEvents";
+import { useScanResults } from "hooks/useScanResults";
 
 export const Events = () => {
   const [events, setEvents] = useState<
@@ -18,12 +20,16 @@ export const Events = () => {
   const { events$: allocationEvents$ } = useAllocationEvents();
   const { events$: depositEvents$ } = useDepositEvents();
   const { events$: yagnaEvents$ } = useYagnaEvents();
+  const { events$: paymentEvents$ } = useDepositPaymentEvents();
+  const { events$: fileEvents$ } = useScanResults();
 
   useEffect(() => {
     const sub = merge(
       allocationEvents$,
       depositEvents$,
-      yagnaEvents$
+      yagnaEvents$,
+      paymentEvents$,
+      fileEvents$
     ).subscribe(
       (
         event: EventType & {
@@ -58,4 +64,10 @@ export const Events = () => {
       })}
     </>
   );
+};
+
+window.cleanup = () => {
+  localStorage.yagnaAgreementEvents = "";
+  localStorage.yagnaDepositEvents = "";
+  localStorage.yagnaDebitNoteEvents = "";
 };

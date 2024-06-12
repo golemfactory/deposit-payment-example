@@ -18,7 +18,7 @@ export const useCurrentAgreement = () => {
       isPaused: () => {
         return user.currentAllocation?.id === undefined;
       },
-      refreshInterval: 10000,
+      refreshInterval: 1000,
     }
   );
 

@@ -35,7 +35,6 @@ const isInTopic = (topic: yagnaEventTopic) => (eventType: yagnaEventType) => {
 };
 
 export const getEventKind = (yagnaEventType: string): Event => {
-  console.log("got new yagna event", yagnaEventType);
   return match(yagnaEventType)
     .with("AgreementTerminatedEvent", () => Event.AGREEMENT_TERMINATED)
     .with("AgreementApprovedEvent", () => Event.AGREEMENT_SIGNED)
@@ -92,12 +91,6 @@ export const useYagnaEvents = () => {
     yagnaEventTopic.agreement
   );
 
-  useEffect(() => {
-    agreementEvents$.subscribe((event) => {
-      console.log("event", event);
-    })
-
-  }, []);
   return {
     events$: merge(debitNoteEvents$, invoiceEvents$, agreementEvents$),
   };

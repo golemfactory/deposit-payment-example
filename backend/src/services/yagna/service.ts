@@ -98,11 +98,9 @@ export class Yagna {
     //which is HARDCODED in yagna we make worker which under the hood makes activity
     // which prevents agreement from closing
     const worker = await this.getUserWorker(userId);
-    console.log("Activity created", worker.context?.activity.id);
     const agreement = await executor.getAgreement();
     container.cradle.userService.setCurrentAgreementId(userId, agreement.id);
     agreement.events.on("terminated", (e: any) => {
-      console.log("agreement terminated", e);
       this.agreementEvents.next({
         agreement,
         event: "terminated",
@@ -303,7 +301,6 @@ export class Yagna {
           throw new Error({ code: ErrorCode.NO_ALLOCATION });
         }
 
-        debugLog("payments", "creating agreement", userId);
         executor
           .run(async (ctx: WorkContext) => {
             newWorker.context = ctx;

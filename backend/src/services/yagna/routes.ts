@@ -86,40 +86,13 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
   fastify.post("/create-agreement", {
     onRequest: [fastify.authenticate],
     handler: async (request, reply) => {
-      console.log("making agreement");
       const requestUser = request.user;
       const Yagna = container.cradle.Yagna;
-      const user = await container.cradle.userService.getUserById(
-        requestUser._id
-      );
       try {
-        const agreement = await Yagna.makeAgreement(requestUser._id);
-
-        console.log("agreement", agreement);
+        await Yagna.makeAgreement(requestUser._id);
       } catch (e) {
         console.log("error", e);
       }
-
-      // const requestUser = request.user;
-      // const Yagna = container.cradle.Yagna;
-      // const user = await container.cradle.userService.getUserById(
-      //   requestUser._id
-      // );
-      // const worker = await Yagna.getUserWorker(requestUser._id);
-      // await worker.context?.activity.start();
-      // if (!user?.currentAllocationId) {
-      //   reply.code(500).send({
-      //     message: "No allocation found",
-      //   });
-      // } else {
-      //   container.cradle.userService.setCurrentActivityId(
-      //     requestUser._id,
-      //     worker.context?.activity.id
-      //   );
-      //   reply
-      //     .code(201)
-      //     .send(container.cradle.userService.getUserDTO(requestUser._id));
-      // }
     },
   });
 
@@ -205,9 +178,6 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
         next();
       });
       fastify.io.of(`/${eventType}`).on("connection", async (socket) => {
-        console.log("--------------");
-        console.log("connected to", eventType);
-        console.log("--------------");
         const user = jwtDecode<{
           _id: string;
         }>(socket.handshake.auth.token);

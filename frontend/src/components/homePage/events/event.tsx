@@ -191,6 +191,105 @@ const NewDebitNoteEvent = (event: {
     </Card>
   );
 };
+
+const DepositProviderPaymentEvent = (event: {
+  kind: Event.DEPOSIT_PROVIDER_PAYMENT;
+  payload: Payload[Event.DEPOSIT_PROVIDER_PAYMENT];
+}) => {
+  return (
+    <Card bordered={true}>
+      <Card.Body>
+        <Card.Title>Provider Payment</Card.Title>
+        <div>
+          <div>
+            Agreement ID: <ShortLink id={event.payload.depositId}></ShortLink>
+          </div>
+          <div>
+            ProviderId :{" "}
+            <EtherScanLink
+              hash={event.payload.txHash}
+              route="address"
+            ></EtherScanLink>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const NewInvoiceEvent = (event: {
+  kind: Event.NEW_INVOICE;
+  payload: Payload[Event.NEW_INVOICE];
+}) => {
+  return (
+    <Card bordered={true}>
+      <Card.Body>
+        <Card.Title>New Invoice</Card.Title>
+        <div>
+          <div>
+            Agreement ID: <ShortLink id={event.payload.agreementId}></ShortLink>
+          </div>
+          <div>
+            Invoice ID: <ShortLink id={event.payload.invoiceId}></ShortLink>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const DepositFeePaymentEvent = (event: {
+  kind: Event.DEPOSIT_FEE_PAYMENT;
+  payload: Payload[Event.DEPOSIT_FEE_PAYMENT];
+}) => {
+  return (
+    <Card bordered={true}>
+      <Card.Body>
+        <Card.Title>Deposit Fee Payment</Card.Title>
+        <div>
+          <div>
+            Transaction :{" "}
+            <EtherScanLink hash={event.payload.txHash}></EtherScanLink>
+          </div>
+          <div>
+            Amount:{" "}
+            <GLMAmountStat
+              amount={formatBalance(
+                parseEther(event.payload.amount.toString())
+              )}
+            ></GLMAmountStat>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const DepositProviderPayment = (event: {
+  kind: Event.DEPOSIT_PROVIDER_PAYMENT;
+  payload: Payload[Event.DEPOSIT_PROVIDER_PAYMENT];
+}) => {
+  return (
+    <Card bordered={true}>
+      <Card.Body>
+        <Card.Title>Deposit Provider Payment</Card.Title>
+        <div>
+          <div>
+            Agreement ID: <ShortLink id={event.payload.depositId}></ShortLink>
+          </div>
+          <div>
+            Transaction :{" "}
+            <EtherScanLink
+              hash={event.payload.txHash}
+              route="address"
+            ></EtherScanLink>
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
 export const EventCard = (event: EventType) => {
   return (
     <motion.div variants={variants} initial="hidden" animate="visible">
@@ -208,8 +307,12 @@ export const EventCard = (event: EventType) => {
             return <AgreementCreatedEvent {...event} />;
           case Event.AGREEMENT_TERMINATED:
             return <AgreementTerminatedEvent {...event} />;
-          case Event.NEW_DEBIT_NOTE:
-            return <NewDebitNoteEvent {...event} />;
+          case Event.NEW_INVOICE:
+            return <NewInvoiceEvent {...event} />;
+          case Event.DEPOSIT_FEE_PAYMENT:
+            return <DepositFeePaymentEvent {...event} />;
+          case Event.DEPOSIT_PROVIDER_PAYMENT:
+            return <DepositProviderPaymentEvent {...event} />;
         }
       })()}
     </motion.div>

@@ -3,7 +3,6 @@ import { useCreateAllocationEvents } from "./useCreateAllocationEvents";
 import { useReleaseAllocationEvents } from "./useReleaseAllocationEvents";
 
 export const useAllocationEvents = () => {
-  console.log("useAllocationEvents");
   const { events$: createAllocationEvents$ } = useCreateAllocationEvents();
   const { events$: releaseAllocationEvents$ } = useReleaseAllocationEvents();
 
