@@ -164,6 +164,7 @@ export class Yagna {
     // @ts-ignore
   }
   async getUserAllocation(userId: string) {
+    console.log("getting user allocation", userId);
     const user = await container.cradle.userService.getUserById(userId);
     if (!user) {
       throw new Error({ code: ErrorCode.USER_NOT_FOUND });
@@ -173,13 +174,9 @@ export class Yagna {
       return null;
     }
     const allocation = await this.paymentService.getAllocation(allocationId);
+    console.log("should be no allocation");
     if (!allocation) {
-      throw new Error({
-        code: ErrorCode.ALLOCATION_NOT_FOUND,
-        payload: {
-          allocationId,
-        },
-      });
+      return null;
     }
     return { ...allocation, id: allocationId };
   }
@@ -209,10 +206,19 @@ export class Yagna {
 
     const currentAmount = new bigDecimal.default(currentAllocation.totalAmount);
     const additionalAmount = new bigDecimal.default(amount);
+    console.log("calling yagna");
+    console.log(
+      "new total amout ",
+      currentAmount.add(additionalAmount).getValue()
+    );
 
-    return this.paymentService.amendAllocation(allocationId, {
-      totalAmount: currentAmount.add(additionalAmount).getValue(),
-    });
+    try {
+      this.paymentService.amendAllocation(allocationId, {
+        totalAmount: currentAmount.add(additionalAmount).getValue(),
+      });
+    } catch (e) {
+      console.log("error", e);
+    }
   }
 
   //task executor creates allocation as well
@@ -397,6 +403,11 @@ export class Yagna {
       events.forEach(async (event: any) => {
         const agreementId = event.agreementId;
         const agreement = await this.activityService.getAgreement(agreementId);
+
+        if (event.eventType === "AgreementTerminatedEvent") {
+          container.cradle.userService.onAgreementTerminated(agreementId);
+        }
+
         this.agreementEvents.next({
           id: uuidv4(),
           agreement,

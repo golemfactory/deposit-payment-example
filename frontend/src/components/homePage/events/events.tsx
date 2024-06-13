@@ -65,7 +65,7 @@ export const Events = () => {
     </>
   );
 };
-
+//@ts-ignore
 window.cleanup = () => {
   localStorage.yagnaAgreementEvents = "";
   localStorage.yagnaDepositEvents = "";

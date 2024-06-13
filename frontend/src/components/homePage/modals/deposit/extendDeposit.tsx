@@ -3,7 +3,7 @@ import {
   useExtendDeposit,
   useUserCurrentDeposit,
 } from "hooks/depositContract/useDeposit";
-import { useTopUpAllocation } from "hooks/useTopUpAllocation";
+import { useTopUpAllocation } from "hooks/yagna/useTopUpAllocation";
 import { useUser } from "hooks/useUser";
 import { useEffect } from "react";
 import { useWaitForTransactionReceipt } from "wagmi";
@@ -46,6 +46,7 @@ export const ExtendDeposit = () => {
       setNonce(user.currentDeposit?.nonce);
     }
     if (isSuccessTransaction && additionalAmount > 0) {
+      console.log("topping up", additionalAmount, isSuccessTransaction);
       topUp(additionalAmount);
       hideModal();
     }

@@ -3,17 +3,21 @@ import { useEvents } from "./events/useEvents";
 import { fileStatus } from "types/file";
 import { Event } from "types/events";
 import { match } from "ts-pattern";
+import { useFileUploader } from "components/providers/fileUploader";
 
 export const useScanResults = () => {
   const { emit, events$ } = useEvents({
     key: "scanResults",
     eventKind: (s: any) => {
-      return match(s.result)
+      console.log("Event kind", s);
+      return match(s)
         .with(fileStatus.CLEAN, () => Event.FILE_SCAN_OK)
         .with(fileStatus.INFECTED, () => Event.FILE_SCAN_ERROR)
         .otherwise(() => Event.FILE_SCAN_ERROR);
     },
   });
+
+  const { removeFile } = useFileUploader();
 
   useSWRSubscription("scanResult", (key, { next }) => {
     const eventSource = new WebSocket(
@@ -23,6 +27,7 @@ export const useScanResults = () => {
     eventSource.addEventListener("message", (event) => {
       const file = JSON.parse(event.data);
       console.log("Emmiting event", file);
+      removeFile(file.id);
       emit(file, file.result);
     });
 

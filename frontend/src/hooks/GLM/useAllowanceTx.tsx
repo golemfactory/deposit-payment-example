@@ -7,17 +7,18 @@ import { abi } from "./abi";
 import { config } from "config";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
 import { ZERO_ADDRESS } from "types/zero";
+import { useLocalStorage } from "hooks/useLocalStorage";
 
 type WithBlockNumber<T> = T & { blockNumber: bigint };
 
 export const useAllowanceTx = () => {
   const { address } = useAccount();
-  const [txHash, setTxHash] = useState<`0x${string}`>();
+  const [txHash, setTxHash] = useLocalStorage("0x");
   const { data: requestor } = useRequestorWalletAddress();
   const client = useMemo(
     () =>
-    //  this is internal problem of the viem. 
-    // TODO : investigate type incompatible issue
+      //  this is internal problem of the viem.
+      // TODO : investigate type incompatible issue
       createPublicClient({
         // @ts-ignore
         chain: holesky,
@@ -53,11 +54,11 @@ export const useAllowanceTx = () => {
     fetchLogs().then((logs) => {
       const sortedLogs = logs.sort(compareBlockNumbers);
       if (sortedLogs.length > 0) {
+        console.log("hh");
         setTxHash(sortedLogs[logs.length - 1].transactionHash);
       }
     });
   }, [address, requestor?.wallet]);
-
 
   return { txHash };
 };

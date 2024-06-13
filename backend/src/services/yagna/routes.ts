@@ -35,7 +35,7 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       const Yagna = container.cradle.Yagna;
       const allocation = await Yagna.getUserAllocation(requestUser._id);
       if (!allocation) {
-        reply.code(500).send({
+        reply.code(404).send({
           message: "No allocation found",
         });
       } else {
@@ -128,15 +128,7 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
 
   fastify.put("/top-up-allocation", {
     onRequest: [fastify.authenticate],
-    schema: {
-      body: {
-        type: "object",
-        properties: {
-          amount: { type: "number" },
-        },
-        required: ["amount"],
-      },
-    },
+
     handler: async (
       request: FastifyRequest<{
         Body: {
@@ -145,22 +137,25 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       }>,
       reply
     ) => {
+      console.log("re", request.body);
       const requestUser = request.user;
       const Yagna = container.cradle.Yagna;
       const user = await container.cradle.userService.getUserById(
         requestUser._id
       );
-
+      console.log("user", user);
       if (!user?.currentAllocationId) {
         reply.code(500).send({
           message: "No allocation found",
           type: "NO_ALLOCATION_TO_TOP_UP",
         });
       } else {
+        console.log("top up", user.currentAllocationId, request.body.amount);
         await Yagna.topUpAllocation(
           user.currentAllocationId,
           request.body.amount
         );
+        console.log("top up done");
         reply
           .code(201)
           .send(container.cradle.userService.getUserDTO(requestUser._id));

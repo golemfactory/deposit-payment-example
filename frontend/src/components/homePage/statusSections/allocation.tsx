@@ -85,7 +85,6 @@ export const Allocation = () => {
             </button>
           ) : user.hasAllocation() ? (
             <div className="btn-group">
-              <button className="btn">Extend </button>
               <button className="btn" onClick={() => releaseAllocation()}>
                 Close{" "}
               </button>

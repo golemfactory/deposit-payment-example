@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useUploadFile } from "./providers/fileUploader";
-import { Button, Card } from "react-daisyui";
+import { Button, Card, Loading } from "react-daisyui";
+import { use } from "i18next";
 
 export const FileUploader = () => {
   const [files, setFiles] = useState<FileList | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    if (files) {
+      setIsUploading(true);
+    }
+  }, [files]);
   const { upload } = useUploadFile();
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -44,17 +52,26 @@ export const FileUploader = () => {
         ref={fileInputRef}
       />
       <Card.Body>
-        <Card.Title> Drag & Drop files here or </Card.Title>
-        <div className="grid grid-cols-6">
-          <Button
-            className="col-start-3 col-span-2"
-            onClick={() => {
-              fileInputRef.current?.click();
-            }}
-          >
-            Click to Upload
-          </Button>
-        </div>
+        {isUploading ? (
+          <div className="h-full flex flex-col items-center justify-center">
+            <div className="text-center stat-value">Processing </div>
+            <Loading variant="infinity" className="text-primary h-12 w-12" />
+          </div>
+        ) : (
+          <>
+            <Card.Title> Drag & Drop files here or </Card.Title>
+            <div className="grid grid-cols-6">
+              <Button
+                className="col-start-3 col-span-2"
+                onClick={() => {
+                  fileInputRef.current?.click();
+                }}
+              >
+                Click to Upload
+              </Button>
+            </div>
+          </>
+        )}
       </Card.Body>
     </Card>
   );

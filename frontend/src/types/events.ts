@@ -42,11 +42,14 @@ export type Payload = {
   };
 
   [Event.FILE_SCAN_OK]: {
-    fileId: string;
+    id: string;
   };
 
   [Event.FILE_SCAN_ERROR]: {
-    fileId: string;
+    id: string;
+    data: {
+      Viruses: string[];
+    };
   };
 
   [Event.NEW_INVOICE]: {

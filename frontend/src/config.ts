@@ -22,7 +22,7 @@ export const config: Config<[typeof holesky]> = {
   supportedChains: [holesky] as const,
   projectId: "20bd2ed396d80502980b6d2a3fb425f4",
   depositContractAddress: {
-    [holesky.id]: "0x6dfeEdcAfbF9A0E1E6a896a7F295477AE475903e",
+    [holesky.id]: "0x9CB8Ecc74e299eF9D3cBcf8f806F5C7b76CA08D3",
   },
   GLMContractAddress: {
     [holesky.id]: "0x8888888815bf4db87e57b609a50f938311eed068",

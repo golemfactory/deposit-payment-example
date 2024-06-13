@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useUser } from "hooks/useUser";
-import { useState } from "react";
+import { use } from "i18next";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { parseEther } from "viem";
 
@@ -10,12 +11,18 @@ export type AllocationDTO = YaTsClient.PaymentApi.AllocationDTO;
 
 export const useCurrentAllocation = () => {
   const { user } = useUser();
+  const [isPaused, setIsPaused] = useState<boolean>(true);
 
   const { data, error } = useSWR<AllocationDTO>(
     `${import.meta.env.VITE_BACKEND_HTTP_URL}/allocation`,
     async (url) => {
-      const response = await axios.get(url);
-      return response.data;
+      try {
+        const response = await axios.get(url);
+        return response.data;
+      } catch (error) {
+        console.log("error", error);
+        return null;
+      }
     },
     {
       isPaused: () => {

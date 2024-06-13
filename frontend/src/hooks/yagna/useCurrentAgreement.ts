@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useUser } from "hooks/useUser";
+import { use } from "i18next";
+import { useEffect } from "react";
 import useSWR from "swr";
 
 import * as YaTsClient from "ya-ts-client";
@@ -16,7 +18,7 @@ export const useCurrentAgreement = () => {
     },
     {
       isPaused: () => {
-        return user.currentAllocation?.id === undefined;
+        return false;
       },
       refreshInterval: 1000,
     }

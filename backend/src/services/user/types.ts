@@ -51,4 +51,5 @@ export interface IUserService {
   getUserById(userId: UserIdType): Promise<IUser | null>;
   setCurrentAgreementId(userId: UserIdType, agreementId: string): Promise<void>;
   getUserDTO(userId: UserIdType): Promise<any>;
+  onAgreementTerminated(agreementId: UserIdType): Promise<void>;
 }

@@ -29,6 +29,8 @@ export const startupFastifyServer = async (): Promise<FastifyInstance> => {
       origin: "*",
     },
   });
+
+  console.log("process.env.PORT", process.env.PORT);
   fastify.register(cors, {
     origin: "*",
   });

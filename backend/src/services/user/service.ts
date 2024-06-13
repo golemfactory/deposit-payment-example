@@ -66,6 +66,13 @@ export const userService: IUserService = {
     );
   },
 
+  onAgreementTerminated: async (agreementId: string) => {
+    await userModel.updateMany(
+      { currentAgreementId: agreementId },
+      { currentAgreementId: null }
+    );
+  },
+
   async getUserDTO(userId: string) {
     const user = await this.getUserById(userId);
     if (!user) {

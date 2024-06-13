@@ -95,11 +95,13 @@ const AgreementCreatedEvent = (event: {
       <Card.Body>
         <Card.Title>Agreement Created</Card.Title>
         <div>
-          <div>
-            Agreement ID: <ShortLink id={event.payload.agreementId}></ShortLink>
+          <div className="flex gap-2">
+            <div className="stat-title"> Agreement Id: </div>
+
+            <ShortLink id={event.payload.agreementId}></ShortLink>
           </div>
-          <div>
-            ProviderId :{" "}
+          <div className="flex gap-2">
+            <div className="stat-title">ProviderId : </div>
             <EtherScanLink
               hash={event.payload.offer.providerId}
               route="address"
@@ -120,8 +122,9 @@ const AgreementTerminatedEvent = (event: {
       <Card.Body>
         <Card.Title>Agreement Terminated</Card.Title>
         <div>
-          <div>
-            Agreement ID: <ShortLink id={event.payload.agreementId}></ShortLink>
+          <div className="flex gap-2">
+            <div className="stat-title"> Agreement ID: </div>{" "}
+            <ShortLink id={event.payload.agreementId}></ShortLink>
           </div>
         </div>
       </Card.Body>
@@ -167,49 +170,28 @@ const DepositExtendedEvent = (event: {
   );
 };
 
-const NewDebitNoteEvent = (event: {
-  kind: Event.NEW_DEBIT_NOTE;
-  payload: Payload[Event.NEW_DEBIT_NOTE];
-}) => {
-  return (
-    <Card bordered={true}>
-      <Card.Body>
-        <Card.Title>Debit Note Received</Card.Title>
-        {/* <div>
-          <div>
-            Agreement ID: <ShortLink id={event.payload.agreementId}></ShortLink>
-          </div>
-          <div>
-            ProviderId :{" "}
-            <EtherScanLink
-              hash={event.payload.offer.providerId}
-              route="address"
-            ></EtherScanLink>
-          </div>
-        </div> */}
-      </Card.Body>
-    </Card>
-  );
-};
-
 const DepositProviderPaymentEvent = (event: {
   kind: Event.DEPOSIT_PROVIDER_PAYMENT;
   payload: Payload[Event.DEPOSIT_PROVIDER_PAYMENT];
 }) => {
+  console.log("payload", event);
   return (
     <Card bordered={true}>
       <Card.Body>
         <Card.Title>Provider Payment</Card.Title>
         <div>
-          <div>
-            Agreement ID: <ShortLink id={event.payload.depositId}></ShortLink>
-          </div>
-          <div>
-            ProviderId :{" "}
+          <div className="flex gap-2">
+            <div className="stat-title">TX Hash : </div>
             <EtherScanLink
               hash={event.payload.txHash}
               route="address"
             ></EtherScanLink>
+          </div>
+          <div className="flex gap-2">
+            <div className="stat-title">Amount : </div>
+            <GLMAmountStat
+              amount={formatBalance(event.payload.amount)}
+            ></GLMAmountStat>
           </div>
         </div>
       </Card.Body>
@@ -247,16 +229,14 @@ const DepositFeePaymentEvent = (event: {
       <Card.Body>
         <Card.Title>Deposit Fee Payment</Card.Title>
         <div>
-          <div>
-            Transaction :{" "}
+          <div className="flex gap-2">
+            <div className="stat-title">Transaction: </div>
             <EtherScanLink hash={event.payload.txHash}></EtherScanLink>
           </div>
-          <div>
-            Amount:{" "}
+          <div className="flex gap-2">
+            <div className="stat-title">Amount: </div>
             <GLMAmountStat
-              amount={formatBalance(
-                parseEther(event.payload.amount.toString())
-              )}
+              amount={formatBalance(event.payload.amount)}
             ></GLMAmountStat>
           </div>
         </div>
@@ -275,15 +255,60 @@ const DepositProviderPayment = (event: {
         <Card.Title>Deposit Provider Payment</Card.Title>
         <div>
           <div>
-            Agreement ID: <ShortLink id={event.payload.depositId}></ShortLink>
+            Agreement IsD: <ShortLink id={event.payload.depositId}></ShortLink>
           </div>
           <div>
-            Transaction :{" "}
+            TX Hash :{" "}
             <EtherScanLink
               hash={event.payload.txHash}
               route="address"
             ></EtherScanLink>
           </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const FileScanError = (event: {
+  kind: Event.FILE_SCAN_ERROR;
+  payload: Payload[Event.FILE_SCAN_ERROR];
+}) => {
+  return (
+    <Card bordered={true} className="!bg-notistack-red">
+      <Card.Body>
+        <Card.Title>File Infected</Card.Title>
+        <div className="flex gap-2">
+          <div className="stat-title">File: {event.payload.id} </div>
+
+          <div></div>
+        </div>
+
+        <div className="flex gap-2">
+          <div className="stat-title">Viruses: </div>
+          <div>
+            {(event.payload?.data?.Viruses || []).map((virus) => (
+              <div key={`virus_${virus}`}>{virus}</div>
+            ))}
+          </div>
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+const FileScanOk = (event: {
+  kind: Event.FILE_SCAN_OK;
+  payload: Payload[Event.FILE_SCAN_OK];
+}) => {
+  return (
+    <Card bordered={true} className="!bg-notistack-green">
+      <Card.Body>
+        <Card.Title>File Clean</Card.Title>
+        <div className="flex gap-2">
+          <div className="stat-title">File: {event.payload.id} </div>
+
+          <div></div>
         </div>
       </Card.Body>
     </Card>
@@ -313,6 +338,10 @@ export const EventCard = (event: EventType) => {
             return <DepositFeePaymentEvent {...event} />;
           case Event.DEPOSIT_PROVIDER_PAYMENT:
             return <DepositProviderPaymentEvent {...event} />;
+          case Event.FILE_SCAN_ERROR:
+            return <FileScanError {...event} />;
+          case Event.FILE_SCAN_OK:
+            return <FileScanOk {...event} />;
         }
       })()}
     </motion.div>
