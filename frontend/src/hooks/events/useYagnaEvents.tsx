@@ -15,13 +15,13 @@ enum yagnaEventTopic {
 enum yagnaEventType {
   AgreementTerminatedEvent = "AgreementTerminatedEvent",
   AgreementApprovedEvent = "AgreementApprovedEvent",
-  InvoiceCreatedEvent = "InvoiceCreatedEvent",
+  InvoiceReceivedEvent = "InvoiceReceivedEvent",
   DebitNoteReceivedEvent = "DebitNoteReceivedEvent",
 }
 
 const yagnaEventTypeByTopic = {
   debitNote: [yagnaEventType.DebitNoteReceivedEvent],
-  invoice: [yagnaEventType.InvoiceCreatedEvent],
+  invoice: [yagnaEventType.InvoiceReceivedEvent],
   agreement: [
     yagnaEventType.AgreementApprovedEvent,
     yagnaEventType.AgreementTerminatedEvent,
@@ -38,7 +38,7 @@ export const getEventKind = (yagnaEventType: string): Event => {
   return match(yagnaEventType)
     .with("AgreementTerminatedEvent", () => Event.AGREEMENT_TERMINATED)
     .with("AgreementApprovedEvent", () => Event.AGREEMENT_SIGNED)
-    .with("InvoiceCreatedEvent", () => Event.NEW_INVOICE)
+    .with("InvoiceReceivedEvent", () => Event.NEW_INVOICE)
     .with("DebitNoteReceivedEvent", () => Event.NEW_DEBIT_NOTE)
     .otherwise(() => {
       throw new Error(`Unknown event type: ${yagnaEventType}`);
@@ -52,9 +52,7 @@ const socketFactory = (eventEndpoint: yagnaEventTopic) =>
 
 export const useYagnaEvent = (event: yagnaEventTopic) => {
   const [accessToken] = useLocalStorage("accessToken");
-
   const socketRef = useRef(socketFactory(event));
-
   const { events$, emit, clean } = useEvents({
     key: `yagna${event[0].toUpperCase()}${event.substring(1)}Events`,
     eventKind: getEventKind,
@@ -66,6 +64,7 @@ export const useYagnaEvent = (event: yagnaEventTopic) => {
       socketRef.current.connect();
 
       socketRef.current.on("event", (data: any) => {
+        console.log("event", data, isInTopic(event)(data.event.eventType));
         if (!isInTopic(event)(data.event.eventType)) return;
         emit({ id: data.id, ...data[event] }, data.event.eventType);
       });

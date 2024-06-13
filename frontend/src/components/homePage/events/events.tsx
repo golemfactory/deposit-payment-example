@@ -31,6 +31,22 @@ export const Events = () => {
   const { events$: flowEvents$ } = useFlowEvents();
 
   useEffect(() => {
+    console.log("events", events);
+    flowEvents$
+      .pipe(
+        finalize(() => {
+          cleanAllocationEvents();
+          cleanDepositEvents();
+          cleanYagnaEvents();
+          cleanPaymentEvents();
+          cleanFileEvents();
+          setEvents([]);
+        })
+      )
+      .subscribe();
+  }, []);
+
+  useEffect(() => {
     const sub = merge(
       allocationEvents$,
       depositEvents$,
