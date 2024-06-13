@@ -6,7 +6,7 @@ import { match } from "ts-pattern";
 import { useFileUploader } from "components/providers/fileUploader";
 
 export const useScanResults = () => {
-  const { emit, events$ } = useEvents({
+  const { emit, events$, clean } = useEvents({
     key: "scanResults",
     eventKind: (s: any) => {
       console.log("Event kind", s);
@@ -36,5 +36,6 @@ export const useScanResults = () => {
 
   return {
     events$,
+    clean,
   };
 };

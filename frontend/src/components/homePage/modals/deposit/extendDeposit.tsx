@@ -38,8 +38,7 @@ export const ExtendDeposit = () => {
 
   const currentDeposit = useUserCurrentDeposit();
 
-  const { trigger: topUp, isMutating: isAmendingAllocation } =
-    useTopUpAllocation();
+  const { trigger: topUp, isTopingUp } = useTopUpAllocation();
 
   useEffect(() => {
     if (user.currentDeposit) {

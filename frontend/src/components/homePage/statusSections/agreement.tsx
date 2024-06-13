@@ -7,10 +7,12 @@ import { useDebitNoteEvents } from "hooks/events/useYagnaEvents";
 import { formatBalance } from "utils/formatBalance";
 import { parseEther } from "viem";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
+import { Loading } from "react-daisyui";
+
 export const Agreement = () => {
   const { user } = useUser();
-  const { createAgreement } = useCreateAgreement();
-  const { releaseAgreement } = useReleaseAgreement();
+  const { createAgreement, isCreating } = useCreateAgreement();
+  const { releaseAgreement, isReleasing } = useReleaseAgreement();
   const { events$ } = useDebitNoteEvents();
   const [totalAmount, setTotalAmount] = useState("-");
   useEffect(() => {
@@ -64,7 +66,7 @@ export const Agreement = () => {
                 releaseAgreement(user.currentAgreement?.id);
               }}
             >
-              Terminate
+              {isReleasing ? <Loading variant="infinity" /> : "Release"}
             </button>
           ) : (
             <button
@@ -74,7 +76,7 @@ export const Agreement = () => {
                 createAgreement();
               }}
             >
-              Create
+              {isCreating ? <Loading variant="infinity" /> : "Create"}
             </button>
           )}
         </div>

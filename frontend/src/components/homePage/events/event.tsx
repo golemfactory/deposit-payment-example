@@ -174,7 +174,6 @@ const DepositProviderPaymentEvent = (event: {
   kind: Event.DEPOSIT_PROVIDER_PAYMENT;
   payload: Payload[Event.DEPOSIT_PROVIDER_PAYMENT];
 }) => {
-  console.log("payload", event);
   return (
     <Card bordered={true}>
       <Card.Body>

@@ -3,10 +3,20 @@ import { useCreateAllocationEvents } from "./useCreateAllocationEvents";
 import { useReleaseAllocationEvents } from "./useReleaseAllocationEvents";
 
 export const useAllocationEvents = () => {
-  const { events$: createAllocationEvents$ } = useCreateAllocationEvents();
-  const { events$: releaseAllocationEvents$ } = useReleaseAllocationEvents();
+  const {
+    events$: createAllocationEvents$,
+    clean: cleanCreateAllocationEvents,
+  } = useCreateAllocationEvents();
+  const {
+    events$: releaseAllocationEvents$,
+    clean: cleanReleaseAllocationEvents,
+  } = useReleaseAllocationEvents();
 
   return {
     events$: merge(releaseAllocationEvents$, createAllocationEvents$),
+    clean: () => {
+      cleanCreateAllocationEvents();
+      cleanReleaseAllocationEvents();
+    },
   };
 };

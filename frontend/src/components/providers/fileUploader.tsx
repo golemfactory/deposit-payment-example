@@ -35,6 +35,7 @@ const FileUploaderContext = createContext({
   files: new Map<string, number>(),
   setProgress: (id: string, progress: number) => {},
   removeFile: (id: string) => {},
+  upload: (files: FileList) => {},
 });
 
 export const useFileUploader = () => {
@@ -44,8 +45,24 @@ export const useFileUploader = () => {
 export const FileUploaderProvider = ({ children }: PropsWithChildren) => {
   const { files, setProgress, removeFile } = useUploadedFiles();
 
+  const onProgress = (name: string, progress: number) => {
+    setProgress(name, progress);
+  };
+  const { trigger } = useSWRMutation(["scanResult", onProgress], processFile);
+
   return (
-    <FileUploaderContext.Provider value={{ files, setProgress, removeFile }}>
+    <FileUploaderContext.Provider
+      value={{
+        files,
+        setProgress,
+        removeFile,
+        //@ts-ignore
+        upload: (files: File[]) => {
+          // @ts-ignore
+          [...files].forEach(trigger);
+        },
+      }}
+    >
       {children}
     </FileUploaderContext.Provider>
   );

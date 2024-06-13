@@ -8,10 +8,9 @@ import { Loading } from "react-daisyui";
 import { formatBalance } from "utils/formatBalance";
 
 export const Allocation = () => {
-  const { isCreating: isCreatingAllocation, createAllocation } =
-    useCreateAllocation();
+  const { isCreating, createAllocation } = useCreateAllocation();
   const { currentAllocation } = useCurrentAllocation();
-  const { releaseAllocation } = useReleaseAllocation();
+  const { releaseAllocation, isReleasing } = useReleaseAllocation();
   const { user } = useUser();
 
   return (
@@ -24,7 +23,7 @@ export const Allocation = () => {
       >
         <div className="stat-title">Allocation </div>
         <div className="stat-value">
-          <ShortLink id={user?.currentAllocation?.id}></ShortLink>
+          <ShortLink id={currentAllocation?.id}></ShortLink>
         </div>
       </div>
       <div
@@ -74,7 +73,7 @@ export const Allocation = () => {
             opacity: user.hasDeposit() ? 1 : 0.3,
           }}
         >
-          {isCreatingAllocation ? (
+          {isCreating ? (
             <button
               className="btn"
               onClick={() => {
@@ -86,7 +85,7 @@ export const Allocation = () => {
           ) : user.hasAllocation() ? (
             <div className="btn-group">
               <button className="btn" onClick={() => releaseAllocation()}>
-                Close{" "}
+                {isReleasing ? <Loading variant="infinity" /> : "Release"}
               </button>
             </div>
           ) : (

@@ -5,6 +5,7 @@ import { abi } from "hooks/depositContract/abi";
 import { config } from "config";
 import { holesky } from "viem/chains";
 import { merge } from "rxjs";
+import { useCallback } from "react";
 
 const depositEventToEventKind = (depositEvent: string): Event => {
   switch (depositEvent) {
@@ -21,40 +22,50 @@ const useDepositEvent = ({
 }: {
   depositEvent: "DepositFeeTransfer" | "DepositTransfer";
 }) => {
-  const { events$, emit } = useEvents({
-    key: `${depositEvent}Events`,
+  const { events$, emit, clean } = useEvents({
+    key: `${depositEvent.toLowerCase()}Events`,
     eventKind: depositEventToEventKind(depositEvent),
   });
 
+  const onLogs = useCallback((logs: any) => {
+    logs.forEach((log: any) => {
+      const e = {
+        txHash: log.transactionHash,
+        amount: Number(log.args.amount),
+        fee: Number(log.args.fee),
+        validityTimestamp: Number(log.args.validToTimestamp),
+      };
+      emit(e);
+    });
+  }, []);
+
   useWatchContractEvent({
-    address: config.depositContractAddress[holesky.id],
     abi: abi,
     eventName: depositEvent,
-    onLogs: (logs: any) => {
-      logs.forEach((log: any) => {
-        emit({
-          txHash: log.transactionHash,
-          amount: log.args.amount,
-          fee: log.args.fee,
-          validityTimestamp: log.args.validToTimestamp,
-        });
-      });
-    },
+    onLogs,
+    address: config.depositContractAddress[holesky.id],
   });
   return {
     events$,
+    clean,
   };
 };
 
 export const useDepositPaymentEvents = () => {
-  const { events$: feeTransferEvents$ } = useDepositEvent({
-    depositEvent: "DepositFeeTransfer",
-  });
-  const { events$: depositTransferEvents$ } = useDepositEvent({
-    depositEvent: "DepositTransfer",
-  });
+  const { events$: feeTransferEvents$, clean: cleanFeeTransfer } =
+    useDepositEvent({
+      depositEvent: "DepositFeeTransfer",
+    });
+  const { events$: depositTransferEvents$, clean: cleanDepositTransfer } =
+    useDepositEvent({
+      depositEvent: "DepositTransfer",
+    });
 
   return {
     events$: merge(feeTransferEvents$, depositTransferEvents$),
+    clean: () => {
+      cleanFeeTransfer();
+      cleanDepositTransfer();
+    },
   };
 };

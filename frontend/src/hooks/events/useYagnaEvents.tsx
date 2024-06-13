@@ -55,7 +55,7 @@ export const useYagnaEvent = (event: yagnaEventTopic) => {
 
   const socketRef = useRef(socketFactory(event));
 
-  const { events$, emit } = useEvents({
+  const { events$, emit, clean } = useEvents({
     key: `yagna${event[0].toUpperCase()}${event.substring(1)}Events`,
     eventKind: getEventKind,
   });
@@ -74,6 +74,7 @@ export const useYagnaEvent = (event: yagnaEventTopic) => {
 
   return {
     events$,
+    clean,
   };
 };
 
@@ -83,15 +84,21 @@ export const useDebitNoteEvents = () => {
 };
 
 export const useYagnaEvents = () => {
-  const { events$: debitNoteEvents$ } = useYagnaEvent(
-    yagnaEventTopic.debitNote
+  const { events$: debitNoteEvents$, clean: cleanDebitNoteEvents } =
+    useYagnaEvent(yagnaEventTopic.debitNote);
+
+  const { events$: invoiceEvents$, clean: cleanInvoiceEvents } = useYagnaEvent(
+    yagnaEventTopic.invoice
   );
-  const { events$: invoiceEvents$ } = useYagnaEvent(yagnaEventTopic.invoice);
-  const { events$: agreementEvents$ } = useYagnaEvent(
-    yagnaEventTopic.agreement
-  );
+  const { events$: agreementEvents$, clean: cleanAgreementEvents } =
+    useYagnaEvent(yagnaEventTopic.agreement);
 
   return {
     events$: merge(debitNoteEvents$, invoiceEvents$, agreementEvents$),
+    clean: () => {
+      cleanDebitNoteEvents();
+      cleanInvoiceEvents();
+      cleanAgreementEvents();
+    },
   };
 };

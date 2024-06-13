@@ -1,31 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import { useUploadFile } from "./providers/fileUploader";
+import { useFileUploader, useUploadFile } from "./providers/fileUploader";
 import { Button, Card, Loading } from "react-daisyui";
 import { use } from "i18next";
 
 export const FileUploader = () => {
-  const [files, setFiles] = useState<FileList | null>(null);
+  const { files, upload } = useFileUploader();
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
-    if (files) {
+    console;
+    if (files.size > 0) {
       setIsUploading(true);
     }
-  }, [files]);
-  const { upload } = useUploadFile();
+  }, [files.size]);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFiles(e.target.files);
+      upload(e.target.files);
     }
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (files) {
-      console.log("upkoad", files);
-      [...files].forEach(upload);
-    }
-  }, [files]);
 
   const handleDragOver = (event: React.DragEvent) => {
     event.preventDefault();
@@ -34,8 +27,7 @@ export const FileUploader = () => {
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     const files = event.dataTransfer.files;
-    // Handle the dropped files
-    setFiles(files);
+    upload(files);
   };
 
   return (

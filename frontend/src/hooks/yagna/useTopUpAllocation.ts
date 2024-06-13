@@ -1,5 +1,6 @@
 import axios from "axios";
 import useSWRMutation from "swr/mutation";
+import { useDebounce } from "@uidotdev/usehooks";
 
 export const useTopUpAllocation = () => {
   const { trigger, isMutating } = useSWRMutation(
@@ -8,8 +9,9 @@ export const useTopUpAllocation = () => {
       return axios.put(url, { amount });
     }
   );
+  const isTopingUp = useDebounce(isMutating, 1000);
   return {
     trigger,
-    isMutating,
+    isTopingUp,
   };
 };

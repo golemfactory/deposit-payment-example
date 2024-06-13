@@ -164,7 +164,6 @@ export class Yagna {
     // @ts-ignore
   }
   async getUserAllocation(userId: string) {
-    console.log("getting user allocation", userId);
     const user = await container.cradle.userService.getUserById(userId);
     if (!user) {
       throw new Error({ code: ErrorCode.USER_NOT_FOUND });
@@ -174,7 +173,6 @@ export class Yagna {
       return null;
     }
     const allocation = await this.paymentService.getAllocation(allocationId);
-    console.log("should be no allocation");
     if (!allocation) {
       return null;
     }

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useUser } from "hooks/useUser";
 import { use } from "i18next";
+import { set } from "ramda";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { parseEther } from "viem";
@@ -13,7 +14,7 @@ export const useCurrentAllocation = () => {
   const { user } = useUser();
   const [isPaused, setIsPaused] = useState<boolean>(true);
 
-  const { data, error } = useSWR<AllocationDTO>(
+  const { data, error, mutate } = useSWR<AllocationDTO>(
     `${import.meta.env.VITE_BACKEND_HTTP_URL}/allocation`,
     async (url) => {
       try {
@@ -25,16 +26,20 @@ export const useCurrentAllocation = () => {
       }
     },
     {
-      isPaused: () => {
-        return user.currentAllocation?.id === undefined;
-      },
+      isPaused: () => isPaused,
       refreshInterval: 1000,
     }
   );
 
+  useEffect(() => {
+    setIsPaused(!user.currentAllocation?.id);
+    mutate();
+  }, [user.currentAllocation?.id]);
+
   return data
     ? {
         currentAllocation: {
+          id: user.currentAllocation?.id,
           totalAmount: parseEther(data?.totalAmount || "0"),
           spentAmount: parseEther(data?.spentAmount || "0"),
           remainingAmount: parseEther(data?.remainingAmount || "0"),

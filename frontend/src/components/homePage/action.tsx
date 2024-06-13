@@ -2,6 +2,7 @@ import { FileUploader } from "components/Uploader";
 import { useUser } from "hooks/useUser";
 import { useCurrentAgreement } from "hooks/yagna/useCurrentAgreement";
 import { Card } from "react-daisyui";
+import { CloseSession } from "./closeSession";
 
 export const Action = () => {
   const currentAgreement = useCurrentAgreement();
@@ -11,7 +12,10 @@ export const Action = () => {
   return (
     <>
       {user.currentAgreement?.state === "Approved" ? (
-        <FileUploader />
+        <>
+          <FileUploader />
+          <CloseSession />
+        </>
       ) : (
         <Card>
           <Card.Body>

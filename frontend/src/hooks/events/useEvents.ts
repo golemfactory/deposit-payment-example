@@ -1,3 +1,4 @@
+import { use } from "i18next";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Payload, Event, ExtractPayload } from "types/events";
@@ -16,9 +17,15 @@ export const useEvents = <K extends Event>({
     const kindOfEvent = eventKind;
     eventKind = (s: string) => kindOfEvent;
   }
+
   const [currentEvents, setCurrentEvents] = useLocalStorageState<any[]>(key, {
     defaultValue: [],
   });
+
+  useEffect(() => {
+    console.log("currentEvents", currentEvents);
+  }, [currentEvents]);
+
   const events$ = useRef<null | Subject<any>>(null);
   const previousEvents = useRef<any[]>([]);
 
@@ -39,6 +46,8 @@ export const useEvents = <K extends Event>({
   const emit = useCallback(
     (payload: ExtractPayload<K>, eventType: string = "") => {
       const currentEvents = JSON.parse(localStorage.getItem(key) || "[]");
+      console.log("currentEvents", currentEvents);
+      console.log("pyload", payload);
       const newEvents = [
         ...currentEvents,
         {
@@ -51,6 +60,9 @@ export const useEvents = <K extends Event>({
           timestamp: Date.now(),
         },
       ];
+      console.log("newEvents", newEvents);
+      console.log("key", key);
+
       setCurrentEvents(newEvents);
     },
     []
@@ -79,5 +91,9 @@ export const useEvents = <K extends Event>({
   return {
     events$: events$.current,
     emit,
+    clean: () => {
+      console.log("cleaning", key);
+      //setCurrentEvents([]);
+    },
   };
 };
