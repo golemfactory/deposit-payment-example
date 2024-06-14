@@ -12,7 +12,6 @@ import { useChainId } from "hooks/useChainId";
 import { assertOptionalBigInt } from "types/assertBigInt";
 import { TransactionExecutionError } from "viem";
 import { useEffect, useState } from "react";
-import { use } from "i18next";
 
 const debug = require("debug")("useAllowance");
 
