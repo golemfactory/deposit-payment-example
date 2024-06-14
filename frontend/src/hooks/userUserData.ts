@@ -21,10 +21,13 @@ export const useUserData = () => {
 
   const { data, error } = useSWRSubscription("userData", (key, { next }) => {
     socket.on("user", (data: any) => {
+      console.log("user", data);
       setIsLoading(false);
       next(null, data);
     });
-
+    socket.on("error", (error: any) => {
+      console.error("error is socket io ", error);
+    });
     return () => {
       socket.disconnect();
     };
