@@ -169,7 +169,8 @@ export class Yagna {
       );
       return allocation;
     } catch (e) {
-      console.log("error", e);
+      console.log("Error creating allocation", e);
+      throw e;
     }
     // @ts-ignore
   }

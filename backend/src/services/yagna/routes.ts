@@ -10,13 +10,9 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
     handler: async (request, reply) => {
       const requestUser = request.user;
       const Yagna = container.cradle.Yagna;
+      try {
+        const allocation = await Yagna.createUserAllocation(requestUser._id);
 
-      const allocation = await Yagna.createUserAllocation(requestUser._id);
-      if (!allocation) {
-        reply.code(500).send({
-          message: "Unable to create allocation",
-        });
-      } else {
         await container.cradle.userService.setCurrentAllocationId(
           requestUser._id,
           allocation.allocationId
@@ -25,6 +21,10 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
         reply
           .code(201)
           .send(container.cradle.userService.getUserDTO(requestUser._id));
+      } catch (e) {
+        reply.code(500).send({
+          message: "Unable to create allocation",
+        });
       }
     },
   });
