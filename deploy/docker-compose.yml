@@ -16,11 +16,13 @@ services:
       - MONGO_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:27017/
       - HOST=0.0.0.0
       - PORT=5174
+      - WS_PORT=5175
       - DB_NAME=depositDB
       - DEPOSIT_CONTRACT_ADDRESS=0xA3D86ebF4FAC94114526f4D09C3fA093898347a6
       - YAGNA_SUBNET=pociej_own
     ports:
       - "5174:5174"
+      - "5175:5175"
     depends_on:
       - yagna
       - mongo

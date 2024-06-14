@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 
-const socket = io(`http://localhost:5174/me`, {
+const socket = io(`${import.meta.env.VITE_BACKEND_WS_URL}/me`, {
   autoConnect: false,
 });
 

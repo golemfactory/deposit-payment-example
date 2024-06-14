@@ -46,7 +46,7 @@ export const getEventKind = (yagnaEventType: string): Event => {
 };
 
 const socketFactory = (eventEndpoint: yagnaEventTopic) =>
-  io(`http://localhost:5174/${eventEndpoint}Events`, {
+  io(`${import.meta.env.VITE_BACKEND_WS_URL}/${eventEndpoint}Events`, {
     autoConnect: false,
   });
 

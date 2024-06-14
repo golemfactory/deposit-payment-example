@@ -16,7 +16,7 @@ const fastifySocketIO: FastifyPluginAsync<Partial<ServerOptions>> = fp(
       },
     });
 
-    server.listen(Number(process.env.PORT) || 5174);
+    server.listen(Number(process.env.WS_PORT) || 5175);
 
     fastify.decorate("io", server);
 

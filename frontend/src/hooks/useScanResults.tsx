@@ -20,7 +20,7 @@ export const useScanResults = () => {
 
   useSWRSubscription("scanResult", (key, { next }) => {
     const eventSource = new WebSocket(
-      `${import.meta.env.VITE_BACKEND_HTTP_URL.replace("http", "ws")}/scan-result`
+      `${import.meta.env.VITE_BACKEND_WS_URL}/scan-result`
     );
 
     eventSource.addEventListener("message", (event) => {
