@@ -2,15 +2,13 @@ import { useEffect, useState } from "react";
 import { EventType } from "types/events";
 import { useAllocationEvents } from "hooks/events/useAllocationEvents";
 import { EventCard } from "./event";
-import { uniqBy, sortBy, prop, set } from "ramda";
+import { uniqBy, sortBy, prop } from "ramda";
 import { useDepositEvents } from "hooks/events/useDepositEvents";
 import { useYagnaEvents } from "hooks/events/useYagnaEvents";
 import { finalize, merge } from "rxjs";
 import { useDepositPaymentEvents } from "hooks/events/usePaymentEvents";
 import { useScanResults } from "hooks/useScanResults";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import { useFlowEvents } from "components/providers/flowEventsProvider";
-import { use } from "i18next";
 
 export const Events = () => {
   const [events, setEvents] = useState<

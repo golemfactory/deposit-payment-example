@@ -1,9 +1,8 @@
 import { GLMAmountInput } from "components/molecules/glmAmountInput/glmAmountInput";
 import dayjs from "dayjs";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 import { Button, Input, Loading } from "react-daisyui";
 import { RPC_ERROR_CONTEXT } from "hooks/useHandleRpcError";
-import { use } from "i18next";
 export const UpsertDepositPresentational = ({
   title,
   subtitle,

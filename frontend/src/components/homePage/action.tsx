@@ -1,4 +1,4 @@
-import { FileUploader } from "components/Uploader";
+import { FileUploader } from "components/molecules/Uploader";
 import { useUser } from "hooks/useUser";
 import { useCurrentAgreement } from "hooks/yagna/useCurrentAgreement";
 import { Card } from "react-daisyui";

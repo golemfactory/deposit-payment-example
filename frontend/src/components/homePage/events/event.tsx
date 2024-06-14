@@ -8,7 +8,7 @@ import { GLMAmountStat } from "components/atoms/GLMAmount";
 import { formatBalance } from "utils/formatBalance";
 import { parseEther } from "viem";
 import dayjs from "dayjs";
-import { ShortLink } from "components/shortLink";
+import { ShortLink } from "components/atoms/shortLink";
 const variants = {
   visible: { opacity: 1, transition: { duration: 1 } },
   hidden: { opacity: 0, transition: { duration: 1 } },

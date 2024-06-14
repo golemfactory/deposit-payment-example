@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useFileUploader, useUploadFile } from "./providers/fileUploader";
+import { useFileUploader } from "../providers/fileUploader";
 import { Button, Card, Loading } from "react-daisyui";
-import { use } from "i18next";
 
 export const FileUploader = () => {
   const { files, upload } = useFileUploader();

@@ -1,4 +1,4 @@
-import { ShortLink } from "components/shortLink";
+import { ShortLink } from "components/atoms/shortLink";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
 import { useCreateAllocation } from "hooks/yagna/useCreateAllocation";
 import { useCurrentAllocation } from "hooks/yagna/useCurrentAllocation";

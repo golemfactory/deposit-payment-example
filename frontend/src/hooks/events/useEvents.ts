@@ -1,4 +1,3 @@
-import { use } from "i18next";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Payload, Event, ExtractPayload } from "types/events";
