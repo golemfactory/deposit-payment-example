@@ -33,8 +33,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta4
     command: pnpm run start
     working_dir: /app/frontend
     ports:
@@ -49,7 +47,7 @@ services:
       context: ./yagna
       dockerfile: Dockerfile
       args:
-        - YAGNA_VERSION=pre-rel-v0.15.0-deposits-beta4
+        - YAGNA_VERSION=pre-rel-v0.16.0-preview.deposit.13
     command: yagna service run
     ports:
       - "7465:7465"
