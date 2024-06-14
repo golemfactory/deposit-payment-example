@@ -98,7 +98,17 @@ export class Yagna {
     //which is HARDCODED in yagna we make worker which under the hood makes activity
     // which prevents agreement from closing
     const worker = await this.getUserWorker(userId);
-    const agreement = await executor.getAgreement();
+
+    const agreement = await worker.context?.activity.agreement;
+
+    if (!agreement) {
+      throw new Error({
+        code: ErrorCode.AGREEMENT_NOT_FOUND,
+        payload: {
+          agreementId: "",
+        },
+      });
+    }
     container.cradle.userService.setCurrentAgreementId(userId, agreement.id);
     agreement.events.on("terminated", (e: any) => {
       this.agreementEvents.next({
