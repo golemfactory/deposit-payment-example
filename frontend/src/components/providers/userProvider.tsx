@@ -96,7 +96,6 @@ const withUserInterface = function (
       return !!user.currentAllocation?.id;
     },
     hasAgreement() {
-      console.log("user.currentAgreement", user.currentAgreement);
       return !!user.currentAgreement?.id;
     },
   };

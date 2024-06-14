@@ -11,9 +11,6 @@ async function saveDeposit({
   nonce: number;
   id: string;
 }): Promise<{ result: boolean }> {
-  console.log("nonce", nonce);
-  console.log("funder", funder);
-  console.log("id", id);
   const response = await fetch(
     `${import.meta.env.VITE_BACKEND_HTTP_URL}/create-deposit`,
     {
@@ -25,8 +22,6 @@ async function saveDeposit({
       body: JSON.stringify({ nonce, funder, id }),
     }
   );
-
-  console.log("response", response);
 
   if (!response.ok)
     throw new Error(`Error registering user: ${response.statusText}`);

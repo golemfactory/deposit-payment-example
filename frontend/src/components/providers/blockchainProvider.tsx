@@ -1,6 +1,10 @@
 import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
-import { SIWECreateMessageArgs, createSIWEConfig, formatMessage } from "@web3modal/siwe";
+import {
+  SIWECreateMessageArgs,
+  createSIWEConfig,
+  formatMessage,
+} from "@web3modal/siwe";
 import { SiweMessage } from "siwe";
 
 import { WagmiProvider, http } from "wagmi";
@@ -29,14 +33,7 @@ const wagmiConfig = defaultWagmiConfig({
   metadata,
 });
 
-
-
-
 function createMessage({ nonce, address, chainId }: any) {
-  console.log('creating message '); 
-  console.log('nonce', nonce);
-  console.log('address', address);
-  console.log('chainId', chainId);
   const message = new SiweMessage({
     version: "1",
     domain: window.location.host,
@@ -46,8 +43,6 @@ function createMessage({ nonce, address, chainId }: any) {
     nonce: nonce.toString(),
     statement: "Sign in with ethereum",
   });
-console.log("message", message);
-console.log("message.prepareMessage()", message.prepareMessage());
   return message.prepareMessage();
 }
 
@@ -59,17 +54,18 @@ console.log("message.prepareMessage()", message.prepareMessage());
 //   signOut
 // })
 
-async function getMessageParams(){
+async function getMessageParams() {
   return {
     domain: window.location.host,
     uri: window.location.origin,
     chains: [1, 2020],
-    statement: 'Please sign with your account'
-  }
+    statement: "Please sign with your account",
+  };
 }
 // // @ts-ignore
 const siweConfig = createSIWEConfig({
-  createMessage: ({ address, ...args }: SIWECreateMessageArgs) => formatMessage(args, address),
+  createMessage: ({ address, ...args }: SIWECreateMessageArgs) =>
+    formatMessage(args, address),
   getMessageParams,
   getNonce: async (address) => {
     if (!address) {
@@ -97,12 +93,15 @@ const siweConfig = createSIWEConfig({
   },
   // @ts-ignore
   async getSession() {
-    return new Promise((resolve) => setTimeout( ()=> {
-      resolve({
-        // @ts-ignore
-        address: localStorage.getItem("address"),
-        chainId: 1,
-    })}, 1000));  
+    return new Promise((resolve) =>
+      setTimeout(() => {
+        resolve({
+          // @ts-ignore
+          address: localStorage.getItem("address"),
+          chainId: 1,
+        });
+      }, 1000)
+    );
   },
   verifyMessage: async ({ message, signature }) => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_HTTP_URL}/login`, {
@@ -122,8 +121,12 @@ const siweConfig = createSIWEConfig({
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
 
-    window.dispatchEvent(new StorageEvent("storage", { key : 'accessToken', newValue : data.accessToken }));
-
+    window.dispatchEvent(
+      new StorageEvent("storage", {
+        key: "accessToken",
+        newValue: data.accessToken,
+      })
+    );
 
     return true;
   },
@@ -131,9 +134,9 @@ const siweConfig = createSIWEConfig({
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("address");
-    
+
     return false;
-  }
+  },
 });
 
 createWeb3Modal({

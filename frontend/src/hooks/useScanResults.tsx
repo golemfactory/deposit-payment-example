@@ -9,7 +9,6 @@ export const useScanResults = () => {
   const { emit, events$, clean } = useEvents({
     key: "scanResults",
     eventKind: (s: any) => {
-      console.log("Event kind", s);
       return match(s)
         .with(fileStatus.CLEAN, () => Event.FILE_SCAN_OK)
         .with(fileStatus.INFECTED, () => Event.FILE_SCAN_ERROR)
@@ -26,7 +25,6 @@ export const useScanResults = () => {
 
     eventSource.addEventListener("message", (event) => {
       const file = JSON.parse(event.data);
-      console.log("Emmiting event", file);
       removeFile(file.id);
       emit(file, file.result);
     });

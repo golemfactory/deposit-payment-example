@@ -1,7 +1,5 @@
 import axios from "axios";
 import { useUser } from "hooks/useUser";
-import { use } from "i18next";
-import { set } from "ramda";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { parseEther } from "viem";
