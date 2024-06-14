@@ -142,7 +142,7 @@ export class Yagna {
   async createUserAllocation(userId: string) {
     const userService = container.cradle.userService;
     const userDeposit = await userService.getCurrentDeposit(userId);
-
+    console.log("creating allocation userDeposit", userDeposit);
     if (!userDeposit) {
       throw new Error({ code: ErrorCode.NO_DEPOSIT });
     }
@@ -160,7 +160,9 @@ export class Yagna {
           // @ts-ignore
           spender: userDeposit.spender,
         },
-        timeout: new Date(Number(userDeposit.validTo) * 1000).toISOString(),
+        timeout: new Date(
+          Number(userDeposit.validTo) * 1000 - 1000
+        ).toISOString(),
       });
 
       container.cradle.userService.setCurrentAllocationId(
