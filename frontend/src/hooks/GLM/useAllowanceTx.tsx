@@ -8,6 +8,8 @@ import { config } from "config";
 import { useRequestorWalletAddress } from "hooks/useRequestorWalletAddress";
 import { ZERO_ADDRESS } from "types/zero";
 import { useLocalStorage } from "hooks/useLocalStorage";
+import debug from "debug";
+const log = debug("useAllowanceTx");
 
 type WithBlockNumber<T> = T & { blockNumber: bigint };
 

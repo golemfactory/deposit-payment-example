@@ -13,7 +13,9 @@ import { assertOptionalBigInt } from "types/assertBigInt";
 import { TransactionExecutionError } from "viem";
 import { useEffect, useState } from "react";
 
-const debug = require("debug")("useAllowance");
+import debug from "debug";
+
+const log = debug("useGLMApprove");
 
 export function useAllowance(): {
   isFetched: boolean;
@@ -23,9 +25,9 @@ export function useAllowance(): {
   const { address } = useAccount();
 
   useEffect(() => {
-    debug("Read allowance");
-    debug("from: ", address);
-    debug("to contact: ", config.GLMContractAddress[chainId]);
+    log("Read allowance");
+    log("from: ", address);
+    log("to contact: ", config.GLMContractAddress[chainId]);
   }, [address, chainId]);
   const {
     isFetched,
@@ -43,9 +45,9 @@ export function useAllowance(): {
   });
 
   useEffect(() => {
-    debug("Allowance amount: ", allowanceAmount);
-    debug("isFetched: ", isFetched);
-    debug("isError: ", isError);
+    log("Allowance amount: ", allowanceAmount);
+    log("isFetched: ", isFetched);
+    log("isError: ", isError);
   }, [allowanceAmount, isFetched]);
   return {
     isFetched,
