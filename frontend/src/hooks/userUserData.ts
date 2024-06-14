@@ -5,6 +5,7 @@ import { useLocalStorage } from "./useLocalStorage";
 
 const socket = io(`${import.meta.env.VITE_BACKEND_WS_URL}/me`, {
   autoConnect: false,
+  transports: ["websocket"],
 });
 
 export const useUserData = () => {
