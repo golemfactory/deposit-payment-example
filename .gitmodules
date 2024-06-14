@@ -14,4 +14,4 @@
 [submodule "yagna"]
 	path = yagna
 	url = https://github.com/golemfactory/yagna.git
-  branch = kek/fix-deposit-amend
+  branch = kek/init-on-schedule
