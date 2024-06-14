@@ -12,6 +12,9 @@ import { useChainId } from "hooks/useChainId";
 import { assertOptionalBigInt } from "types/assertBigInt";
 import { TransactionExecutionError } from "viem";
 import { useEffect, useState } from "react";
+import { use } from "i18next";
+
+const debug = require("debug")("useAllowance");
 
 export function useAllowance(): {
   isFetched: boolean;
@@ -20,7 +23,16 @@ export function useAllowance(): {
   const chainId = useChainId();
   const { address } = useAccount();
 
-  const { isFetched, data: allowanceAmount } = useReadContract({
+  useEffect(() => {
+    debug("Read allowance");
+    debug("from: ", address);
+    debug("to contact: ", config.GLMContractAddress[chainId]);
+  }, [address, chainId]);
+  const {
+    isFetched,
+    data: allowanceAmount,
+    isError,
+  } = useReadContract({
     address: config.GLMContractAddress[chainId],
     abi: abi,
     functionName: "allowance",
@@ -31,6 +43,11 @@ export function useAllowance(): {
     },
   });
 
+  useEffect(() => {
+    debug("Allowance amount: ", allowanceAmount);
+    debug("isFetched: ", isFetched);
+    debug("isError: ", isError);
+  }, [allowanceAmount, isFetched]);
   return {
     isFetched,
     amount: allowanceAmount,

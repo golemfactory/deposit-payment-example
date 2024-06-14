@@ -236,6 +236,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     }
   }, [isUserLoading, userData, user.allowanceAmount, depositData]);
 
+  console.log("use allowance hook call");
   const { isFetched: isAllowanceFetched, amount: allowanceAmount } =
     useAllowance();
 
@@ -267,6 +268,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
       if (isRegistered) {
         if (isAllowanceFetched && allowanceAmount !== undefined) {
           if (allowanceAmount > config.minimalAllowance) {
+            console.log("enough allowance");
             dispatch({
               kind: UserAction.ENOUGH_ALLOWANCE,
               payload: { allowanceAmount },
