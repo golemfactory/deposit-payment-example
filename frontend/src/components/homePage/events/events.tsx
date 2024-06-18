@@ -29,7 +29,6 @@ export const Events = () => {
   const { events$: flowEvents$ } = useFlowEvents();
 
   useEffect(() => {
-    console.log("events", events);
     flowEvents$
       .pipe(
         finalize(() => {

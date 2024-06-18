@@ -7,6 +7,7 @@ export enum ErrorCode {
   ALLOCATION_NOT_FOUND = "ALLOCATION_NOT_FOUND",
   AGREEMENT_NOT_FOUND = "AGREEMENT_NOT_FOUND",
   ALLOCATION_TOP_UP_FAILED = "ALLOCATION_TOP_UP_FAILED",
+  UNABLE_TO_CREATE_AGREEMENT = "UNABLE_TO_CREATE_AGREEMENT",
 }
 
 export const errorMessages = {
@@ -26,6 +27,7 @@ export const errorMessages = {
   }: {
     allocationId: string;
   }) => `Allocation top up failed: ${allocationId}`,
+  [ErrorCode.UNABLE_TO_CREATE_AGREEMENT]: () => "Unable to create agreement",
 };
 
 export type ErrorParams = {
@@ -34,6 +36,7 @@ export type ErrorParams = {
   [ErrorCode.NO_ALLOCATION]: never;
   [ErrorCode.NO_WORKER]: never;
   [ErrorCode.USER_NOT_FOUND]: never;
+  [ErrorCode.UNABLE_TO_CREATE_AGREEMENT]: never;
   [ErrorCode.ALLOCATION_NOT_FOUND]: {
     allocationId: string;
   };

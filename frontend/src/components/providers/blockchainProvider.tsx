@@ -88,7 +88,6 @@ const siweConfig = createSIWEConfig({
     }
     const responseData = await response.json();
 
-    console.log("nonce", responseData.nonce.toString());
     return responseData.nonce.toString();
   },
   // @ts-ignore

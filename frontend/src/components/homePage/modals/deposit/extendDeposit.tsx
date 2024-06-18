@@ -45,7 +45,6 @@ export const ExtendDeposit = () => {
       setNonce(user.currentDeposit?.nonce);
     }
     if (isSuccessTransaction && additionalAmount > 0) {
-      console.log("topping up", additionalAmount, isSuccessTransaction);
       topUp(additionalAmount);
       hideModal();
     }

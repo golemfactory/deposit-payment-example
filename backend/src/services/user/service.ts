@@ -31,7 +31,6 @@ export const userService: IUserService = {
   //@ts-ignore
   getCurrentDeposit: async (userId: string): DepositData | null => {
     const user = await userModel.findOne({ _id: userId });
-    console.log("user", user);
     if (!user) {
       throw new Error(`User not found with id ${userId}`);
     }

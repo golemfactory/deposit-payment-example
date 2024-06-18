@@ -16,6 +16,7 @@ import { WorkContext } from "@golem-sdk/golem-js";
 import { TaskExecutor } from "@golem-sdk/task-executor";
 import { formatEther, parseEther } from "viem";
 import { UUID } from "mongodb";
+import { debug } from "node:console";
 export class Yagna {
   public debitNoteEvents: Subject<any>;
   public invoiceEvents: Subject<any>;
@@ -42,9 +43,12 @@ export class Yagna {
     },
     getExecutor: async (userId: string) => {
       const existingExecutor = this.userContext.data.get(userId)?.executor;
+      debugLog("yagna", "get executor", userId);
       if (existingExecutor) {
+        debugLog("yagna", "getting executor, found", userId);
         return existingExecutor;
       }
+      debugLog("yagna", "getting executor, not found", userId);
       return await this.createExecutor(userId);
     },
     setWorker: async (userId: string, worker: Worker) => {
@@ -93,20 +97,27 @@ export class Yagna {
 
   async makeAgreement(userId: string) {
     //creating executor by task executor makes agreement
-    const executor = await this.userContext.getExecutor(userId);
-    //in order to make sure agreement wont be automatically closed after 90s
-    //which is HARDCODED in yagna we make worker which under the hood makes activity
-    // which prevents agreement from closing
-    const worker = await this.getUserWorker(userId);
+    debugLog("yagna", "making agreement", userId);
+    let executor, worker, agreement;
+    try {
+      executor = await this.userContext.getExecutor(userId);
+      debugLog("yagna", "making agreement, executor found", userId);
 
-    const agreement = await worker.context?.activity.agreement;
+      //in order to make sure agreement wont be automatically closed after 90s
+      //which is HARDCODED in yagna we make worker which under the hood makes activity
+      // which prevents agreement from closing
+      worker = await this.getUserWorker(userId);
+      debugLog("yagna", "making agreement, worker found", userId);
+      agreement = await worker.context?.activity.agreement;
+      debugLog("yagna", "making agreement, agreement found", agreement);
+    } catch (e) {
+      console.log("Error", e);
+    }
 
     if (!agreement) {
+      debugLog("yagna", "Error making agreement, no agreement found", userId);
       throw new Error({
-        code: ErrorCode.AGREEMENT_NOT_FOUND,
-        payload: {
-          agreementId: "",
-        },
+        code: ErrorCode.UNABLE_TO_CREATE_AGREEMENT,
       });
     }
     container.cradle.userService.setCurrentAgreementId(userId, agreement.id);
@@ -234,7 +245,7 @@ export class Yagna {
 
   //task executor creates allocation as well
   async createExecutor(userId: string) {
-    debugLog("payments", "creating executor", userId);
+    debugLog("yagna", "creating executor", userId);
     const userService = container.cradle.userService;
     const userDeposit = await userService.getCurrentDeposit(userId);
 
@@ -254,7 +265,7 @@ export class Yagna {
 
     //@ts-ignore
     if (allocation?.id) {
-      debugLog("payments", "allocation already exists, reusing", allocation);
+      debugLog("yagna", "allocation already exists, reusing", allocation);
     }
 
     const executor = await TaskExecutor.create({
@@ -281,11 +292,11 @@ export class Yagna {
 
   //task executor creates agreement and activity
   async getUserWorker(userId: string): Promise<Worker> {
-    debugLog("payments", "getting user worker", userId);
+    debugLog("yagna", "getting user worker", userId);
     return new Promise(async (resolve, reject) => {
       const worker = this.userContext.getWorker(userId);
       if (worker) {
-        debugLog("yagna", "worker found", userId);
+        debugLog("yagna", "getUSerWorker: worker found", userId);
         const isConnected = await worker.isConnected();
         if (isConnected) {
           debugLog("yagna", "worker connected", userId);
@@ -308,18 +319,27 @@ export class Yagna {
         resolve(newWorker);
         return;
       } else {
+        debugLog("yagna", "creating worker, not mock getting deposit", userId);
         const userService = container.cradle.userService;
         const userDeposit = await userService.getCurrentDeposit(userId);
+        debugLog("yagna", "creating worker deposit found", userDeposit);
         if (!userDeposit) {
           throw new Error({ code: ErrorCode.NO_DEPOSIT });
         }
+        debugLog("yagna", "creating worker, getting executor", userId);
         const executor = await this.userContext.getExecutor(userId);
         if (!executor) {
           throw new Error({ code: ErrorCode.NO_ALLOCATION });
         }
 
+        debugLog(
+          "yagna",
+          "creating worker, executor found getting agreement",
+          userId
+        );
         executor
           .run(async (ctx: WorkContext) => {
+            debugLog("yagna", "created worker", userId);
             newWorker.context = ctx;
 
             newWorker.setState("free");
@@ -328,7 +348,8 @@ export class Yagna {
           })
           .catch((e: any) => {
             console.log("Error", e);
-            reject();
+            debugLog("yagna", "error creating worker", e);
+            reject(e);
           });
       }
     });

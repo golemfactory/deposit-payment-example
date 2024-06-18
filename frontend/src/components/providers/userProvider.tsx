@@ -236,7 +236,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     }
   }, [isUserLoading, userData, user.allowanceAmount, depositData]);
 
-  console.log("use allowance hook call");
   const { isFetched: isAllowanceFetched, amount: allowanceAmount } =
     useAllowance();
 

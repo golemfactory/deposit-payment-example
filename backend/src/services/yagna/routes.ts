@@ -90,8 +90,14 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       const Yagna = container.cradle.Yagna;
       try {
         await Yagna.makeAgreement(requestUser._id);
+        reply.code(201).send({
+          message: "Agreement created",
+        });
       } catch (e) {
         console.log("error", e);
+        reply.code(500).send({
+          message: "Unable to create agreement",
+        });
       }
     },
   });
@@ -143,7 +149,6 @@ export const Yagna = fastifyPlugin((fastify: FastifyInstance, opts, done) => {
       const user = await container.cradle.userService.getUserById(
         requestUser._id
       );
-      console.log("user", user);
       if (!user?.currentAllocationId) {
         reply.code(500).send({
           message: "No allocation found",
