@@ -85,7 +85,12 @@ export type Payload = {
     txHash: `0x${string}`;
   };
 
-  [Event.NEW_DEBIT_NOTE]: {};
+  [Event.NEW_DEBIT_NOTE]: {
+    agreementId: string;
+    debitNoteId: string;
+    totalAmountDue: string;
+    paymentDueDate: string;
+  };
 };
 
 export type EventType = EventWithPayload<Payload>;

@@ -206,13 +206,19 @@ const NewInvoiceEvent = (event: {
     <Card bordered={true}>
       <Card.Body>
         <Card.Title>New Invoice</Card.Title>
-        <div>
-          <div>
-            Agreement ID: <ShortLink id={event.payload.agreementId}></ShortLink>
-          </div>
-          <div>
-            Invoice ID: <ShortLink id={event.payload.invoiceId}></ShortLink>
-          </div>
+        <div className="flex gap-2">
+          <div className="stat-title">Invoice ID</div>:{" "}
+          <ShortLink id={event.payload.invoiceId}></ShortLink>
+        </div>
+        <div className="flex gap-2">
+          <div className="stat-title">Agreement ID: </div>:{" "}
+          <ShortLink id={event.payload.agreementId}></ShortLink>
+        </div>
+        <div className="flex gap-2">
+          <div className="stat-title">Amount</div>:{" "}
+          <GLMAmountStat
+            amount={formatBalance(parseEther(event.payload.amount))}
+          ></GLMAmountStat>
         </div>
       </Card.Body>
     </Card>
@@ -314,6 +320,45 @@ const FileScanOk = (event: {
   );
 };
 
+const NewDebitNoteEvent = (event: {
+  kind: Event.NEW_DEBIT_NOTE;
+  payload: Payload[Event.NEW_DEBIT_NOTE];
+}) => {
+  return (
+    <>
+      {event.payload.paymentDueDate ? (
+        <Card bordered={true}>
+          <Card.Body>
+            <Card.Title>New Payable Debit Note</Card.Title>
+            <div className="flex gap-2">
+              <div className="stat-title">ID:</div>
+              <div>
+                <ShortLink id={event.payload.debitNoteId}></ShortLink>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="stat-title">Agreement ID:</div>
+              <div>
+                <ShortLink id={event.payload.agreementId}></ShortLink>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="stat-title">Amount </div>
+              <div>
+                <GLMAmountStat
+                  amount={formatBalance(
+                    parseEther(event.payload.totalAmountDue)
+                  )}
+                ></GLMAmountStat>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+      ) : null}
+    </>
+  );
+};
+
 export const EventCard = (event: EventType) => {
   return (
     <motion.div variants={variants} initial="hidden" animate="visible">
@@ -341,6 +386,8 @@ export const EventCard = (event: EventType) => {
             return <FileScanError {...event} />;
           case Event.FILE_SCAN_OK:
             return <FileScanOk {...event} />;
+          case Event.NEW_DEBIT_NOTE:
+            return <NewDebitNoteEvent {...event} />;
         }
       })()}
     </motion.div>

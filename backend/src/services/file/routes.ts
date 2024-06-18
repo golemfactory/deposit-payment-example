@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 import { mkdir } from "node:fs/promises";
 import { debugLog } from "../../utils.js";
+import { jwtDecode } from "jwt-decode";
 
 const DIR_NAME = fileURLToPath(new URL("../../../../temp", import.meta.url));
 export const fileService = fastifyPlugin(
@@ -55,9 +56,21 @@ export const fileService = fastifyPlugin(
         reply.send({ message: "File uploaded" });
       },
     });
-    fastify.get("/scan-result", { websocket: true }, (socket) => {
+
+    fastify.io.of(`/scan-result`).on("connection", async (socket) => {
+      const user = jwtDecode<{
+        _id: string;
+      }>(socket.handshake.auth.token);
+      if (!user._id) {
+        throw new Error(`Wrong token`);
+      }
+      if (!user) {
+        throw new Error(
+          `User not found with id ${socket.handshake.auth.token}`
+        );
+      }
       container.cradle.fileService.resultStream.subscribe((result) => {
-        socket.send(JSON.stringify(result));
+        socket.emit("event", JSON.stringify(result));
       });
     });
 

@@ -3,6 +3,7 @@ import {
   useContext,
   PropsWithChildren,
   useCallback,
+  useEffect,
 } from "react";
 
 import useSWRMutation from "swr/mutation";
@@ -16,7 +17,9 @@ export const useUploadedFiles = () => {
   const setProgress = (id: string, progress: number) => {
     files.set(id, progress);
   };
-
+  useEffect(() => {
+    console.log("useUploadedFiles", files.size);
+  }, []);
   const removeFile = useCallback((id: string) => {
     files.delete(id);
   }, []);

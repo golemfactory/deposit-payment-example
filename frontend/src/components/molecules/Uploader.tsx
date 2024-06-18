@@ -7,9 +7,11 @@ export const FileUploader = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
-    console;
+    console.log("files size", files.size);
     if (files.size > 0) {
       setIsUploading(true);
+    } else {
+      setIsUploading(false);
     }
   }, [files.size]);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
