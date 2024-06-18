@@ -73,7 +73,7 @@ export const Events = () => {
       //TODO: fix this
       setTimeout(() => {
         sub.unsubscribe();
-      }, 0);
+      }, 1000);
     };
   }, []);
 

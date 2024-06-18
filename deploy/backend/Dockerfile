@@ -7,7 +7,6 @@ RUN curl -L https://join.golem.network/as-requestor --output as-requestor.sh
 RUN chmod +x as-requestor.sh
 
 ENV PATH="${PATH}:/root/.local/bin"
-ENV DEBUG="task-executor:*"
 # switch yagna version if necessery
 ARG YAGNA_VERSION
 

@@ -1,3 +1,4 @@
+import { set } from "ramda";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Payload, Event, ExtractPayload } from "types/events";
@@ -64,7 +65,9 @@ export const useEvents = <K extends Event>({
     if (currentEvents) {
       currentEvents.forEach((e: any) => {
         if (!previousEvents.current.find((p) => getId(p) === getId(e))) {
-          events$.current?.next(e);
+          setTimeout(() => {
+            events$.current?.next(e);
+          }, 1000);
         }
       });
       setIsFirstRun(false);
@@ -72,7 +75,7 @@ export const useEvents = <K extends Event>({
         previousEvents.current = currentEvents;
       }
     }
-  }, [currentEvents]);
+  }, [currentEvents, events$.current]);
 
   useEffect(() => {
     if (!isFirstRun) {

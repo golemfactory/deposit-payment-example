@@ -64,7 +64,6 @@ export const useYagnaEvent = (event: yagnaEventTopic) => {
       socketRef.current.connect();
 
       socketRef.current.on("event", (data: any) => {
-        console.log("event", data, isInTopic(event)(data.event.eventType));
         if (!isInTopic(event)(data.event.eventType)) return;
         emit({ id: data.id, ...data[event] }, data.event.eventType);
       });

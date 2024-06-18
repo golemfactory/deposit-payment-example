@@ -56,6 +56,7 @@ export type Payload = {
     agreementId: string;
     invoiceId: string;
     transactionId?: string;
+    amount: string;
   };
 
   [Event.AGREEMENT_SIGNED]: {
