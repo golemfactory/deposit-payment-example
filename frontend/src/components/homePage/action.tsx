@@ -12,28 +12,32 @@ import { useDepositReleasedEvents } from "hooks/events/useDepositReleasedEvents"
 import { useYagnaEvents } from "hooks/events/useYagnaEvents";
 import { Event } from "types/events";
 import { useDepositPaymentEvents } from "hooks/events/usePaymentEvents";
+import { useFlowEvents } from "components/providers/flowEventsProvider";
 export const Action = () => {
   const currentAgreement = useCurrentAgreement();
 
   const { user } = useUser();
 
+  //TODO : this logic should be move outside of this component
+  // probably we should extend user state provider to handle this
+
   const [state, setState] = useState<
-    UserState | "HAS_FILE_SCANNED" | "AGREEMENT_RELEASED" | "DEPOSIT_RELEASED"
+    | UserState
+    | "HAS_FILE_SCANNED"
+    | "AGREEMENT_RELEASED"
+    | "DEPOSIT_RELEASED"
+    | "WAITING_FOR_PROVIDER_PAYMENT"
+    | "WAITING_FOR_FEE_PAYMENT"
   >(user.state);
 
   useEffect(() => {
-    if (
-      !["HAS_FILE_SCANNED", "AGREEMENT_RELEASED", "DEPOSIT_RELEASED"].includes(
-        state
-      )
-    ) {
-      setState(user.state);
-    }
+    setState(user.state);
   }, [user.state]);
 
   const { events$: scanResults$ } = useScanResults();
   const { events$: depositResults$ } = useDepositPaymentEvents();
   const { events$: yagnaEvents$ } = useYagnaEvents();
+  const { events$: flowEvents$ } = useFlowEvents();
   useEffect(() => {
     const subscription = scanResults$.subscribe((event) => {
       console.log(event);
@@ -49,7 +53,7 @@ export const Action = () => {
     const subscription2 = depositResults$.subscribe((event) => {
       console.log(event);
       if (event.kind === Event.DEPOSIT_FEE_PAYMENT) {
-        // setState("DEPOSIT_RELEASED");
+        setState("DEPOSIT_RELEASED");
       }
     });
 
@@ -59,10 +63,21 @@ export const Action = () => {
       }
     });
 
+    const subscription4 = flowEvents$.subscribe((event) => {
+      if (event === "releaseAllocation") {
+        setState("WAITING_FOR_FEE_PAYMENT");
+      }
+
+      if (event === "releaseAgreement") {
+        setState("WAITING_FOR_PROVIDER_PAYMENT");
+      }
+    });
+
     return () => {
       subscription.unsubscribe();
       subscription2.unsubscribe();
       subscription3.unsubscribe();
+      subscription4.unsubscribe();
     };
   }, []);
 

@@ -163,11 +163,13 @@ const userActionReducer = (
     .with(UserAction.HAS_AGREEMENT, () => UserState.HAS_AGREEMENT)
     .otherwise(() => user.state);
 
+  console.log("state", state);
+  console.log("kind of action", kind);
   const newUser = {
     ...user,
     ...payload,
     state:
-      UserStateOrderValue[state] > UserStateOrderValue[user.state]
+      UserStateOrderValue[state] >= UserStateOrderValue[user.state]
         ? state
         : user.state,
   };
