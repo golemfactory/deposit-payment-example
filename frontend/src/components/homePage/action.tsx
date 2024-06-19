@@ -1,23 +1,17 @@
 import { FileUploader } from "components/molecules/Uploader";
 import { useUser } from "hooks/useUser";
-import { useCurrentAgreement } from "hooks/yagna/useCurrentAgreement";
 import { Card } from "react-daisyui";
-import { CloseSession } from "./closeSession";
-import { match } from "ts-pattern";
 import { UserState } from "types/user";
 import { copy } from "utils/copy";
 import { useScanResults } from "hooks/useScanResults";
 import { useEffect, useState } from "react";
-import { useDepositReleasedEvents } from "hooks/events/useDepositReleasedEvents";
 import { useYagnaEvents } from "hooks/events/useYagnaEvents";
 import { Event } from "types/events";
 import { useDepositPaymentEvents } from "hooks/events/usePaymentEvents";
 import { useFlowEvents } from "components/providers/flowEventsProvider";
+import { set } from "ramda";
 export const Action = () => {
-  const currentAgreement = useCurrentAgreement();
-
   const { user } = useUser();
-
   //TODO : this logic should be move outside of this component
   // probably we should extend user state provider to handle this
 
@@ -27,45 +21,41 @@ export const Action = () => {
     | "AGREEMENT_RELEASED"
     | "DEPOSIT_RELEASED"
     | "WAITING_FOR_PROVIDER_PAYMENT"
-    | "WAITING_FOR_FEE_PAYMENT"
+    | "WAITING_FOR_OWNER_PAYMENT"
   >(user.state);
 
   useEffect(() => {
-    setState(user.state);
+    if (
+      state !== "WAITING_FOR_OWNER_PAYMENT" &&
+      state !== "WAITING_FOR_PROVIDER_PAYMENT"
+    ) {
+      setState(user.state);
+    }
   }, [user.state]);
 
   const { events$: scanResults$ } = useScanResults();
-  const { events$: depositResults$ } = useDepositPaymentEvents();
   const { events$: yagnaEvents$ } = useYagnaEvents();
   const { events$: flowEvents$ } = useFlowEvents();
+  const { events$: paymentEvents$ } = useDepositPaymentEvents();
   useEffect(() => {
-    const subscription = scanResults$.subscribe((event) => {
-      console.log(event);
+    const scanResultSub = scanResults$.subscribe((event) => {
       if (
         event.kind === Event.FILE_SCAN_OK ||
         event.kind === Event.FILE_SCAN_ERROR
       ) {
-        console.log("setting");
         setState("HAS_FILE_SCANNED");
       }
     });
 
-    const subscription2 = depositResults$.subscribe((event) => {
-      console.log(event);
-      if (event.kind === Event.DEPOSIT_FEE_PAYMENT) {
-        setState("DEPOSIT_RELEASED");
-      }
-    });
-
-    const subscription3 = yagnaEvents$.subscribe((event) => {
+    const yagnaSub = yagnaEvents$.subscribe((event) => {
       if (event.kind === Event.AGREEMENT_TERMINATED) {
         setState("AGREEMENT_RELEASED");
       }
     });
 
-    const subscription4 = flowEvents$.subscribe((event) => {
+    const flowSub = flowEvents$.subscribe((event) => {
       if (event === "releaseAllocation") {
-        setState("WAITING_FOR_FEE_PAYMENT");
+        setState("WAITING_FOR_OWNER_PAYMENT");
       }
 
       if (event === "releaseAgreement") {
@@ -73,11 +63,26 @@ export const Action = () => {
       }
     });
 
+    const paymentsSub = paymentEvents$.subscribe((event) => {
+      if (event.kind === Event.DEPOSIT_PROVIDER_PAYMENT) {
+        setState((prev) => {
+          if (prev !== "DEPOSIT_RELEASED") {
+            return "AGREEMENT_RELEASED";
+          }
+          return prev;
+        });
+      }
+      if (event.kind === Event.DEPOSIT_FEE_PAYMENT) {
+        console.log("DEPOSIT_FEE_PAYMENT");
+        setState("DEPOSIT_RELEASED");
+      }
+    });
+
     return () => {
-      subscription.unsubscribe();
-      subscription2.unsubscribe();
-      subscription3.unsubscribe();
-      subscription4.unsubscribe();
+      scanResultSub.unsubscribe();
+      yagnaSub.unsubscribe();
+      flowSub.unsubscribe();
+      paymentsSub.unsubscribe();
     };
   }, []);
 
@@ -85,10 +90,24 @@ export const Action = () => {
     <>
       <Card className="p-2">
         <Card.Body>
-          <Card.Title>
-            {copy[state].title} {state}
-          </Card.Title>
+          <Card.Title className="mb-2">{copy[state].title}</Card.Title>
           <div dangerouslySetInnerHTML={copy[state].message}></div>
+          {state === "DEPOSIT_RELEASED" ? (
+            <div className="grid grid-cols-12 mt-12 ">
+              <div className="col-start-6 col-span-2">
+                <button
+                  className="btn"
+                  onClick={() => {
+                    flowEvents$.complete();
+                  }}
+                >
+                  Restart session
+                </button>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
         </Card.Body>
         {}
       </Card>

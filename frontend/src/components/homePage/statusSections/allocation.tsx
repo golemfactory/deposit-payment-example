@@ -7,11 +7,21 @@ import { useUser } from "hooks/useUser";
 import { Loading } from "react-daisyui";
 import { formatBalance } from "utils/formatBalance";
 import { Tooltip } from "react-daisyui";
+import { useEffect, useState } from "react";
+import { Bip } from "components/atoms/bip";
 export const Allocation = () => {
   const { isCreating, createAllocation } = useCreateAllocation();
   const { currentAllocation } = useCurrentAllocation();
   const { releaseAllocation, isReleasing } = useReleaseAllocation();
   const { user } = useUser();
+  const [isCreateAllocationButtonActive, setIsCreateAllocationButtonActive] =
+    useState(false);
+
+  useEffect(() => {
+    setIsCreateAllocationButtonActive(
+      user.hasDeposit() && !user.hasAllocation()
+    );
+  }, [user.hasAllocation(), user.hasDeposit()]);
 
   return (
     <div className="stats shadow mt-2 pt-4 pb-4">
@@ -95,12 +105,13 @@ export const Allocation = () => {
             </Tooltip>
           ) : (
             <button
-              className="btn"
+              className="btn relative"
               {...(user.hasDeposit() ? {} : { disabled: true })}
               onClick={() => {
                 createAllocation();
               }}
             >
+              {isCreateAllocationButtonActive && <Bip />}
               Create{" "}
             </button>
           )}

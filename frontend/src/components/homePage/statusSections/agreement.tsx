@@ -7,7 +7,7 @@ import { useDebitNoteEvents } from "hooks/events/useYagnaEvents";
 import { formatBalance } from "utils/formatBalance";
 import { parseEther } from "viem";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
-import { Loading } from "react-daisyui";
+import { Loading, Tooltip } from "react-daisyui";
 import { filter } from "rxjs";
 
 export const Agreement = () => {
@@ -17,16 +17,20 @@ export const Agreement = () => {
   const { events$ } = useDebitNoteEvents();
   const [totalAmount, setTotalAmount] = useState("-");
   useEffect(() => {
-    events$
-      .pipe(
-        filter((event: any) => {
-          return event.payload.agreementId === user.currentAgreement?.id;
-        })
-      )
-      .subscribe((event: any) => {
-        setTotalAmount(event.payload.totalAmountDue);
-      });
-  }, []);
+    if (user.currentAgreement?.id) {
+      console.log("fetching total amount");
+      events$
+        .pipe(
+          filter((event: any) => {
+            console.log(event, user.currentAgreement);
+            return event.payload.agreementId === user.currentAgreement?.id;
+          })
+        )
+        .subscribe((event: any) => {
+          setTotalAmount(event.payload.totalAmountDue);
+        });
+    }
+  }, [user]);
 
   return (
     <div
@@ -67,19 +71,20 @@ export const Agreement = () => {
         <div className="stat-actions">
           {user.currentAgreement?.id &&
           user.currentAgreement?.state === "Approved" ? (
-            <button
-              className="btn"
-              onClick={() => {
-                //@ts-ignore
-                releaseAgreement(user.currentAgreement?.id);
-              }}
+            <Tooltip
+              className="bg-primary"
+              message="Will trigger payment to the provider."
             >
-              {isReleasing ? (
-                <Loading variant="infinity" />
-              ) : (
-                "Release/Pay Provider"
-              )}
-            </button>
+              <button
+                className="btn"
+                onClick={() => {
+                  //@ts-ignore
+                  releaseAgreement(user.currentAgreement?.id);
+                }}
+              >
+                {isReleasing ? <Loading variant="infinity" /> : "Release"}
+              </button>
+            </Tooltip>
           ) : (
             <button
               className="btn"

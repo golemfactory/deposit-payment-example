@@ -163,8 +163,6 @@ const userActionReducer = (
     .with(UserAction.HAS_AGREEMENT, () => UserState.HAS_AGREEMENT)
     .otherwise(() => user.state);
 
-  console.log("state", state);
-  console.log("kind of action", kind);
   const newUser = {
     ...user,
     ...payload,
@@ -246,7 +244,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   useEffect(() => {
     if (user.currentDeposit) {
       if (userData?.currentAllocation.id) {
-        console.log("indeed");
         dispatch({
           kind: UserAction.HAS_ALLOCATION,
           payload: {
@@ -254,7 +251,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
           },
         });
       } else {
-        console.log("no allocation");
         dispatch({
           kind: UserAction.HAS_NO_ALLOCATION,
           payload: { currentAllocation: null },
@@ -291,7 +287,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   }, [isAllowanceFetched, allowanceAmount, isRegistered]);
 
   useEffect(() => {
-    console.log("currentAgreement", currentAgreement);
     if (currentAgreement?.agreementId) {
       dispatch({
         kind: UserAction.HAS_AGREEMENT,

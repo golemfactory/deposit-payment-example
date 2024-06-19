@@ -370,6 +370,7 @@ export const EventCard = (
               <EventCardScaffold
                 event={event}
                 template={<FileScanError {...event} />}
+                color="#F66A6A"
               />
             );
           case Event.FILE_SCAN_OK:
@@ -377,6 +378,7 @@ export const EventCard = (
               <EventCardScaffold
                 event={event}
                 template={<FileScanOk {...event} />}
+                color="#5BC281"
               />
             );
           case Event.NEW_DEBIT_NOTE:

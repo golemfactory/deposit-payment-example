@@ -96,8 +96,8 @@ timestamp: it points to the place in time till which Deposit will be held on the
     ["AGREEMENT_RELEASED"]: {
       title: "Agreement released!",
       message: {
-        __html: md.render(`
-          Congratulations, You have successfully released the Agreement and as a result paid the Provider for his work.
+        __html:
+          md.render(`Congratulations, You have successfully released the Agreement and as a result paid the Provider for his work.
           The next step is to release Allocation. By clicking "Release" in the Allocation:
           The deposit will be released
           All not spent funds will be returned to the end-user
@@ -120,14 +120,14 @@ timestamp: it points to the place in time till which Deposit will be held on the
         __html: "fsdfsdf",
       },
     },
-    ["WAITING_FOR_AGREEMENT_PAYMENT"]: {
-      title: "fdsfsd",
+    ["WAITING_FOR_PROVIDER_PAYMENT"]: {
+      title: "owner payment",
       message: {
         __html: "fsdfsdf",
       },
     },
-    ["WAITING_FOR_DEPOSIT_PAYMENT"]: {
-      title: "fdsfsd",
+    ["WAITING_FOR_OWNER_PAYMENT"]: {
+      title: "owner payment ",
       message: {
         __html: "fsdfsdf",
       },

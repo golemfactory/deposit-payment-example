@@ -1,6 +1,6 @@
 import { set } from "ramda";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Subject } from "rxjs";
+import { ReplaySubject, Subject } from "rxjs";
 import { Payload, Event, ExtractPayload } from "types/events";
 import useLocalStorageState from "use-local-storage-state";
 import { v4 as uuidv4 } from "uuid";
@@ -22,12 +22,12 @@ export const useEvents = <K extends Event>({
     defaultValue: [],
   });
 
-  const events$ = useRef<null | Subject<any>>(null);
+  const events$ = useRef<null | ReplaySubject<any>>(null);
   const previousEvents = useRef<any[]>([]);
 
   const [isFirstRun, setIsFirstRun] = useState(true);
   if (!events$.current) {
-    events$.current = new Subject<{
+    events$.current = new ReplaySubject<{
       kind: K;
       payload: Payload[typeof eventKind extends (s: string) => infer R ? R : K];
       id: number;

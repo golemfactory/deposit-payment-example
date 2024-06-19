@@ -5,12 +5,23 @@ import { EventTitle, EventType } from "types/events";
 export const EventCardScaffold = ({
   event,
   template,
+  color,
 }: {
   event: EventType & { isExpanded: boolean; toggleExpanded: () => void };
   template: ReactElement;
+  color?: string;
 }) => {
   return (
-    <Card className="transition-all duration-1300 ease-out">
+    <Card
+      className={`transition-all duration-1300 ease-out `}
+      style={
+        color
+          ? {
+              backgroundColor: color,
+            }
+          : {}
+      }
+    >
       <Card.Body>
         <Card.Title>
           <div className="w-full flex justify-between">

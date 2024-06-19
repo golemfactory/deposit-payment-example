@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-daisyui";
 import { formatBalance } from "utils/formatBalance";
 import { shortTransaction } from "utils/shortTransaction";
+import { Bip } from "components/atoms/bip";
 
 export const Approve = () => {
   const { txHash } = useAllowanceTx();
@@ -20,8 +21,10 @@ export const Approve = () => {
   const [isApproveButtonActive, setIsApproveButtonActive] = useState(false);
 
   useEffect(() => {
+    console.log(user.hasEnoughAllowance());
+    console.log(user.isRegistered());
     setIsApproveButtonActive(user.isRegistered() && !user.hasEnoughAllowance());
-  }, [user.hasEnoughAllowance()]);
+  }, [user.hasEnoughAllowance(), user.isRegistered()]);
   return (
     <div
       className="stats shadow mt-2 pb-4 pt-4"
@@ -66,11 +69,11 @@ export const Approve = () => {
       <div className="stat "></div>
       <div className="stat ">
         <div className="stat-actions mt-0 ">
-          <button className="btn border-solid" onClick={openExtendApproveModal}>
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
-            </span>
+          <button
+            className="relative btn border-solid"
+            onClick={openExtendApproveModal}
+          >
+            {isApproveButtonActive && <Bip />}
             {user.hasEnoughAllowance()
               ? "Extend"
               : user.allowanceAmount && user.allowanceAmount > 0

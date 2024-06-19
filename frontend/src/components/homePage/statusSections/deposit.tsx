@@ -5,9 +5,10 @@ import { ExtendDeposit } from "components/homePage/modals/deposit/extendDeposit"
 import { useLayout } from "components/providers/layoutProvider";
 import { useUserCurrentDeposit } from "hooks/depositContract/useDeposit";
 import { useUser } from "hooks/useUser";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loading } from "react-daisyui";
 import { formatBalance } from "utils/formatBalance";
+import { Bip } from "components/atoms/bip";
 
 export const Deposit = () => {
   const { user } = useUser();
@@ -23,6 +24,11 @@ export const Deposit = () => {
     openModal();
   }, []);
 
+  const [isDepositButtonActive, setIsDepositButtonActive] = useState(false);
+
+  useEffect(() => {
+    setIsDepositButtonActive(user.isRegistered() && user.hasEnoughAllowance());
+  }, [user.hasEnoughAllowance()]);
   const deposit = useUserCurrentDeposit();
   return (
     <div
@@ -63,7 +69,8 @@ export const Deposit = () => {
               Extend
             </button>
           ) : (
-            <button className="btn" onClick={openCreateDepositModal}>
+            <button className="btn relative" onClick={openCreateDepositModal}>
+              {isDepositButtonActive && <Bip />}
               Create
             </button>
           )}

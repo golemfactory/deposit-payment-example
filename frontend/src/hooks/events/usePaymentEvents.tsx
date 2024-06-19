@@ -35,6 +35,7 @@ const useDepositEvent = ({
         amount: Number(log.args.amount),
         fee: Number(log.args.fee),
         validityTimestamp: Number(log.args.validToTimestamp),
+        id: log.transactionHash,
       };
       emit(e);
     });
