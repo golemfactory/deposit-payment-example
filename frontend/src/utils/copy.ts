@@ -102,7 +102,7 @@ export const copy: any = (() => {
       message: {
         __html:
           md.render(
-            `After signing the Agreement witj Provider, it is time to upload the files that you want to scan. \\
+            `After signing the Agreement with Provider, it is time to upload the files that you want to scan. \\
             \\
             You can do it by clicking the "Upload" button. The results of the scan will be displayed in the event log on the left-hand side of the interface.
               `),
@@ -127,11 +127,12 @@ export const copy: any = (() => {
       title: "Agreement released!",
       message: {
         __html: md.render(`
-Congratulations, You have successfully released the Agreement and as a result paid the Provider for his work.
-The next step is to release Allocation. By clicking "Release" in the Allocation:
-The deposit will be released
-All not spent funds will be returned to the end-user
-Deposit Fee will be transferred to Service Owner
+Congratulations, You have successfully released the Agreement and as a result paid the Provider for his work. \\
+\\
+The next step is to release Allocation. By clicking "Release" in the Allocation: \\
+- The deposit will be released \\
+- All not spent funds will be returned to the end-user \\
+- Deposit Fee will be transferred to Service Owner
         `),
       },
     },
@@ -139,27 +140,33 @@ Deposit Fee will be transferred to Service Owner
       title: "Congratulations!",
       message: {
         __html:
-          md.render(`You have successfully reached out to the end of this example.
-We hope You liked it and that it inspired You to create similar service on Golem. At this moment You can either create new Deposit to start the process again or clean the current session and close the browser window.
+          md.render(
+            `You have successfully reached out to the end of this example. \\
+            \\
+            We hope You liked it and that it inspired You to create similar service on Golem. At this moment You can either create new Deposit to start the process again or clean the current session and close the browser window.
 `),
       },
     },
-    ["SCANED_FILES"]: {
-      title: "fdsfsd",
-      message: {
-        __html: "fsdfsdf",
-      },
-    },
     ["WAITING_FOR_AGREEMENT_PAYMENT"]: {
-      title: "fdsfsd",
+      title: "Closing Agreement!",
       message: {
-        __html: "fsdfsdf",
+        __html:
+          md.render(
+            `Let’s wait for an Agreement to be closed. \\
+            \\
+            When it is done payment will be sent to the Provider. You will see all those events in the log on the left.
+            `),
       },
     },
     ["WAITING_FOR_DEPOSIT_PAYMENT"]: {
-      title: "fdsfsd",
+      title: "Closing Deposit!",
       message: {
-        __html: "fsdfsdf",
+        __html:
+          md.render(
+            `Let’s wait for Deposit to be closed. \\
+            \\
+            When it is done all not spent funds will be transferred back to the user. What is more, the Deposit Fee will be transferred to the Service Owner for being an intermediary in the whole process.  You will see all those events in the log on the left.
+            `),
       },
     },
   };
