@@ -17,8 +17,8 @@ export function Home() {
         }
         center={
           <div className="w-full">
-            <Status />
             <Action />
+            <Status />
           </div>
         }
       />

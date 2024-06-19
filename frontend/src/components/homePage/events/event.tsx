@@ -264,7 +264,7 @@ const NewDebitNoteEvent = (event: {
 }) => {
   return (
     <>
-      {event.payload.paymentDueDate ? (
+      {true ? (
         <>
           <div className="flex gap-2">
             <div className="stat-title">ID:</div>
