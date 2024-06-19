@@ -36,7 +36,6 @@ export const useScanResults = () => {
     if (accessToken) {
       socketRef.current.auth = { token: accessToken };
       socketRef.current.connect();
-      console.log("connecting ");
       socketRef.current.on("event", (event) => {
         log("message", event);
         const file = JSON.parse(event);
@@ -44,6 +43,10 @@ export const useScanResults = () => {
         emit(file, file.result);
       });
     }
+
+    return () => {
+      socketRef.current.disconnect();
+    };
   });
 
   return {

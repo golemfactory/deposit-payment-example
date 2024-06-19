@@ -109,11 +109,11 @@ export class Yagna {
       worker = await this.getUserWorker(userId);
       debugLog("yagna", "making agreement, worker found", userId);
       agreement = await worker.context?.activity.agreement;
-      debugLog("yagna", "making agreement, agreement found", agreement);
     } catch (e) {
       console.log("Error", e);
     }
 
+    console.log("WTF agreement", agreement);
     if (!agreement) {
       debugLog("yagna", "Error making agreement, no agreement found", userId);
       throw new Error({

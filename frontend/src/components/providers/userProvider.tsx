@@ -267,7 +267,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
       if (isRegistered) {
         if (isAllowanceFetched && allowanceAmount !== undefined) {
           if (allowanceAmount > config.minimalAllowance) {
-            console.log("enough allowance");
             dispatch({
               kind: UserAction.ENOUGH_ALLOWANCE,
               payload: { allowanceAmount },

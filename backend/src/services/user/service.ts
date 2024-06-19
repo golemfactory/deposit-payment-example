@@ -98,6 +98,7 @@ export const userService: IUserService = {
     };
   },
   setCurrentAgreementId: async (userId: string, agreementId: string) => {
+    console.log("Setting agreement id", agreementId, userId);
     await userModel.updateOne(
       { _id: userId },
       { currentAgreementId: agreementId }
