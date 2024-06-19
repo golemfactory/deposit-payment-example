@@ -10,23 +10,29 @@ export const copy: any = (() => {
     [UserState.DISCONNECTED]: {
       title: "Disconnected",
       message: {
-        __html:
-          md.render(
-          `Welcome to our example service for Deposit payments on Golem. We're glad to have you here. This version will show you step by step how Golem deposit payments work and how You can benefit from it on your very own service. \\ \\ 
-          This example service is inspired by a real-world service called VirusTotal. VirusTotal is well well-renowned service that analyzes suspicious files and URLs by running them through multiple antivirus engines and URL scanners to detect malware and malicious content. You can access the original service under this [Virus Total](https://www.virustotal.com/gui/home/upload). \\ \\ 
-          Of course, our service is a little bit less ambitious as it aims to present how deposit payments can be utilized by the Golem community. Consequently, our service will let you scan files on the ClamAV engine and give the results of such scans. \\ \\
-          Last but not least, we are utilizing the Holesky testnet for this example. It means that you need a Metamask wallet with both Holesky tETH and Holesky tGLM. To obtain Holesky tETH feel free to use one of the following faucets: \\ 
-          - [Faucet 1](https://holesky-faucet.pk910.de/)  \\
-          - [Faucet 2](https://faucet.quicknode.com/ethereum/holesky) \\n
-          - [Faucet 3](https://faucet.chainstack.com/holesky-testnet-faucet) \\ 
-          - [Faucet 4](https://www.holeskyfaucet.io/)  \\ \\
+        __html: md.render(
+          `Welcome to our example service for Deposit payments on Golem. We're glad to have you here. This version will show you step by step how Golem deposit payments work and how You can benefit from it on your very own service. \\
+          \\
+          This example service is inspired by a real-world service called VirusTotal. VirusTotal is well well-renowned service that analyzes suspicious files and URLs by running them through multiple antivirus engines and URL scanners to detect malware and malicious content. You can access the original service under this [Virus Total](https://www.virustotal.com/gui/home/upload). \\
+          \\
+          Of course, our service is a little bit less ambitious as it aims to present how deposit payments can be utilized by the Golem community. Consequently, our service will let you scan files on the ClamAV engine and give the results of such scans. \\
+          \\
+          Last but not least, we are utilizing the Holesky testnet for this example. It means that you need a Metamask wallet with both Holesky tETH and Holesky tGLM. To obtain Holesky tETH feel free to use one of the following faucets: \\
+          - [Faucet 1](https://holesky-faucet.pk910.de/) \\
+          - [Faucet 2](https://faucet.quicknode.com/ethereum/holesky) \\
+          - [Faucet 3](https://faucet.chainstack.com/holesky-testnet-faucet)\\
+          - [Faucet 4](https://www.holeskyfaucet.io/)\\
+          \\
           After You obtain some tETH, you can request tGLM tokens from this Smart Contract by calling the "Create" function:  \\
-          - [GLM Faucet Smart Contract](https://holesky.etherscan.io/address/0xface100969ff47eb58d2cf603321b581a84bceac) \\ \\
+          - [GLM Faucet Smart Contract](https://holesky.etherscan.io/address/0xface100969ff47eb58d2cf603321b581a84bceac) \\
+          \\
           When You are ready to start, click the "Connect Wallet" button. This button will initialize the following steps of the process: \\
-          - Connect Your Metamask Wallet with Web Service \\ 
-          - Register Your wallet to the Service via SIWE (Sign-In with Ethereum) standard \\ \\
-          Have fun!`
- `),
+          - Connect Your Metamask Wallet with Web Service \\
+          - Register Your wallet to the Service via SIWE (Sign-In with Ethereum) standard \\
+          \\
+          Have fun!
+ `
+        ),
       },
     },
     get [UserState.CONNECTED]() {
