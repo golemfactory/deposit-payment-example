@@ -10,8 +10,11 @@ export const copy: any = (() => {
     [UserState.DISCONNECTED]: {
       title: "Hello Golem Developer!",
       message: {
-        __html:
-          md.render(`Welcome to our example service for Deposit payments on Golem. We're glad to have you here. This version will show you step by step how Golem deposit payments work and how You can benefit from it on your very own service. \nThis example service is inspired by a real-world service called VirusTotal. VirusTotal is well well-renowned service that analyzes suspicious files and URLs by running them through multiple antivirus engines and URL scanners to detect malware and malicious content. You can access the original service under this [Link](https://www.virustotal.com/gui/home/upload). \nOf course, our service is a little bit less ambitious as it aims to present how deposit payments can be utilized by the Golem community. Consequently, our service will let you scan files on the ClamAV engine and give the results of such scans. \nLast but not least, we are utilizing the Holesky testnet for this example. It means that you need a Metamask wallet with both Holesky tETH and Holesky tGLM. To obtain Holesky tETH feel free to use one of the following faucets: \n[Faucet 1](https://holesky-faucet.pk910.de/) \n[Faucet 2](https://faucet.quicknode.com/ethereum/holesky) \n[Faucet 3](https://faucet.chainstack.com/holesky-testnet-faucet) \n[Faucet 4](https://www.holeskyfaucet.io/) \nAfter You obtain some tETH, you can request tGLM tokens from this Smart Contract by calling the "Create" function: \n[GLM Faucet Smart Contract](https://holesky.etherscan.io/address/0xface100969ff47eb58d2cf603321b581a84bceac) When You are ready to start, click the "Connect Wallet" button. This button will initialize the following steps of the process: \n-Connect Your Metamask Wallet with Web Service \n-Register Your wallet to the Service via SIWE (Sign-In with Ethereum) standard \nHave fun!`),
+        __html: md.render(
+          `Welcome to our example service for Deposit payments on Golem.
+          We're glad to have you here. 
+          This version will show you step by step how Golem deposit payments work and how You can benefit from it on your very own service.  \n This example service is inspired by a real-world service called VirusTotal. VirusTotal is well well-renowned service that analyzes suspicious files and URLs by running them through multiple antivirus engines and URL scanners to detect malware and malicious content. You can access the original service under this [Link](https://www.virustotal.com/gui/home/upload).  \nOf course, our service is a little bit less ambitious as it aims to present how deposit payments can be utilized by the Golem community. Consequently, our service will let you scan files on the ClamAV engine and give the results of such scans.  \nLast but not least, we are utilizing the Holesky testnet for this example. It means that you need a Metamask wallet with both Holesky tETH and Holesky tGLM. To obtain Holesky tETH feel free to use one of the following faucets:  \n[Faucet 1](https://holesky-faucet.pk910.de/)  \n[Faucet 2](https://faucet.quicknode.com/ethereum/holesky)  \n[Faucet 3](https://faucet.chainstack.com/holesky-testnet-faucet)  \n[Faucet 4](https://www.holeskyfaucet.io/)  \nAfter You obtain some tETH, you can request tGLM tokens from this Smart Contract by calling the "Create" function:  \n[GLM Faucet Smart Contract](https://holesky.etherscan.io/address/0xface100969ff47eb58d2cf603321b581a84bceac) When You are ready to start, click the "Connect Wallet" button. This button will initialize the following steps of the process:  \n-Connect Your Metamask Wallet with Web Service \n-Register Your wallet to the Service via SIWE (Sign-In with Ethereum) standard  \nHave fun!`
+        ),
       },
     },
     get [UserState.CONNECTED]() {
@@ -49,7 +52,7 @@ timestamp: it points to the place in time till which Deposit will be held on the
       message: {
         __html:
           md.render(`Allocation is a logical entity created in Yagna, which keeps track of how much money the Requestor wishes to pay the Provider for his computation power. In our scenario Allocation will be created for the same amount as the Deposit. It is because those two entities are interconnected in Deposit Payments as GLMs stored at the Deposit will be used to cover Allocation payments.
-In a normal scenario, Allocation should be created automatically by Yagna so User interaction is not needed. However, in our example service we let you create it manually so there is a better understanding of what is happening behind the UI. Click "Create" next to Allocation.
+          In a normal scenario, Allocation should be created automatically by Yagna so User interaction is not needed. However, in our example service we let you create it manually so there is a better understanding of what is happening behind the UI. Click "Create" next to Allocation.
         `),
       },
     },
@@ -61,7 +64,7 @@ In a normal scenario, Allocation should be created automatically by Yagna so Use
       message: {
         __html:
           md.render(`It is high time to sign the Agreement and find our Golem Provider. By clicking "Create" next to the Agreement section You will trigger Yagna to start looking for a Provider on the Golem network to run our file scanning example. It might take a while, but when it is done Agreement will be signed between Service Owner Yagna and the Provider.
-The provider will also be ready to accept files for us to scan. What is more, We will start to receive "debit notes" from a Provider, which will inform us about how many GLM tokens we own at this moment. Please remember that Providers can also charge for a time they are ready to receive work and not only for work being done. You will see the amount You own Provider under Due payments. It is refreshed in real-time..
+          The provider will also be ready to accept files for us to scan. What is more, We will start to receive "debit notes" from a Provider, which will inform us about how many GLM tokens we own at this moment. Please remember that Providers can also charge for a time they are ready to receive work and not only for work being done. You will see the amount You own Provider under Due payments. It is refreshed in real-time..
         `),
       },
     },
@@ -82,10 +85,10 @@ The provider will also be ready to accept files for us to scan. What is more, We
       message: {
         __html:
           md.render(`We hope that the results are negative :) At this point, You can either continue scanning more files or release the Agreement.
-When You decide to release the agreement following things will happen:
-The provider will send a final invoice for his services
-Deposit Payment will be sent to cover the invoice
-When Payment is done, You can check it out on Etherscan by clicking on Transaction ID in the event log on the left. At this point Amount Locked on the Deposit should be equal to the remaining Allocation value.
+          When You decide to release the agreement following things will happen:
+          The provider will send a final invoice for his services
+          Deposit Payment will be sent to cover the invoice
+          When Payment is done, You can check it out on Etherscan by clicking on Transaction ID in the event log on the left. At this point Amount Locked on the Deposit should be equal to the remaining Allocation value.
 
             `),
       },
@@ -94,11 +97,11 @@ When Payment is done, You can check it out on Etherscan by clicking on Transacti
       title: "Agreement released!",
       message: {
         __html: md.render(`
-Congratulations, You have successfully released the Agreement and as a result paid the Provider for his work.
-The next step is to release Allocation. By clicking "Release" in the Allocation:
-The deposit will be released
-All not spent funds will be returned to the end-user
-Deposit Fee will be transferred to Service Owner
+          Congratulations, You have successfully released the Agreement and as a result paid the Provider for his work.
+          The next step is to release Allocation. By clicking "Release" in the Allocation:
+          The deposit will be released
+          All not spent funds will be returned to the end-user
+          Deposit Fee will be transferred to Service Owner
         `),
       },
     },
@@ -107,7 +110,7 @@ Deposit Fee will be transferred to Service Owner
       message: {
         __html:
           md.render(`You have successfully reached out to the end of this example.
-We hope You liked it and that it inspired You to create similar service on Golem. At this moment You can either create new Deposit to start the process again or clean the current session and close the browser window.
+            We hope You liked it and that it inspired You to create similar service on Golem. At this moment You can either create new Deposit to start the process again or clean the current session and close the browser window.
 `),
       },
     },
