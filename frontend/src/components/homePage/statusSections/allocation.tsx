@@ -6,7 +6,7 @@ import { useReleaseAllocation } from "hooks/yagna/useReleaseAllocation";
 import { useUser } from "hooks/useUser";
 import { Loading } from "react-daisyui";
 import { formatBalance } from "utils/formatBalance";
-
+import { Tooltip } from "react-daisyui";
 export const Allocation = () => {
   const { isCreating, createAllocation } = useCreateAllocation();
   const { currentAllocation } = useCurrentAllocation();
@@ -14,7 +14,7 @@ export const Allocation = () => {
   const { user } = useUser();
 
   return (
-    <div className="stats shadow mt-2 ">
+    <div className="stats shadow mt-2 pt-4 pb-4">
       <div
         className="stat "
         style={{
@@ -83,11 +83,16 @@ export const Allocation = () => {
               <Loading variant="infinity" />
             </button>
           ) : user.hasAllocation() ? (
-            <div className="btn-group">
-              <button className="btn" onClick={() => releaseAllocation()}>
-                {isReleasing ? <Loading variant="infinity" /> : "Release"}
-              </button>
-            </div>
+            <Tooltip
+              className="bg-primary"
+              message="Will trigger service fee transfer to owner"
+            >
+              <div className="btn-group">
+                <button className="btn" onClick={() => releaseAllocation()}>
+                  {isReleasing ? <Loading variant="infinity" /> : "Release"}
+                </button>
+              </div>
+            </Tooltip>
           ) : (
             <button
               className="btn"

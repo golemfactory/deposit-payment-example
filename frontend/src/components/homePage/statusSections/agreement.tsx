@@ -30,7 +30,7 @@ export const Agreement = () => {
 
   return (
     <div
-      className="stats shadow mt-2"
+      className="stats shadow mt-2 pt-4 pb-4"
       style={{
         opacity: user.hasAllocation() ? 1 : 0.3,
       }}
@@ -47,7 +47,7 @@ export const Agreement = () => {
       </div>
 
       <div className="stat">
-        <div className="stat-title">Total</div>
+        <div className="stat-title">Due amount</div>
         <div className="stat-value">
           {user.currentAgreement?.id ? (
             <GLMAmountStat
@@ -74,7 +74,11 @@ export const Agreement = () => {
                 releaseAgreement(user.currentAgreement?.id);
               }}
             >
-              {isReleasing ? <Loading variant="infinity" /> : "Release"}
+              {isReleasing ? (
+                <Loading variant="infinity" />
+              ) : (
+                "Release/Pay Provider"
+              )}
             </button>
           ) : (
             <button

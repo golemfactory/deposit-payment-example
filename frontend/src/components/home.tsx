@@ -18,6 +18,7 @@ export function Home() {
         center={
           <div className="w-full">
             <Action />
+            <div className="mt-12"></div>
             <Status />
           </div>
         }

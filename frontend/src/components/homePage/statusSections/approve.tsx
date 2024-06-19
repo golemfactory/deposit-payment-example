@@ -19,7 +19,7 @@ export const Approve = () => {
   }, []);
   return (
     <div
-      className="stats shadow mt-2"
+      className="stats shadow mt-2 pb-4 pt-4"
       style={{
         opacity: user.isRegistered() ? 1 : 0.3,
       }}
@@ -36,7 +36,11 @@ export const Approve = () => {
       </div>
       <div className="stat">
         <div className="stat-title">Given</div>
-        <GLMAmountStat amount={formatBalance(user.allowanceAmount)} />
+        <GLMAmountStat
+          amount={
+            user.allowanceAmount ? formatBalance(user.allowanceAmount) : ""
+          }
+        />
       </div>
       <div className="stat ">
         {txHash && (

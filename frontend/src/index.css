@@ -9,6 +9,16 @@ body {
     background-attachment: fixed;;
 }
 
+@layer base {
+  a {
+     @apply underline;
+     @apply text-golemblue;
+
+    }
+    a:hover {
+      @apply text-darkblue-600;
+    }
+}
 
 
  

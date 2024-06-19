@@ -113,7 +113,6 @@ export const Events = () => {
   return (
     <>
       {events.map((event, index) => {
-        console.log(event.isExpanded);
         return <EventCard key={index} {...event} />;
       })}
     </>

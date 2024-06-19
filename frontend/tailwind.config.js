@@ -47,6 +47,9 @@ module.exports = {
     themes: [
       {
         golem: {
+          ".tooltip:before": {
+            backgroundColor: "#404B63",
+          },
           ".btn": {
             backgroundColor: "#181EA9",
             color: "white",

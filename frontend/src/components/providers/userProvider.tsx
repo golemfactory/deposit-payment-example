@@ -160,6 +160,7 @@ const userActionReducer = (
     .with(UserAction.HAS_NO_DEPOSIT, () => UserState.HAS_NO_DEPOSIT)
     .with(UserAction.HAS_ALLOCATION, () => UserState.HAS_ALLOCATION)
     .with(UserAction.HAS_NO_ALLOCATION, () => UserState.HAS_NO_ALLOCATION)
+    .with(UserAction.HAS_AGREEMENT, () => UserState.HAS_AGREEMENT)
     .otherwise(() => user.state);
 
   const newUser = {
@@ -179,7 +180,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const chainId = useChainId();
   const [currentDepositNonce, setCurrentDepositNonce] = useState(0n);
   const { data: userData, isLoading: isUserLoading } = useUserData();
-  console.log("userData", userData);
   //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
   const currentAgreement = useCurrentAgreement();
@@ -244,6 +244,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   useEffect(() => {
     if (user.currentDeposit) {
       if (userData?.currentAllocation.id) {
+        console.log("indeed");
         dispatch({
           kind: UserAction.HAS_ALLOCATION,
           payload: {
@@ -251,6 +252,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
           },
         });
       } else {
+        console.log("no allocation");
         dispatch({
           kind: UserAction.HAS_NO_ALLOCATION,
           payload: { currentAllocation: null },
@@ -265,16 +267,9 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
 
   useEffect(() => {
     if (isConnected) {
-      console.log("isConnected", isConnected, isRegistered);
       dispatch({ kind: UserAction.CONNECT });
       if (isRegistered) {
-        console.log("isRegistered", isRegistered);
         if (isAllowanceFetched && allowanceAmount !== undefined) {
-          console.log(
-            "isAllowanceFetched",
-            isAllowanceFetched,
-            allowanceAmount
-          );
           if (allowanceAmount > config.minimalAllowance) {
             dispatch({
               kind: UserAction.ENOUGH_ALLOWANCE,
@@ -292,6 +287,16 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
       dispatch({ kind: UserAction.DISCONNECT });
     }
   }, [isAllowanceFetched, allowanceAmount, isRegistered]);
+
+  useEffect(() => {
+    console.log("currentAgreement", currentAgreement);
+    if (currentAgreement?.agreementId) {
+      dispatch({
+        kind: UserAction.HAS_AGREEMENT,
+        payload: { currentAgreement },
+      });
+    }
+  }, [currentAgreement]);
 
   return (
     <UserContext.Provider
