@@ -128,5 +128,23 @@ We hope You liked it and that it inspired You to create similar service on Golem
 `),
       },
     },
+    ["SCANED_FILES"]: {
+      title: "fdsfsd",
+      message: {
+        __html: "fsdfsdf",
+      },
+    },
+    ["WAITING_FOR_AGREEMENT_PAYMENT"]: {
+      title: "fdsfsd",
+      message: {
+        __html: "fsdfsdf",
+      },
+    },
+    ["WAITING_FOR_DEPOSIT_PAYMENT"]: {
+      title: "fdsfsd",
+      message: {
+        __html: "fsdfsdf",
+      },
+    },
   };
 })();
