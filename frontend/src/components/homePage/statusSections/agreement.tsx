@@ -8,6 +8,7 @@ import { formatBalance } from "utils/formatBalance";
 import { parseEther } from "viem";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
 import { Loading } from "react-daisyui";
+import { filter } from "rxjs";
 
 export const Agreement = () => {
   const { user } = useUser();
@@ -16,9 +17,17 @@ export const Agreement = () => {
   const { events$ } = useDebitNoteEvents();
   const [totalAmount, setTotalAmount] = useState("-");
   useEffect(() => {
-    events$.subscribe((event: any) => {
-      setTotalAmount(event.payload.totalAmountDue);
-    });
+    events$
+      .pipe(
+        filter((event: any) => {
+          console.log("e,", event);
+          console.log("t", user.currentAgreement?.id);
+          return event.payload.agreementId === user.currentAgreement?.id;
+        })
+      )
+      .subscribe((event: any) => {
+        setTotalAmount(event.payload.totalAmountDue);
+      });
   }, []);
   return (
     <div
