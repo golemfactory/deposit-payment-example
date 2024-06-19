@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { EventType } from "types/events";
 import { useAllocationEvents } from "hooks/events/useAllocationEvents";
 import { EventCard } from "./event";
-import { uniqBy, sortBy, prop } from "ramda";
+import { uniqBy, sortBy, reverse, prop } from "ramda";
 import { useDepositEvents } from "hooks/events/useDepositEvents";
 import { useYagnaEvents } from "hooks/events/useYagnaEvents";
 import { finalize, merge } from "rxjs";
@@ -15,6 +15,8 @@ export const Events = () => {
     (EventType & {
       id: number;
       timestamp: number;
+      isExpanded: boolean;
+      toggleExpanded: () => void;
     })[]
   >([]);
 
@@ -58,14 +60,45 @@ export const Events = () => {
         }
       ) => {
         setEvents((prevEvents) => {
-          return sortBy(prop("timestamp"))(
-            uniqBy(
-              (e) => {
-                return `${e.kind}-${e.id}`;
-              },
-              [...prevEvents, event]
+          return reverse(
+            sortBy(prop("timestamp"))(
+              uniqBy(
+                (e) => {
+                  return `${e.kind}-${e.id}`;
+                },
+                [
+                  ...prevEvents.map((e) => {
+                    return {
+                      ...e,
+                    };
+                  }),
+                  {
+                    ...event,
+                    isExpanded: true,
+                  },
+                ]
+              )
             )
-          );
+          ).map((e, index) => {
+            return {
+              ...e,
+              isExpanded: index === 0,
+
+              toggleExpanded: () => {
+                setEvents((prevEvents) => {
+                  return prevEvents.map((prevEvent) => {
+                    return {
+                      ...prevEvent,
+                      isExpanded:
+                        e.id === prevEvent.id
+                          ? !prevEvent.isExpanded
+                          : prevEvent.isExpanded,
+                    };
+                  });
+                });
+              },
+            };
+          });
         });
       }
     );
@@ -80,6 +113,7 @@ export const Events = () => {
   return (
     <>
       {events.map((event, index) => {
+        console.log(event.isExpanded);
         return <EventCard key={index} {...event} />;
       })}
     </>

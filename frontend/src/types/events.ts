@@ -16,6 +16,22 @@ export enum Event {
   DEPOSIT_FEE_PAYMENT = "DEPOSIT_FEE_PAYMENT",
 }
 
+export const EventTitle: { [key in Event]: string } = {
+  [Event.DEPOSIT_CREATED]: "Deposit Created",
+  [Event.ALLOCATION_CREATED]: "Allocation Created",
+  [Event.AGREEMENT_SIGNED]: "Agreement Signed",
+  [Event.FILE_SCAN_OK]: "File Scan OK",
+  [Event.FILE_SCAN_ERROR]: "File Scan Error",
+  [Event.NEW_INVOICE]: "New Invoice",
+  [Event.AGREEMENT_TERMINATED]: "Agreement Terminated",
+  [Event.ALLOCATION_RELEASED]: "Allocation Released",
+  [Event.DEPOSIT_RELEASED]: "Deposit Released",
+  [Event.DEPOSIT_EXTENDED]: "Deposit Extended",
+  [Event.NEW_DEBIT_NOTE]: "New Debit Note",
+  [Event.DEPOSIT_PROVIDER_PAYMENT]: "Provider Payment",
+  [Event.DEPOSIT_FEE_PAYMENT]: "Service Owner Payment",
+};
+
 export type Payload = {
   [Event.DEPOSIT_CREATED]: {
     txHash: `0x${string}`;

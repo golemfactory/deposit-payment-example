@@ -20,8 +20,6 @@ export const Agreement = () => {
     events$
       .pipe(
         filter((event: any) => {
-          console.log("e,", event);
-          console.log("t", user.currentAgreement?.id);
           return event.payload.agreementId === user.currentAgreement?.id;
         })
       )
@@ -29,6 +27,7 @@ export const Agreement = () => {
         setTotalAmount(event.payload.totalAmountDue);
       });
   }, []);
+
   return (
     <div
       className="stats shadow mt-2"
