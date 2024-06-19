@@ -33,7 +33,7 @@ export const useUserData = () => {
   });
 
   return {
-    isLoading,
+    isLoading: false,
     data: data || [],
     error,
   };

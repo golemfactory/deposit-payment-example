@@ -183,7 +183,7 @@ const DepositProviderPaymentEvent = (event: {
             <div className="stat-title">TX Hash : </div>
             <EtherScanLink
               hash={event.payload.txHash}
-              route="address"
+              route="tx"
             ></EtherScanLink>
           </div>
           <div className="flex gap-2">

@@ -25,7 +25,6 @@ export const useCurrentAgreement = () => {
     }
   );
   useEffect(() => {
-    console.log(userData.currentAgreement?.id);
     setIsPaused(!userData.currentAgreement?.id);
     mutate();
   }, [userData.currentAgreement?.id]);

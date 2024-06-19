@@ -9,7 +9,6 @@ import {
 import { abi } from "./abi";
 import { config } from "config";
 import { useChainId } from "hooks/useChainId";
-import { assertOptionalBigInt } from "types/assertBigInt";
 import { TransactionExecutionError } from "viem";
 import { useEffect, useState } from "react";
 

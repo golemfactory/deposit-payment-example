@@ -179,6 +179,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const chainId = useChainId();
   const [currentDepositNonce, setCurrentDepositNonce] = useState(0n);
   const { data: userData, isLoading: isUserLoading } = useUserData();
+  console.log("userData", userData);
   //TODO : get rid of
   const [isRegistered, setIsRegistered] = useState(false);
   const currentAgreement = useCurrentAgreement();
@@ -215,6 +216,7 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     const currentDeposit = (userData?.deposits || []).find(
       (deposit: { isCurrent: boolean }) => deposit.isCurrent
     );
+
     if (!isUserLoading && userData?._id) {
       setIsRegistered(true);
     }
@@ -263,9 +265,16 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
 
   useEffect(() => {
     if (isConnected) {
+      console.log("isConnected", isConnected, isRegistered);
       dispatch({ kind: UserAction.CONNECT });
       if (isRegistered) {
+        console.log("isRegistered", isRegistered);
         if (isAllowanceFetched && allowanceAmount !== undefined) {
+          console.log(
+            "isAllowanceFetched",
+            isAllowanceFetched,
+            allowanceAmount
+          );
           if (allowanceAmount > config.minimalAllowance) {
             dispatch({
               kind: UserAction.ENOUGH_ALLOWANCE,
