@@ -9,7 +9,7 @@ export const ShortLink = ({ id = "" }: { id?: string }) => {
   const handleClick = () => {
     navigator.clipboard.writeText(id);
     setIsCopied(true);
-    enqueueSnackbar("Id to clipboard", { variant: "success" });
+    enqueueSnackbar("Copied to clipboard", { variant: "success" });
   };
 
   const shortenedId =
