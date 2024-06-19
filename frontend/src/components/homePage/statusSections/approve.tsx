@@ -3,7 +3,7 @@ import { GLMAmountStat } from "components/atoms/GLMAmount";
 import { useLayout } from "components/providers/layoutProvider";
 import { useAllowanceTx } from "hooks/GLM/useAllowanceTx";
 import { useUser } from "hooks/useUser";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-daisyui";
 import { formatBalance } from "utils/formatBalance";
 import { shortTransaction } from "utils/shortTransaction";
@@ -17,6 +17,11 @@ export const Approve = () => {
     setModalContent(<ApproveForm />);
     openModal();
   }, []);
+  const [isApproveButtonActive, setIsApproveButtonActive] = useState(false);
+
+  useEffect(() => {
+    setIsApproveButtonActive(user.isRegistered() && !user.hasEnoughAllowance());
+  }, [user.hasEnoughAllowance()]);
   return (
     <div
       className="stats shadow mt-2 pb-4 pt-4"
@@ -61,7 +66,11 @@ export const Approve = () => {
       <div className="stat "></div>
       <div className="stat ">
         <div className="stat-actions mt-0 ">
-          <button className="btn" onClick={openExtendApproveModal}>
+          <button className="btn border-solid" onClick={openExtendApproveModal}>
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+            </span>
             {user.hasEnoughAllowance()
               ? "Extend"
               : user.allowanceAmount && user.allowanceAmount > 0
