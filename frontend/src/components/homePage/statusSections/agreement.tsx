@@ -113,7 +113,7 @@ export const Agreement = () => {
             </Tooltip>
           ) : (
             <button
-              className="btn"
+              className="btn relative"
               {...(user.hasAllocation() ? {} : { disabled: true })}
               onClick={() => {
                 createAgreement();
@@ -123,12 +123,11 @@ export const Agreement = () => {
                 <Loading variant="infinity" />
               ) : isAgreementButtonActive ? (
                 <>
-                  {" "}
                   <Bip />
-                  "Create"{" "}
+                  Create
                 </>
               ) : (
-                "Create"
+                <>Create</>
               )}
             </button>
           )}

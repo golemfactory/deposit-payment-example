@@ -56,7 +56,9 @@ export const useAllowanceTx = () => {
     fetchLogs().then((logs) => {
       const sortedLogs = logs.sort(compareBlockNumbers);
       if (sortedLogs.length > 0) {
-        setTxHash(sortedLogs[logs.length - 1].transactionHash);
+        if (address) {
+          setTxHash(sortedLogs[logs.length - 1].transactionHash);
+        }
       }
     });
   }, [address, requestor?.wallet]);
