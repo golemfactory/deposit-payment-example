@@ -9,6 +9,8 @@ import { parseEther } from "viem";
 import { GLMAmountStat } from "components/atoms/GLMAmount";
 import { Loading, Tooltip } from "react-daisyui";
 import { filter } from "rxjs";
+import { useFlowEvents } from "components/providers/flowEventsProvider";
+import { Bip } from "components/atoms/bip";
 
 export const Agreement = () => {
   const { user } = useUser();
@@ -16,6 +18,32 @@ export const Agreement = () => {
   const { releaseAgreement, isReleasing } = useReleaseAgreement();
   const { events$ } = useDebitNoteEvents();
   const [totalAmount, setTotalAmount] = useState("-");
+
+  const { events$: flowEvents$ } = useFlowEvents();
+  const [isAgreementButtonActive, setIsAgreementButtonActive] = useState(false);
+
+  const [canButtonBeActive, setCanButtonBeActive] = useState(true);
+
+  useEffect(() => {
+    const sub = flowEvents$.subscribe((event) => {
+      if (event === "restartSession") {
+        setCanButtonBeActive(true);
+      }
+      if (event === "releaseAgreement") {
+        setCanButtonBeActive(false);
+      }
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    setIsAgreementButtonActive(
+      canButtonBeActive && user.hasAllocation() && !user.hasAgreement()
+    );
+  }, [user.hasAgreement(), user.hasAllocation(), canButtonBeActive]);
+
   useEffect(() => {
     if (user.currentAgreement?.id) {
       events$
@@ -91,7 +119,17 @@ export const Agreement = () => {
                 createAgreement();
               }}
             >
-              {isCreating ? <Loading variant="infinity" /> : "Create"}
+              {isCreating ? (
+                <Loading variant="infinity" />
+              ) : isAgreementButtonActive ? (
+                <>
+                  {" "}
+                  <Bip />
+                  "Create"{" "}
+                </>
+              ) : (
+                "Create"
+              )}
             </button>
           )}
         </div>

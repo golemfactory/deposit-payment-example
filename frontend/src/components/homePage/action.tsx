@@ -11,7 +11,6 @@ import { useDepositPaymentEvents } from "hooks/events/usePaymentEvents";
 import { useFlowEvents } from "components/providers/flowEventsProvider";
 import { init, set } from "ramda";
 import { AnimatePresence, Variants, motion } from "framer-motion";
-console.log("Action", copy);
 export const Action = () => {
   const { user } = useUser();
   //TODO : this logic should be move outside of this component
@@ -48,13 +47,9 @@ export const Action = () => {
     }
   }, [user.state]);
 
-  useEffect(() => {
-    console.log("user.state", state);
-  }, [state]);
-
   const { events$: scanResults$ } = useScanResults();
   const { events$: yagnaEvents$ } = useYagnaEvents();
-  const { events$: flowEvents$ } = useFlowEvents();
+  const { events$: flowEvents$, restartSession } = useFlowEvents();
   const { events$: paymentEvents$ } = useDepositPaymentEvents();
   useEffect(() => {
     const scanResultSub = scanResults$.subscribe((event) => {
@@ -80,6 +75,9 @@ export const Action = () => {
       if (event === "releaseAgreement") {
         setState("WAITING_FOR_PROVIDER_PAYMENT");
       }
+      if (event === "restartSession") {
+        setState(user.state);
+      }
     });
 
     const paymentsSub = paymentEvents$.subscribe((event) => {
@@ -92,7 +90,6 @@ export const Action = () => {
         });
       }
       if (event.kind === Event.DEPOSIT_FEE_PAYMENT) {
-        console.log("DEPOSIT_FEE_PAYMENT");
         setState("DEPOSIT_RELEASED");
       }
     });
@@ -143,7 +140,8 @@ export const Action = () => {
                 <button
                   className="btn"
                   onClick={() => {
-                    flowEvents$.complete();
+                    restartSession();
+                    // flowEvents$.complete();
                   }}
                 >
                   Restart session

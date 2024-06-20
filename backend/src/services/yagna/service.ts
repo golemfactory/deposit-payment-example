@@ -121,12 +121,13 @@ export class Yagna {
       });
     }
     container.cradle.userService.setCurrentAgreementId(userId, agreement.id);
-    agreement.events.on("terminated", (e: any) => {
-      this.agreementEvents.next({
-        agreement,
-        event: "terminated",
-      });
-    });
+    // agreement.events.on("terminated", (e: any) => {
+    //   console.log("agreement terminated");
+    //   this.agreementEvents.next({
+    //     agreement,
+    //     event: "terminated",
+    //   });
+    // });
   }
 
   async getUserAgreement(userId: string) {
@@ -337,20 +338,24 @@ export class Yagna {
           "creating worker, executor found getting agreement",
           userId
         );
-        executor
-          .run(async (ctx: WorkContext) => {
-            debugLog("yagna", "created worker", userId);
-            newWorker.context = ctx;
+        try {
+          executor
+            .run(async (ctx: WorkContext) => {
+              debugLog("yagna", "created worker", userId);
+              newWorker.context = ctx;
 
-            newWorker.setState("free");
+              newWorker.setState("free");
 
-            resolve(newWorker);
-          })
-          .catch((e: any) => {
-            console.log("Error", e);
-            debugLog("yagna", "error creating worker", e);
-            reject(e);
-          });
+              resolve(newWorker);
+            })
+            .catch((e: any) => {
+              console.log("Error", e);
+              debugLog("yagna", "error creating worker", e);
+              reject(e);
+            });
+        } catch (e) {
+          console.log("Error", e);
+        }
       }
     });
   }
@@ -377,9 +382,10 @@ export class Yagna {
       });
 
       debitNoteEvents.forEach(async (event: any) => {
-        console.log("debit note event", event);
+        console.log("debit note event");
         const debitNoteId = event.debitNoteId;
         const debitNote = await this.paymentService.getDebitNote(debitNoteId);
+        console.log("debit note");
         this.debitNoteEvents.next({
           debitNote,
           event,
@@ -410,6 +416,7 @@ export class Yagna {
         console.log("invoice event", event);
         const invoiceId = event.invoiceId;
         const invoice = await this.paymentService.getInvoice(invoiceId);
+        console.log("invoice");
         this.invoiceEvents.next({ invoice, event, id: uuidv4() });
       });
     }
@@ -439,7 +446,7 @@ export class Yagna {
         if (event.eventType === "AgreementTerminatedEvent") {
           container.cradle.userService.onAgreementTerminated(agreementId);
         }
-
+        console.log("agreement event");
         this.agreementEvents.next({
           id: uuidv4(),
           agreement,

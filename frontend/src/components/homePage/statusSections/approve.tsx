@@ -21,8 +21,6 @@ export const Approve = () => {
   const [isApproveButtonActive, setIsApproveButtonActive] = useState(false);
 
   useEffect(() => {
-    console.log(user.hasEnoughAllowance());
-    console.log(user.isRegistered());
     setIsApproveButtonActive(user.isRegistered() && !user.hasEnoughAllowance());
   }, [user.hasEnoughAllowance(), user.isRegistered()]);
   return (

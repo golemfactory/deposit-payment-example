@@ -5,7 +5,7 @@ import { EventCard } from "./event";
 import { uniqBy, sortBy, reverse, prop } from "ramda";
 import { useDepositEvents } from "hooks/events/useDepositEvents";
 import { useYagnaEvents } from "hooks/events/useYagnaEvents";
-import { finalize, merge } from "rxjs";
+import { filter, finalize, merge } from "rxjs";
 import { useDepositPaymentEvents } from "hooks/events/usePaymentEvents";
 import { useScanResults } from "hooks/useScanResults";
 import { useFlowEvents } from "components/providers/flowEventsProvider";
@@ -33,16 +33,16 @@ export const Events = () => {
   useEffect(() => {
     flowEvents$
       .pipe(
-        finalize(() => {
-          cleanAllocationEvents();
-          cleanDepositEvents();
-          cleanYagnaEvents();
-          cleanPaymentEvents();
-          cleanFileEvents();
-          setEvents([]);
-        })
+        filter((event) => event === "restartSession") // Adjust the condition to match your event structure
       )
-      .subscribe();
+      .subscribe(() => {
+        cleanAllocationEvents();
+        cleanDepositEvents();
+        cleanYagnaEvents();
+        cleanPaymentEvents();
+        cleanFileEvents();
+        setEvents([]);
+      });
   }, []);
 
   useEffect(() => {

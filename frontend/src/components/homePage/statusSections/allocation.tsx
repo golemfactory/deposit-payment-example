@@ -9,6 +9,7 @@ import { formatBalance } from "utils/formatBalance";
 import { Tooltip } from "react-daisyui";
 import { useEffect, useState } from "react";
 import { Bip } from "components/atoms/bip";
+import { useFlowEvents } from "components/providers/flowEventsProvider";
 export const Allocation = () => {
   const { isCreating, createAllocation } = useCreateAllocation();
   const { currentAllocation } = useCurrentAllocation();
@@ -16,12 +17,29 @@ export const Allocation = () => {
   const { user } = useUser();
   const [isCreateAllocationButtonActive, setIsCreateAllocationButtonActive] =
     useState(false);
+  const [canButtonBeActive, setCanButtonBeActive] = useState(true);
+
+  const { events$: flowEvents$ } = useFlowEvents();
 
   useEffect(() => {
     setIsCreateAllocationButtonActive(
-      user.hasDeposit() && !user.hasAllocation()
+      user.hasDeposit() && !user.hasAllocation() && canButtonBeActive
     );
-  }, [user.hasAllocation(), user.hasDeposit()]);
+  }, [user.hasAllocation(), user.hasDeposit(), canButtonBeActive]);
+
+  useEffect(() => {
+    const sub = flowEvents$.subscribe((event) => {
+      if (event === "restartSession") {
+        setCanButtonBeActive(true);
+      }
+      if (event === "releaseAllocation") {
+        setCanButtonBeActive(false);
+      }
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, []);
 
   return (
     <div className="stats shadow mt-2 pt-4 pb-4">

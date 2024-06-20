@@ -12,6 +12,9 @@ const FlowEventsContext = createContext({
   releaseAllocation() {
     this.events$.next("releaseAllocation");
   },
+  restartSession() {
+    this.events$.next("restartSession");
+  },
 });
 
 export const FlowEventsProvider = ({ children }: PropsWithChildren) => {
@@ -28,6 +31,9 @@ export const FlowEventsProvider = ({ children }: PropsWithChildren) => {
         },
         releaseAllocation() {
           events.current.next("releaseAllocation");
+        },
+        restartSession() {
+          events.current.next("restartSession");
         },
       }}
     >

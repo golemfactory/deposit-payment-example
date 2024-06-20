@@ -32,8 +32,8 @@ export const useCurrentAgreement = () => {
         setIsPaused(true);
       }
       if (event.kind === Event.AGREEMENT_SIGNED) {
-        setIsPaused(false);
         mutate();
+        setIsPaused(false);
       }
     });
     return () => {

@@ -29,7 +29,6 @@ const useDepositEvent = ({
 
   const onLogs = useCallback((logs: any) => {
     logs.forEach((log: any) => {
-      console.log("got e", log);
       const e = {
         txHash: log.transactionHash,
         amount: Number(log.args.amount),
