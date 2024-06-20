@@ -18,11 +18,9 @@ export const Agreement = () => {
   const [totalAmount, setTotalAmount] = useState("-");
   useEffect(() => {
     if (user.currentAgreement?.id) {
-      console.log("fetching total amount");
       events$
         .pipe(
           filter((event: any) => {
-            console.log(event, user.currentAgreement);
             return event.payload.agreementId === user.currentAgreement?.id;
           })
         )

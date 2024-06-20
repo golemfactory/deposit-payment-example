@@ -9,12 +9,27 @@ import { useYagnaEvents } from "hooks/events/useYagnaEvents";
 import { Event } from "types/events";
 import { useDepositPaymentEvents } from "hooks/events/usePaymentEvents";
 import { useFlowEvents } from "components/providers/flowEventsProvider";
-import { set } from "ramda";
+import { init, set } from "ramda";
+import { AnimatePresence, Variants, motion } from "framer-motion";
+console.log("Action", copy);
 export const Action = () => {
   const { user } = useUser();
   //TODO : this logic should be move outside of this component
   // probably we should extend user state provider to handle this
 
+  const variants: Variants = {
+    initial: {
+      opacity: 0,
+    },
+    animate: {
+      opacity: 1,
+    },
+    exit: {
+      opacity: 0,
+      height: "0px",
+      top: "-20px",
+    },
+  };
   const [state, setState] = useState<
     | UserState
     | "HAS_FILE_SCANNED"
@@ -32,6 +47,10 @@ export const Action = () => {
       setState(user.state);
     }
   }, [user.state]);
+
+  useEffect(() => {
+    console.log("user.state", state);
+  }, [state]);
 
   const { events$: scanResults$ } = useScanResults();
   const { events$: yagnaEvents$ } = useYagnaEvents();
@@ -90,8 +109,34 @@ export const Action = () => {
     <>
       <Card className="p-2">
         <Card.Body>
-          <Card.Title className="mb-2">{copy[state].title}</Card.Title>
-          <div dangerouslySetInnerHTML={copy[state].message}></div>
+          <AnimatePresence>
+            <motion.h1
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={variants}
+              key={copy[state]?.title || state}
+              transition={{ ease: "easeOut", duration: 0.5 }}
+              className="text-xl font-semibold mb-4"
+            >
+              {copy[state]?.title || state}
+            </motion.h1>
+          </AnimatePresence>
+          <AnimatePresence>
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={variants}
+              key={copy[state]?.message || state}
+              transition={{ ease: "easeOut", duration: 0.5 }}
+              dangerouslySetInnerHTML={
+                copy[state]?.message || {
+                  __html: <div>{state}</div>,
+                }
+              }
+            ></motion.div>
+          </AnimatePresence>
           {state === "DEPOSIT_RELEASED" ? (
             <div className="grid grid-cols-12 mt-12 ">
               <div className="col-start-6 col-span-2">
