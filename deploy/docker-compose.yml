@@ -47,7 +47,7 @@ services:
       context: ./yagna
       dockerfile: Dockerfile
       args:
-        - YAGNA_VERSION=pre-rel-v0.16.0-preview.deposit.3
+        - YAGNA_VERSION=pre-rel-v0.16.0-preview.deposits.3
     command: yagna service run
     ports:
       - "7465:7465"
