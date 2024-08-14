@@ -42,7 +42,7 @@ export const copy: any = (() => {
         __html: md.render(
           `Congratulations! You are now successfully registered with our example service. \\
           \\
-          The next step in the process is to provide approval for the GLM tokens stored in your wallet. This approval is given to the Deposit Smart Contract (0x9CB8Ecc74e299eF9D3cBcf8f806F5C7b76CA08D3) and can be revoked or extended at any time. It is a necessary step to create a deposit later on. It is important to emphasize that this step has to be done by the service user.
+          The next step in the process is to provide approval for the GLM tokens stored in your wallet. This approval is given to the Deposit Smart Contract (0x63704675f72A47a7a183112700Cb48d4B0A94332) and can be revoked or extended at any time. It is a necessary step to create a deposit later on. It is important to emphasize that this step has to be done by the service user.
           `
         ),
       },
